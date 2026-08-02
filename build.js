@@ -6,10 +6,15 @@
  * /usr/share/cockpit/lxc and what `make devinstall` symlinks into
  * ~/.local/share/cockpit/lxc.
  *
- * The `cockpit` module is marked external and resolved in the browser by the
- * import map in src/index.html, which points at ../base1/cockpit.js. Cockpit
- * serves that itself, so bundling it would both duplicate it and pin us to a
- * copy that can drift from the running server.
+ * Cockpit's client library is loaded by index.html as a classic script, which
+ * sets window.cockpit. The bare "cockpit" specifier is aliased to the shim in
+ * src/backend that re-exports that global. Bundling base1/cockpit.js instead
+ * would duplicate what the server already serves and pin the plugin to a copy
+ * that can drift from the running Cockpit.
+ *
+ * Output format is iife, matching Cockpit's own pages. An ES module would also
+ * work, but iife keeps the loading model identical to every other package on
+ * the system and avoids depending on module/classic ordering rules.
  */
 import { context } from "esbuild";
 import { sassPlugin } from "esbuild-sass-plugin";
@@ -58,13 +63,15 @@ const ctx = await context({
     entryPoints: [path.join(srcDir, "index.tsx")],
     outdir: outDir,
     bundle: true,
-    format: "esm",
+    format: "iife",
     target: ["es2020"],
     platform: "browser",
     sourcemap: production ? false : "linked",
     minify: production,
     legalComments: "external",
-    external: ["cockpit"],
+    alias: {
+        cockpit: path.join(srcDir, "backend", "cockpit-runtime.ts"),
+    },
     loader: {
         ".woff": "file",
         ".woff2": "file",

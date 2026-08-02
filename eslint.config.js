@@ -47,6 +47,19 @@ export default tseslint.config(
                         "boundary talks to ContainerDriver.",
                 }],
             }],
+            /*
+             * base1/cockpit.js publishes itself as window.cockpit, so restricting
+             * the import specifier alone would leave the global as an open back
+             * door around the boundary. src/backend/cockpit-runtime.ts is the one
+             * file allowed to read it, and it is exempt by the `ignores` above.
+             */
+            "no-restricted-properties": ["error", {
+                object: "window",
+                property: "cockpit",
+                message:
+                    "Reach cockpit through ContainerDriver, not the global. Only " +
+                    "src/backend/cockpit-runtime.ts may read window.cockpit.",
+            }],
         },
     },
 

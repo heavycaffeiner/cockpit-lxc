@@ -175,7 +175,7 @@ flowchart TD
     T2 --> BR
     T3 --> BR
 
-    SOCK["/var/lib/incus/unix.socket"]
+    SOCK["/run/incus/unix.socket"]
     CLI["incus CLI"]
     BR --> SOCK
     BR --> CLI
@@ -193,15 +193,23 @@ through `cockpit.http()`, which accepts a unix socket path and a `superuser` fie
 
 ```ts
 const http = cockpit.http({
-    unix: "/var/lib/incus/unix.socket",
+    unix: "/run/incus/unix.socket",
     superuser: "require",
 });
 ```
 
-The Incus socket is root-owned (group `incus-admin`). Cockpit's superuser bridge runs as
+The path is `/run/incus`, not `/var/lib/incus`: the systemd unit declares
+`ListenStream=/run/incus/unix.socket`, and `/var/lib/incus` holds the daemon's state
+rather than its socket.
+
+The socket is owned `root:incus-admin` with mode 0660. Cockpit's superuser bridge runs as
 root, so `superuser: "require"` gives access and, importantly, makes Cockpit surface its
 standard "Administrative access" prompt when the session has not yet escalated. This is
 the single point where the plugin depends on privilege.
+
+Verified against Incus 6.23 on Rocky Linux 10.2: `GET /1.0` over this socket returns a
+`sync` envelope with `auth: "trusted"`, `api_version: "1.0"` and 510 API extensions,
+which is the shape the startup sequence in 4.3.1 depends on.
 
 **Transport 2: pty stream for the terminal.** Incus's own exec endpoint
 (`POST /1.0/instances/<name>/exec`) upgrades to websockets for its stdin/stdout/control

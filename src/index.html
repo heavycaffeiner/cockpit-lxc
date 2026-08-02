@@ -4,22 +4,20 @@
     <meta charset="utf-8">
     <title>LXC Containers</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <!--
-      Cockpit serves its own client library at ../base1/cockpit.js. Resolving the
-      bare "cockpit" specifier here rather than bundling a copy keeps the plugin
-      in step with whatever version the running server provides.
-    -->
-    <script type="importmap">
-    {
-        "imports": {
-            "cockpit": "../base1/cockpit.js"
-        }
-    }
-    </script>
     <link rel="stylesheet" href="index.css">
+    <!--
+      base1/cockpit.js is an IIFE that assigns window.cockpit and exports
+      nothing, so it has to be a classic script rather than a module or an
+      import-map target. Cockpit's own pages load it exactly this way.
+
+      It is deliberately not deferred: it must run before the bundle. index.js
+      is deferred, so it executes after parsing and after this script, with the
+      #app element already in the document.
+    -->
+    <script type="text/javascript" src="../base1/cockpit.js"></script>
+    <script type="text/javascript" src="index.js" defer></script>
 </head>
 <body>
     <div id="app"></div>
-    <script type="module" src="index.js"></script>
 </body>
 </html>

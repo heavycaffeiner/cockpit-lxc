@@ -12,6 +12,8 @@ export type {
     SetStateOptions,
 } from "./driver";
 
+export { getHostName } from "./host";
+
 export {
     ApiError,
     ConflictError,
@@ -41,5 +43,13 @@ export type {
     TerminalMode,
 } from "./types";
 
-/** Path to the Incus REST socket. */
-export const INCUS_SOCKET = "/var/lib/incus/unix.socket";
+/**
+ * Path to the Incus REST socket.
+ *
+ * This is /run/incus, not /var/lib/incus. The systemd unit declares
+ * `ListenStream=/run/incus/unix.socket`, and /var/lib/incus holds the daemon's
+ * state rather than its socket. Verified against Incus 6.23 on Rocky Linux 10.2;
+ * the socket is owned root:incus-admin with mode 0660, which is why the driver
+ * opens it with superuser: "require".
+ */
+export const INCUS_SOCKET = "/run/incus/unix.socket";

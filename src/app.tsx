@@ -6,6 +6,7 @@ import {
 } from "@patternfly/react-core";
 import { CubesIcon } from "@patternfly/react-icons";
 
+import { getHostName } from "./backend";
 import { GridOverlay } from "./grid-overlay";
 
 /**
@@ -28,6 +29,8 @@ export const Application = () => (
                     The container list is not implemented yet. This build exists to
                     verify the package scaffolding, the PatternFly baseline and the
                     4px grid gate.
+                    <br />
+                    Connected to <strong>{getHostName()}</strong>.
                 </EmptyStateBody>
             </EmptyState>
         </PageSection>
