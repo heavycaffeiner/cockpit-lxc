@@ -1,0 +1,22 @@
+/*
+ * The 1px gradient stops below are line widths, not spacing, which is why they
+ * live in background-image and not in a geometry property. The 4px stop is the
+ * grid pitch itself.
+ */
+.lxc-grid-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+    background-image:
+        repeating-linear-gradient(
+            to bottom,
+            rgb(255 0 0 / 16%) 0 1px,
+            transparent 1px 4px
+        ),
+        repeating-linear-gradient(
+            to right,
+            rgb(0 90 255 / 10%) 0 1px,
+            transparent 1px 4px
+        );
+}

@@ -1,0 +1,43 @@
+{
+    "name": "cockpit-lxc",
+    "version": "0.1.0",
+    "description": "Manage LXC system containers (Incus) from the Cockpit web console",
+    "license": "LGPL-2.1-or-later",
+    "type": "module",
+    "private": true,
+    "scripts": {
+        "build": "node build.js",
+        "watch": "node build.js --watch",
+        "typecheck": "tsc --noEmit",
+        "lint:js": "eslint src build.js build",
+        "lint:js:fix": "eslint --fix src build.js build",
+        "lint:css": "stylelint \"src/**/*.{css,scss}\"",
+        "lint:css:fix": "stylelint --fix \"src/**/*.{css,scss}\"",
+        "lint": "npm run lint:js && npm run lint:css",
+        "check": "npm run typecheck && npm run lint"
+    },
+    "dependencies": {
+        "@patternfly/patternfly": "^6.6.1",
+        "@patternfly/react-core": "^6.6.0",
+        "@patternfly/react-icons": "^6.6.0",
+        "@patternfly/react-table": "^6.6.0",
+        "react": "^18.3.1",
+        "react-dom": "^18.3.1"
+    },
+    "devDependencies": {
+        "@eslint/js": "^9.39.5",
+        "@types/react": "^18.3.31",
+        "@types/react-dom": "^18.3.7",
+        "esbuild": "^0.28.1",
+        "esbuild-sass-plugin": "^3.7.0",
+        "eslint": "^9.39.5",
+        "eslint-plugin-react": "^7.37.5",
+        "eslint-plugin-react-hooks": "^7.1.1",
+        "globals": "^17.9.0",
+        "sass": "^1.102.0",
+        "stylelint": "^17.14.1",
+        "stylelint-config-standard-scss": "^17.0.0",
+        "typescript": "^5.9.3",
+        "typescript-eslint": "^8.65.0"
+    }
+}

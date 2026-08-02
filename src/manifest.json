@@ -1,0 +1,17 @@
+{
+    "version": 0,
+    "requires": {
+        "cockpit": "300"
+    },
+    "menu": {
+        "index": {
+            "label": "LXC Containers",
+            "order": 40,
+            "keywords": [
+                {
+                    "matches": ["lxc", "incus", "container", "system container", "lxd"]
+                }
+            ]
+        }
+    }
+}

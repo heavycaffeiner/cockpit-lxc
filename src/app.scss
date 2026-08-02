@@ -1,0 +1,28 @@
+/*
+ * Plugin-wide styling.
+ *
+ * Every geometry value here resolves through a PatternFly spacer token, so it is
+ * on the 4px grid by construction. build/stylelint-4px-grid.js is the backstop
+ * for anything that has to be written as a literal.
+ */
+
+html,
+body {
+    height: 100%;
+}
+
+.lxc-page {
+    block-size: 100%;
+}
+
+.lxc-page__section {
+    padding-block: var(--pf-t--global--spacer--md);
+    padding-inline: var(--pf-t--global--spacer--lg);
+}
+
+.lxc-page__toolbar {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: center;
+    margin-block-end: var(--pf-t--global--spacer--md);
+}

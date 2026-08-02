@@ -1,0 +1,15 @@
+{
+    "extends": ["stylelint-config-standard-scss"],
+    "plugins": ["./build/stylelint-4px-grid.js"],
+    "rules": {
+        "cockpit-lxc/four-px-grid": true,
+        "selector-class-pattern": [
+            "^lxc(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+            {
+                "message": "Expected class selector to follow the lxc-block__element--modifier convention"
+            }
+        ],
+        "custom-property-pattern": "^(lxc|pf)-.+$"
+    },
+    "ignoreFiles": ["dist/**", "node_modules/**"]
+}

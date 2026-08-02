@@ -1,0 +1,121 @@
+import type {
+    Container,
+    ContainerConfig,
+    CreateContainerSpec,
+    Image,
+    LifecycleEvent,
+    Metrics,
+    Network,
+    Profile,
+    ServerInfo,
+    Snapshot,
+    StoragePool,
+    TerminalHandle,
+    TerminalMode,
+} from "./types";
+
+export interface SetStateOptions {
+    /**
+     * Maps to Incus's force flag. For stop this means SIGKILL rather than a
+     * clean shutdown, so callers must have confirmed with the operator first.
+     */
+    force?: boolean;
+    /** Graceful shutdown window, in seconds. */
+    timeout?: number;
+}
+
+export interface EventHandlers {
+    onLifecycle(event: LifecycleEvent): void;
+    /**
+     * Reports whether live updates are currently working. The subscription does
+     * not fail when the stream drops, because unmounting the view over a
+     * transient stream loss is worse than showing a degraded indicator.
+     */
+    onDegraded(degraded: boolean): void;
+}
+
+/**
+ * The single seam between the UI and the container manager.
+ *
+ * Everything above this interface is backend-agnostic; everything below it is
+ * Incus-specific. Nothing outside src/backend/ may import cockpit directly, and
+ * eslint.config.js enforces that.
+ */
+export interface ContainerDriver {
+    /**
+     * Probe the backend and report its capabilities. Called once at startup,
+     * before any other method. Rejects with a DriverError whose `kind` field
+     * distinguishes "not-installed", "access-denied" and "untrusted", because
+     * each maps to a different empty state.
+     */
+    probe(): Promise<ServerInfo>;
+
+    /**
+     * List system containers. Virtual machines are filtered out. Uses
+     * recursion=2 so that state arrives in the same round trip, which is a
+     * deliberate bandwidth-for-latency trade since the list view needs state.
+     */
+    listContainers(): Promise<Container[]>;
+
+    /**
+     * Fetch one container together with the ETag needed to write it back safely.
+     * The ETag is opaque to callers and must be passed through to updateConfig.
+     */
+    getContainer(name: string): Promise<{ container: Container; etag: string }>;
+
+    /**
+     * Replace the full configuration. `etag` must come from the getContainer
+     * call this edit was based on. Rejects with ConflictError carrying the
+     * current server-side object when the precondition fails, so the caller can
+     * present a conflict rather than losing the operator's input.
+     *
+     * Keys absent from `config` are REMOVED. This is the only way to unset a
+     * key; PATCH cannot express removal.
+     */
+    updateConfig(name: string, config: ContainerConfig, etag: string): Promise<void>;
+
+    /**
+     * Merge a partial configuration. Cannot remove keys. No ETag round trip is
+     * needed, because a merge of disjoint keys cannot clobber a concurrent edit.
+     */
+    patchConfig(name: string, partial: Readonly<ContainerConfig>): Promise<void>;
+
+    setState(
+        name: string,
+        action: "start" | "stop" | "restart" | "freeze" | "unfreeze",
+        options?: SetStateOptions,
+    ): Promise<void>;
+
+    /** Create from an image. Resolves only after the async operation settles. */
+    createContainer(spec: CreateContainerSpec): Promise<void>;
+
+    /** Delete a container and its snapshots. Refuses while it is running. */
+    deleteContainer(name: string): Promise<void>;
+
+    renameContainer(name: string, newName: string): Promise<void>;
+
+    listSnapshots(name: string): Promise<Snapshot[]>;
+    createSnapshot(name: string, snapshot: string, stateful: boolean): Promise<void>;
+    restoreSnapshot(name: string, snapshot: string): Promise<void>;
+    deleteSnapshot(name: string, snapshot: string): Promise<void>;
+
+    listProfiles(): Promise<Profile[]>;
+    listNetworks(): Promise<Network[]>;
+    listStoragePools(): Promise<StoragePool[]>;
+    listImages(): Promise<Image[]>;
+
+    /**
+     * Per-container metrics, parsed from the OpenMetrics text body and keyed by
+     * container name. Polled; Incus offers no push equivalent.
+     */
+    getMetrics(): Promise<Map<string, Metrics>>;
+
+    /** Subscribe to lifecycle events. Returns an unsubscribe function. */
+    subscribeEvents(handlers: EventHandlers): () => void;
+
+    /**
+     * Open an interactive pty into a running container. The caller owns the
+     * returned handle and must close() it on unmount.
+     */
+    openTerminal(name: string, mode: TerminalMode): TerminalHandle;
+}

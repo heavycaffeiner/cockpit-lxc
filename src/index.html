@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>LXC Containers</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!--
+      Cockpit serves its own client library at ../base1/cockpit.js. Resolving the
+      bare "cockpit" specifier here rather than bundling a copy keeps the plugin
+      in step with whatever version the running server provides.
+    -->
+    <script type="importmap">
+    {
+        "imports": {
+            "cockpit": "../base1/cockpit.js"
+        }
+    }
+    </script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div id="app"></div>
+    <script type="module" src="index.js"></script>
+</body>
+</html>
