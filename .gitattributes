@@ -1,0 +1,10 @@
+# The build and install targets run on Linux even though development happens on
+# Windows. Normalising to LF in the repository keeps the Makefile and any shell
+# scripts from arriving with CRLF line endings, which make and sh both reject.
+* text=auto eol=lf
+
+*.png binary
+*.woff binary
+*.woff2 binary
+*.ttf binary
+*.vhdx binary
