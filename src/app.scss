@@ -81,6 +81,67 @@ body {
     border-radius: var(--pf-t--global--border--radius--small);
 }
 
+.lxc-config__description {
+    margin-block-end: var(--pf-t--global--spacer--sm);
+    color: var(--pf-t--global--text--color--subtle);
+}
+
+.lxc-field__key {
+    color: var(--pf-t--global--text--color--subtle);
+    font-family: var(--pf-t--global--font--family--mono);
+    font-size: var(--pf-t--global--font--size--xs);
+}
+
+.lxc-chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--pf-t--global--spacer--xs);
+    margin-block-end: var(--pf-t--global--spacer--sm);
+}
+
+.lxc-raw__table,
+.lxc-conflict {
+    inline-size: 100%;
+    border-collapse: collapse;
+
+    th,
+    td {
+        padding-block: var(--pf-t--global--spacer--xs);
+        padding-inline: 0 var(--pf-t--global--spacer--sm);
+        text-align: start;
+        vertical-align: top;
+    }
+
+    thead th {
+        color: var(--pf-t--global--text--color--subtle);
+        font-size: var(--pf-t--global--font--size--sm);
+    }
+}
+
+.lxc-raw__problem {
+    margin-block: var(--pf-t--global--spacer--xs);
+    color: var(--pf-t--global--color--status--danger--default);
+}
+
+.lxc-devices__card {
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
+.lxc-devices__inherited {
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
+.lxc-devices__cardhead {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: center;
+    justify-content: space-between;
+}
+
+.lxc-snapshots .lxc-page__toolbar {
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
 .lxc-address-list {
     margin: 0;
     padding: 0;

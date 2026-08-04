@@ -35,6 +35,7 @@ export type {
     ContainerConfig,
     ContainerInterface,
     ContainerState,
+    ContainerUpdate,
     CreateContainerSpec,
     Image,
     LifecycleEvent,

@@ -1,6 +1,7 @@
 import type {
     Container,
     ContainerConfig,
+    ContainerUpdate,
     CreateContainerSpec,
     Image,
     LifecycleEvent,
@@ -64,15 +65,20 @@ export interface ContainerDriver {
     getContainer(name: string): Promise<{ container: Container; etag: string }>;
 
     /**
-     * Replace the full configuration. `etag` must come from the getContainer
-     * call this edit was based on. Rejects with ConflictError carrying the
-     * current server-side object when the precondition fails, so the caller can
-     * present a conflict rather than losing the operator's input.
+     * Replace the editable half of an instance.
      *
-     * Keys absent from `config` are REMOVED. This is the only way to unset a
-     * key; PATCH cannot express removal.
+     * `etag` must come from the getContainer call this edit was based on.
+     * Rejects with ConflictError carrying the current server-side object when
+     * the precondition fails, so the caller can present a conflict rather than
+     * losing the operator's input.
+     *
+     * Takes the whole ContainerUpdate rather than just a config map, because
+     * Incus's PUT is a replace: a body carrying only `config` leaves the
+     * instance with no devices and fails with "no root device could be found".
+     * Keys absent from `update.config` are removed, which is the only way to
+     * unset one; PATCH cannot express removal.
      */
-    updateConfig(name: string, config: ContainerConfig, etag: string): Promise<void>;
+    updateConfig(name: string, update: ContainerUpdate, etag: string): Promise<void>;
 
     /**
      * Merge a partial configuration. Cannot remove keys. No ETag round trip is

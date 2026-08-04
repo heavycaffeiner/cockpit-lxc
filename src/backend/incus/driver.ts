@@ -3,6 +3,7 @@ import { ApiError, ConflictError, DriverError } from "../errors";
 import type {
     Container,
     ContainerConfig,
+    ContainerUpdate,
     CreateContainerSpec,
     Image,
     Metrics,
@@ -29,29 +30,46 @@ import { openTerminal } from "./terminal";
 const IMAGE_SERVERS: Record<string, string> = {
     images: "https://images.linuxcontainers.org",
 };
+
+/**
+ * Keys where the operator's edit and the server's current value disagree.
+ *
+ * Only genuine divergence counts: a key the operator left alone is not a
+ * conflict just because someone else changed it, and listing those would bury
+ * the real ones.
+ */
+const divergedKeys = (
+    mine: Record<string, string>,
+    theirs: Record<string, string>,
+): string[] => {
+    const keys = new Set([...Object.keys(mine), ...Object.keys(theirs)]);
+    return [...keys]
+        .filter((key) => mine[key] !== theirs[key])
+        // volatile.* is managed by Incus and changes on its own; reporting it
+        // would make every conflict dialog look worse than it is.
+        .filter((key) => !key.startsWith("volatile."))
+        .sort();
+};
 import {
     isContainer,
     mapContainer,
+    mapImage,
     mapMetrics,
     mapNetwork,
     mapProfile,
     mapServerInfo,
+    mapSnapshot,
     mapStoragePool,
 } from "./map";
 import type {
+    WireImage,
     WireInstance,
     WireNetwork,
     WireProfile,
     WireServerInfo,
+    WireSnapshot,
     WireStoragePool,
 } from "./wire";
-
-const notImplemented = (phase: string, method: string): never => {
-    throw new DriverError(
-        "transport",
-        `${method} is not implemented yet; it lands in ${phase}`,
-    );
-};
 
 /**
  * The Incus implementation of ContainerDriver.
@@ -273,36 +291,113 @@ export class IncusDriver implements ContainerDriver {
         return openTerminal(name, mode);
     }
 
-    /* Phase 5: configuration writes. */
-
-    updateConfig(_name: string, _config: ContainerConfig, _etag: string): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 5", "updateConfig"));
+    /**
+     * Replace the editable half of an instance, guarded by its ETag.
+     *
+     * The whole ContainerUpdate goes back, not just the map the form touched.
+     * Incus's PUT is a replace: a body carrying only `config` leaves the
+     * instance with no devices and the operation fails with "no root device
+     * could be found". Verified against Incus 6.23.
+     */
+    async updateConfig(
+        name: string,
+        update: ContainerUpdate,
+        etag: string,
+    ): Promise<void> {
+        try {
+            await this.client.request<unknown>(
+                `/1.0/instances/${encodeURIComponent(name)}`,
+                {
+                    method: "PUT",
+                    headers: { "If-Match": etag },
+                    body: {
+                        architecture: update.architecture,
+                        description: update.description,
+                        ephemeral: update.ephemeral,
+                        profiles: update.profiles,
+                        config: update.config,
+                        devices: update.devices,
+                        // A stateful write needs CRIU, which a stock host does
+                        // not have, and asking for it fails the whole update.
+                        stateful: false,
+                    },
+                },
+            );
+        } catch (error) {
+            if (error instanceof ApiError && error.status === 412) {
+                /*
+                 * The instance changed under the edit. Refetch and report only
+                 * the keys that actually diverged, so the operator sees the real
+                 * conflict instead of a wall of untouched settings, and so their
+                 * input is never silently discarded.
+                 */
+                const { container } = await this.getContainer(name);
+                const conflicts = divergedKeys(update.config, container.localConfig);
+                throw new ConflictError(conflicts, container);
+            }
+            throw error;
+        }
     }
 
-    patchConfig(_name: string, _partial: Readonly<ContainerConfig>): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 5", "patchConfig"));
+    /**
+     * Merge a partial configuration.
+     *
+     * No ETag round trip: a merge of disjoint keys cannot clobber a concurrent
+     * edit. It also cannot remove a key, which is why the forms use PUT.
+     */
+    async patchConfig(name: string, partial: Readonly<ContainerConfig>): Promise<void> {
+        await this.client.request<unknown>(`/1.0/instances/${encodeURIComponent(name)}`, {
+            method: "PATCH",
+            body: { config: partial },
+        });
     }
 
-    /* Phase 6: snapshots and images. */
+    async listSnapshots(name: string): Promise<Snapshot[]> {
+        const wire = await this.client.request<WireSnapshot[]>(
+            `/1.0/instances/${encodeURIComponent(name)}/snapshots?recursion=1`,
+        );
+        if (!Array.isArray(wire))
+            throw new DriverError("parse", "Incus returned a non-list of snapshots");
 
-    listSnapshots(_name: string): Promise<Snapshot[]> {
-        return Promise.resolve(notImplemented("Phase 6", "listSnapshots"));
+        return wire.map(mapSnapshot).filter((s): s is Snapshot => s !== null);
     }
 
-    createSnapshot(_name: string, _snapshot: string, _stateful: boolean): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 6", "createSnapshot"));
+    /**
+     * `stateful` captures the running process state and needs CRIU. It is
+     * offered rather than pinned off because a host that has CRIU can use it,
+     * but the UI has to make clear it will fail without.
+     */
+    async createSnapshot(name: string, snapshot: string, stateful: boolean): Promise<void> {
+        await this.client.request<unknown>(
+            `/1.0/instances/${encodeURIComponent(name)}/snapshots`,
+            { method: "POST", body: { name: snapshot, stateful } },
+        );
     }
 
-    restoreSnapshot(_name: string, _snapshot: string): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 6", "restoreSnapshot"));
+    /**
+     * Restore is a PUT on the instance carrying only `restore`, not an endpoint
+     * of its own. Unlike a configuration PUT it needs no other fields.
+     */
+    async restoreSnapshot(name: string, snapshot: string): Promise<void> {
+        await this.client.request<unknown>(`/1.0/instances/${encodeURIComponent(name)}`, {
+            method: "PUT",
+            body: { restore: snapshot },
+        });
     }
 
-    deleteSnapshot(_name: string, _snapshot: string): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 6", "deleteSnapshot"));
+    async deleteSnapshot(name: string, snapshot: string): Promise<void> {
+        await this.client.request<unknown>(
+            `/1.0/instances/${encodeURIComponent(name)}/snapshots/${encodeURIComponent(snapshot)}`,
+            { method: "DELETE" },
+        );
     }
 
-    listImages(): Promise<Image[]> {
-        return Promise.resolve(notImplemented("Phase 6", "listImages"));
+    async listImages(): Promise<Image[]> {
+        const wire = await this.client.request<WireImage[]>("/1.0/images?recursion=1");
+        if (!Array.isArray(wire))
+            throw new DriverError("parse", "Incus returned a non-list of images");
+
+        return wire.map(mapImage).filter((i): i is Image => i !== null);
     }
 }
 

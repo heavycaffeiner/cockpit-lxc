@@ -7,12 +7,20 @@ import {
     type Container,
     type ContainerDriver,
     type DriverErrorKind,
+    type Metrics,
+    type Profile,
     type ServerInfo,
 } from "../backend";
 
 export type LoadState =
     | { status: "loading" }
-    | { status: "ready"; info: ServerInfo; containers: Container[] }
+    | {
+        status: "ready";
+        info: ServerInfo;
+        containers: Container[];
+        profiles: Profile[];
+        metrics: Map<string, Metrics>;
+    }
     | { status: "failed"; kind: DriverErrorKind | "unknown"; message: string };
 
 export interface ContainersApi {
@@ -20,6 +28,8 @@ export interface ContainersApi {
     /** True while live updates are not working and the list may be stale. */
     degraded: boolean;
     reload: () => void;
+    /** Increments on every reload, so detail views know to refetch. */
+    generation: number;
     driver: ContainerDriver;
 }
 
@@ -28,18 +38,10 @@ export interface ContainersApi {
  *
  * Starting one container emits several events in quick succession, and each
  * would otherwise cost a full list refetch. Trailing rather than leading, so the
- * refetch sees the settled state instead of a state halfway through the change.
+ * refetch sees the settled state instead of one halfway through the change.
  */
 const REFRESH_DEBOUNCE_MS = 500;
 
-/**
- * Runs the startup sequence, loads the container list, and keeps it current.
- *
- * Probing and listing are one hook because they are one sequence: probing first
- * is what turns "the list failed to load" into a specific, actionable reason,
- * and listing before probing would surface a raw transport error where "Incus is
- * not installed" belongs.
- */
 export const useContainers = (): ContainersApi => {
     const driver = useMemo(() => new IncusDriver(), []);
     const [state, setState] = useState<LoadState>({ status: "loading" });
@@ -60,8 +62,19 @@ export const useContainers = (): ContainersApi => {
             try {
                 const info = await driver.probe();
                 const containers = await driver.listContainers();
+
+                /*
+                 * Profiles and metrics are supporting data: a failure there is
+                 * not a reason to withhold the container list, which is the
+                 * thing the operator came for.
+                 */
+                const [profiles, metrics] = await Promise.all([
+                    driver.listProfiles().catch(() => [] as Profile[]),
+                    driver.getMetrics().catch(() => new Map<string, Metrics>()),
+                ]);
+
                 if (!cancelled)
-                    setState({ status: "ready", info, containers });
+                    setState({ status: "ready", info, containers, profiles, metrics });
             } catch (error) {
                 if (cancelled)
                     return;
@@ -122,5 +135,5 @@ export const useContainers = (): ContainersApi => {
     // it on unmount keeps a navigation away from leaking them.
     useEffect(() => () => driver.close(), [driver]);
 
-    return { state, degraded, reload, driver };
+    return { state, degraded, reload, generation, driver };
 };

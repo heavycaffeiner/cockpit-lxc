@@ -2,19 +2,23 @@ import type {
     Container,
     ContainerInterface,
     ContainerState,
+    Image,
     Metrics,
     Network,
     NetworkAddress,
     Profile,
     ServerInfo,
+    Snapshot,
     StoragePool,
 } from "../types";
 import type {
+    WireImage,
     WireInstance,
     WireNetwork,
     WireNetworkState,
     WireProfile,
     WireServerInfo,
+    WireSnapshot,
     WireStoragePool,
 } from "./wire";
 import { OperationStatus } from "./wire";
@@ -99,13 +103,16 @@ export const mapContainer = (wire: WireInstance): Container | null => {
         createdAt: wire.created_at ?? "",
         profiles: wire.profiles ?? [],
         /*
-         * The effective configuration, not the instance-local one. `config` is
-         * empty on an instance that takes everything from a profile, so showing
-         * it would tell an operator a container has no memory limit when its
-         * profile sets one.
+         * The effective configuration for display, and the instance-local one
+         * for writing. `config` is empty on an instance that takes everything
+         * from a profile, so showing it would report no memory limit on a
+         * container whose profile sets one; writing the expanded map back would
+         * copy every profile value onto the instance instead.
          */
         config: wire.expanded_config ?? wire.config ?? {},
+        localConfig: wire.config ?? {},
         devices: wire.expanded_devices ?? wire.devices ?? {},
+        localDevices: wire.devices ?? {},
         interfaces: mapInterfaces(wire),
     };
 };
@@ -170,6 +177,45 @@ export const mapStoragePool = (wire: WireStoragePool): StoragePool | null => {
         description: wire.description ?? "",
         config: wire.config ?? {},
         usedBy: usedByNames(wire.used_by),
+    };
+};
+
+/**
+ * Incus sends the zero time when a snapshot has no expiry. Passing that through
+ * would render as the year 1, which reads as a bug rather than as "never".
+ */
+const ZERO_TIME_PREFIX = "0001-01-01";
+
+export const mapSnapshot = (wire: WireSnapshot): Snapshot | null => {
+    if (typeof wire.name !== "string" || wire.name === "")
+        return null;
+
+    const expires = wire.expires_at;
+    return {
+        name: wire.name,
+        createdAt: wire.created_at ?? "",
+        stateful: wire.stateful ?? false,
+        expiresAt: typeof expires === "string" && !expires.startsWith(ZERO_TIME_PREFIX)
+            ? expires
+            : null,
+    };
+};
+
+export const mapImage = (wire: WireImage): Image | null => {
+    if (typeof wire.fingerprint !== "string" || wire.fingerprint === "")
+        return null;
+
+    return {
+        fingerprint: wire.fingerprint,
+        aliases: (wire.aliases ?? [])
+            .map((alias) => alias.name)
+            .filter((name): name is string => typeof name === "string" && name !== ""),
+        // Cached images carry no alias, so the description is the only human
+        // name they have.
+        description: wire.properties?.["description"] ?? "",
+        architecture: wire.architecture ?? "",
+        size: wire.size ?? 0,
+        uploadedAt: wire.uploaded_at ?? "",
     };
 };
 

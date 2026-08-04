@@ -59,15 +59,51 @@ export interface ContainerInterface {
 export interface Container {
     name: string;
     state: ContainerState;
-    /** Image description the instance was created from, when known. */
     description: string;
     architecture: string;
     ephemeral: boolean;
     createdAt: string;
     profiles: readonly string[];
+    /**
+     * Effective configuration: instance keys merged with the applied profiles.
+     * This is what to display, because it is what the container actually runs
+     * with.
+     */
+    config: ContainerConfig;
+    /**
+     * Keys set on the instance itself, which is what a write must send back.
+     *
+     * Writing the expanded map instead would copy every profile value onto the
+     * instance, silently severing the container from the profile that was
+     * supplying them.
+     */
+    localConfig: ContainerConfig;
+    /** Effective devices, for display. */
+    devices: Record<string, Record<string, string>>;
+    /** Instance-local devices, for writing. */
+    localDevices: Record<string, Record<string, string>>;
+    interfaces: readonly ContainerInterface[];
+}
+
+/**
+ * The editable half of an instance, as PUT requires it.
+ *
+ * Incus's PUT is a true replace, not a merge: sending only `config` leaves the
+ * instance with no devices and the write fails with "no root device could be
+ * found". Every field here has to go back even when the form only touched one
+ * of them.
+ *
+ * `config` keeps its volatile.* entries. They are not editable, and Incus
+ * rejects a body that drops them with "volatile idmap keys can't be deleted by
+ * the user".
+ */
+export interface ContainerUpdate {
+    architecture: string;
+    description: string;
+    ephemeral: boolean;
+    profiles: readonly string[];
     config: ContainerConfig;
     devices: Record<string, Record<string, string>>;
-    interfaces: readonly ContainerInterface[];
 }
 
 export interface Snapshot {

@@ -23,7 +23,7 @@ import { StartupFailure } from "./views/startup-states";
  * tabs rather than ahead of them.
  */
 export const Application = () => {
-    const { state, degraded, reload, driver } = useContainers();
+    const { state, degraded, reload, generation, driver } = useContainers();
     const [selected, setSelected] = useState<string | null>(null);
 
     const containers = state.status === "ready" ? state.containers : [];
@@ -78,7 +78,11 @@ export const Application = () => {
                 {state.status === "ready" && current !== null && (
                     <ContainerDetail
                         container={current}
+                        info={state.info}
+                        profiles={state.profiles}
+                        metrics={state.metrics.get(current.name)}
                         driver={driver}
+                        generation={generation}
                         onBack={() => setSelected(null)}
                         onRefresh={reload}
                     />
