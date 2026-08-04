@@ -1,39 +1,67 @@
 import {
-    EmptyState,
-    EmptyStateBody,
+    Content,
     Page,
     PageSection,
+    Spinner,
+    Bullseye,
 } from "@patternfly/react-core";
-import { CubesIcon } from "@patternfly/react-icons";
+import { useEffect } from "react";
 
-import { getHostName } from "./backend";
+import { reloadOnSuperuserChange } from "./backend";
 import { GridOverlay } from "./grid-overlay";
+import { useContainers } from "./hooks/use-containers";
+import { ContainerList } from "./views/container-list";
+import { StartupFailure } from "./views/startup-states";
 
 /**
- * Phase 1 shell.
+ * Phase 2 shell: the startup sequence and the read-only container list.
  *
- * This renders the page chrome and nothing else. The container list arrives in
- * Phase 2, once IncusDriver can answer listContainers(). What matters here is
- * that the page is mounted inside PatternFly's Page primitives, so that every
- * later view inherits Cockpit's spacing and theme rather than reinventing it.
+ * Everything the page can show is one of three things: still probing, a specific
+ * failure the operator can act on, or the list. Nothing here talks to Incus
+ * directly; the hook owns the driver and the driver owns Cockpit.
  */
-export const Application = () => (
-    <Page className="lxc-page">
-        <PageSection>
-            <EmptyState
-                headingLevel="h1"
-                icon={CubesIcon}
-                titleText="LXC containers"
-            >
-                <EmptyStateBody>
-                    The container list is not implemented yet. This build exists to
-                    verify the package scaffolding, the PatternFly baseline and the
-                    4px grid gate.
-                    <br />
-                    Connected to <strong>{getHostName()}</strong>.
-                </EmptyStateBody>
-            </EmptyState>
-        </PageSection>
-        <GridOverlay />
-    </Page>
-);
+export const Application = () => {
+    const state = useContainers();
+
+    /*
+     * Escalating administrative access has to re-run the startup sequence, and
+     * Cockpit already knows when that happens. Without this the operator would
+     * grant access and keep looking at the same screen.
+     */
+    useEffect(() => reloadOnSuperuserChange(), []);
+
+    return (
+        <Page className="lxc-page">
+            <PageSection>
+                <Content component="h1" className="lxc-page__title">
+                    LXC containers
+                </Content>
+            </PageSection>
+
+            <PageSection>
+                {state.status === "loading" && (
+                    <Bullseye className="lxc-loading">
+                        <Spinner aria-label="Contacting Incus" />
+                    </Bullseye>
+                )}
+
+                {state.status === "failed" && (
+                    <StartupFailure
+                        kind={state.kind}
+                        message={state.message}
+                        onRetry={state.reload}
+                    />
+                )}
+
+                {state.status === "ready" && (
+                    <ContainerList
+                        containers={state.containers}
+                        onRefresh={state.reload}
+                    />
+                )}
+            </PageSection>
+
+            <GridOverlay />
+        </Page>
+    );
+};

@@ -15,14 +15,38 @@ body {
     block-size: 100%;
 }
 
-.lxc-page__section {
-    padding-block: var(--pf-t--global--spacer--md);
-    padding-inline: var(--pf-t--global--spacer--lg);
+.lxc-page__title {
+    margin-block-end: 0;
 }
 
-.lxc-page__toolbar {
-    display: flex;
-    gap: var(--pf-t--global--spacer--sm);
-    align-items: center;
-    margin-block-end: var(--pf-t--global--spacer--md);
+.lxc-page__toolbar-wrap {
+    padding-block-end: var(--pf-t--global--spacer--sm);
+}
+
+.lxc-loading {
+    min-block-size: var(--pf-t--global--spacer--4xl);
+}
+
+.lxc-count {
+    color: var(--pf-t--global--text--color--subtle);
+}
+
+.lxc-muted {
+    color: var(--pf-t--global--text--color--subtle);
+}
+
+.lxc-row__description {
+    margin-block-start: var(--pf-t--global--spacer--xs);
+    color: var(--pf-t--global--text--color--subtle);
+    font-size: var(--pf-t--global--font--size--sm);
+}
+
+.lxc-address-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+
+    li + li {
+        margin-block-start: var(--pf-t--global--spacer--xs);
+    }
 }

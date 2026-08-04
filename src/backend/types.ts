@@ -7,7 +7,23 @@
  * need them land, not up front.
  */
 
-export type ContainerState = "Running" | "Stopped" | "Frozen" | "Starting" | "Stopping" | "Error";
+/**
+ * Instance run state.
+ *
+ * Derived from Incus's numeric `status_code`, not its `status` string: the code
+ * is part of the API while the string is a display label Incus may reword.
+ * "Unknown" covers codes the plugin does not recognise, so that a new Incus
+ * state degrades to an honest label rather than being reported as an error.
+ */
+export type ContainerState =
+    | "Running"
+    | "Stopped"
+    | "Frozen"
+    | "Starting"
+    | "Stopping"
+    | "Freezing"
+    | "Error"
+    | "Unknown";
 
 /** The instance `config` map. Incus keys are free-form strings by design. */
 export type ContainerConfig = Record<string, string>;

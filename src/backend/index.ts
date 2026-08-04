@@ -2,8 +2,8 @@
  * The backend boundary.
  *
  * This barrel is the only backend entry point the rest of the application may
- * import. The Incus implementation lands in Phase 2; until then this module
- * exports the contract and its types so that UI work can be written against it.
+ * import. Nothing above it imports cockpit, and eslint.config.js enforces that
+ * for both the module specifier and the window global.
  */
 
 export type {
@@ -13,6 +13,7 @@ export type {
 } from "./driver";
 
 export { getHostName } from "./host";
+export { hasSuperuser, reloadOnSuperuserChange } from "./superuser";
 
 export {
     ApiError,
@@ -23,6 +24,11 @@ export {
 } from "./errors";
 
 export type { DriverErrorKind } from "./errors";
+
+export { INCUS_SOCKET } from "./socket";
+
+export { IncusDriver } from "./incus/driver";
+export { IncusClient } from "./incus/client";
 
 export type {
     Container,
@@ -42,14 +48,3 @@ export type {
     TerminalHandle,
     TerminalMode,
 } from "./types";
-
-/**
- * Path to the Incus REST socket.
- *
- * This is /run/incus, not /var/lib/incus. The systemd unit declares
- * `ListenStream=/run/incus/unix.socket`, and /var/lib/incus holds the daemon's
- * state rather than its socket. Verified against Incus 6.23 on Rocky Linux 10.2;
- * the socket is owned root:incus-admin with mode 0660, which is why the driver
- * opens it with superuser: "require".
- */
-export const INCUS_SOCKET = "/run/incus/unix.socket";

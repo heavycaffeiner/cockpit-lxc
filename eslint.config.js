@@ -25,6 +25,17 @@ export default tseslint.config(
             "react/react-in-jsx-scope": "off",
             // Prop shapes are already checked by TypeScript.
             "react/prop-types": "off",
+            /*
+             * A leading underscore marks a parameter that exists to satisfy a
+             * signature rather than to be used. The driver's not-yet-implemented
+             * methods are full of them, and deleting the names would lose the
+             * documentation of what each argument will be.
+             */
+            "@typescript-eslint/no-unused-vars": ["error", {
+                argsIgnorePattern: "^_",
+                varsIgnorePattern: "^_",
+                caughtErrorsIgnorePattern: "^_",
+            }],
         },
     },
 
