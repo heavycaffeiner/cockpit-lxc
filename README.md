@@ -49,6 +49,40 @@ make check            # typecheck + eslint + stylelint
 `make check` is the gate. It runs the TypeScript compiler, ESLint and Stylelint, and CI
 fails on any of them.
 
+### Verifying against a real Cockpit
+
+`make check` cannot tell you the plugin works, only that it compiles. Three faults have
+shipped past it, and every one of them was invisible without a live session:
+
+- `cockpit.superuser` does not exist on the base1 global, so calling it threw on mount
+- `cockpit.http` `request()` hangs forever when `body` is omitted
+- setting `Origins` in `cockpit.conf` replaces the same-origin default rather than adding
+  to it, which silently breaks `https://127.0.0.1:9090`
+
+All three hid behind a smoke test that replaced `cockpit.js` with a stub. A stub agrees
+with whatever assumption you encode in it. There are now two ways to avoid that.
+
+**`test/session-smoke.py`** runs on the host being managed and needs only
+`chromium-browser` and `websocket-client`. It logs in for real, optionally turns on
+administrative access, and asserts what the plugin rendered:
+
+```sh
+python3 test/session-smoke.py --password "$PASSWORD" --escalate \
+    --expect-rows web01,db01 --screenshot /tmp/lxc.png
+```
+
+Exit status is 0 only when every requested check passed, so it works in CI.
+
+**`chrome-devtools-mcp`** is configured in `.mcp.json` for interactive work from a
+development machine. It drives Chrome on the host running the agent, so point it at the
+tunnelled or Tailscale URL rather than the guest address. Usage statistics are turned off
+in that config; remove the flag if you would rather send them.
+
+One trap worth knowing in both: `cockpit.spawn` type-checks its argv, so an array built in
+a different JavaScript realm is rejected with `not-found`. When evaluating from a parent
+frame, construct it with `new w.Array()` where `w` is the plugin frame's window. The
+symptom looks exactly like a missing binary and is not one.
+
 ## The 4px grid
 
 Every spacing, sizing and positional length in this plugin resolves to a multiple of 4px.
