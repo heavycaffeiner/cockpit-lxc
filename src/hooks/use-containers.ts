@@ -7,7 +7,6 @@ import {
     type Container,
     type ContainerDriver,
     type DriverErrorKind,
-    type Metrics,
     type Profile,
     type ServerInfo,
 } from "../backend";
@@ -19,7 +18,6 @@ export type LoadState =
         info: ServerInfo;
         containers: Container[];
         profiles: Profile[];
-        metrics: Map<string, Metrics>;
     }
     | { status: "failed"; kind: DriverErrorKind | "unknown"; message: string };
 
@@ -64,17 +62,15 @@ export const useContainers = (): ContainersApi => {
                 const containers = await driver.listContainers();
 
                 /*
-                 * Profiles and metrics are supporting data: a failure there is
-                 * not a reason to withhold the container list, which is the
-                 * thing the operator came for.
+                 * Profiles are supporting data: a failure there is not a reason
+                 * to withhold the container list, which is the thing the
+                 * operator came for. Metrics are not fetched at all, because
+                 * listContainers already carries them.
                  */
-                const [profiles, metrics] = await Promise.all([
-                    driver.listProfiles().catch(() => [] as Profile[]),
-                    driver.getMetrics().catch(() => new Map<string, Metrics>()),
-                ]);
+                const profiles = await driver.listProfiles().catch(() => [] as Profile[]);
 
                 if (!cancelled)
-                    setState({ status: "ready", info, containers, profiles, metrics });
+                    setState({ status: "ready", info, containers, profiles });
             } catch (error) {
                 if (cancelled)
                     return;

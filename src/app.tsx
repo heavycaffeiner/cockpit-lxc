@@ -5,6 +5,9 @@ import {
     Page,
     PageSection,
     Spinner,
+    Tab,
+    TabTitleText,
+    Tabs,
 } from "@patternfly/react-core";
 import { useState } from "react";
 
@@ -12,7 +15,10 @@ import { GridOverlay } from "./grid-overlay";
 import { useContainers } from "./hooks/use-containers";
 import { ContainerDetail } from "./views/container-detail";
 import { ContainerList } from "./views/container-list";
+import { ResourcesView } from "./views/resources-view";
 import { StartupFailure } from "./views/startup-states";
+
+type TopTab = "containers" | "resources";
 
 /**
  * Phase 4 shell: startup, the container list, live updates and the detail view.
@@ -25,6 +31,7 @@ import { StartupFailure } from "./views/startup-states";
 export const Application = () => {
     const { state, degraded, reload, generation, driver } = useContainers();
     const [selected, setSelected] = useState<string | null>(null);
+    const [topTab, setTopTab] = useState<TopTab>("containers");
 
     const containers = state.status === "ready" ? state.containers : [];
     // Re-resolved from the list on every render, so a rename or a state change
@@ -80,7 +87,6 @@ export const Application = () => {
                         container={current}
                         info={state.info}
                         profiles={state.profiles}
-                        metrics={state.metrics.get(current.name)}
                         driver={driver}
                         generation={generation}
                         onBack={() => setSelected(null)}
@@ -89,12 +95,28 @@ export const Application = () => {
                 )}
 
                 {state.status === "ready" && current === null && (
-                    <ContainerList
-                        containers={state.containers}
-                        driver={driver}
-                        onRefresh={reload}
-                        onOpen={setSelected}
-                    />
+                    <Tabs
+                        activeKey={topTab}
+                        onSelect={(_event, key) => setTopTab(key as TopTab)}
+                        aria-label="LXC views"
+                        role="region"
+                    >
+                        <Tab eventKey="containers" title={<TabTitleText>Containers</TabTitleText>}>
+                            <ContainerList
+                                containers={state.containers}
+                                driver={driver}
+                                onRefresh={reload}
+                                onOpen={setSelected}
+                            />
+                        </Tab>
+                        <Tab eventKey="resources" title={<TabTitleText>Images and resources</TabTitleText>}>
+                            <ResourcesView
+                                driver={driver}
+                                profiles={state.profiles}
+                                onRefresh={reload}
+                            />
+                        </Tab>
+                    </Tabs>
                 )}
             </PageSection>
 

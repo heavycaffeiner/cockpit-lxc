@@ -23,7 +23,6 @@ import { useState } from "react";
 import type {
     Container,
     ContainerDriver,
-    Metrics,
     Profile,
     ServerInfo,
 } from "../backend";
@@ -49,7 +48,6 @@ interface ContainerDetailProps {
     container: Container;
     info: ServerInfo;
     profiles: readonly Profile[];
-    metrics: Metrics | undefined;
     driver: ContainerDriver;
     generation: number;
     onBack: () => void;
@@ -60,7 +58,6 @@ export const ContainerDetail = ({
     container,
     info,
     profiles,
-    metrics,
     driver,
     generation,
     onBack,
@@ -158,7 +155,7 @@ export const ContainerDetail = ({
                                             etag={detail.etag}
                                             info={info}
                                             profiles={profiles}
-                                            metrics={metrics}
+                                            metrics={editable.metrics}
                                             driver={driver}
                                             onSaved={saved}
                                         />

@@ -142,6 +142,19 @@ body {
     margin-block-end: var(--pf-t--global--spacer--md);
 }
 
+.lxc-rowactions {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: center;
+    white-space: nowrap;
+}
+
+.lxc-resource .lxc-page__toolbar {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
 .lxc-address-list {
     margin: 0;
     padding: 0;

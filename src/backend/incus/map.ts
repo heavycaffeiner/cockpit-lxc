@@ -114,6 +114,9 @@ export const mapContainer = (wire: WireInstance): Container | null => {
         devices: wire.expanded_devices ?? wire.devices ?? {},
         localDevices: wire.devices ?? {},
         interfaces: mapInterfaces(wire),
+        metrics: wire.state?.status_code === OperationStatus.Running
+            ? mapMetrics(wire)
+            : null,
     };
 };
 

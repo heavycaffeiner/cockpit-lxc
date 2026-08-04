@@ -1,4 +1,5 @@
 PACKAGE_NAME := cockpit-lxc
+VERSION := 0.1.0
 # Cockpit addresses the package by its directory name, which is what appears in
 # the URL (/cockpit/@localhost/lxc). It is deliberately shorter than the
 # distribution package name.
@@ -9,7 +10,10 @@ DESTDIR ?=
 SYSTEM_DIR := $(DESTDIR)$(PREFIX)/share/cockpit/$(COCKPIT_PACKAGE)
 USER_DIR := $(HOME)/.local/share/cockpit/$(COCKPIT_PACKAGE)
 
-.PHONY: all build watch check typecheck lint lint-js lint-css install devinstall devuninstall clean
+TARBALL := $(PACKAGE_NAME)-$(VERSION).tar.xz
+
+.PHONY: all build watch check typecheck lint lint-js lint-css install devinstall \
+        devuninstall dist rpm deb clean
 
 all: build
 
@@ -51,5 +55,22 @@ devinstall: build
 devuninstall:
 	rm -f $(USER_DIR)
 
+# node_modules goes into the tarball so the package build works on a builder
+# with no network, which is what most build systems provide.
+dist: check build
+	tar --create --xz --file $(TARBALL) \
+	    --transform 's,^,$(PACKAGE_NAME)-$(VERSION)/,' \
+	    --exclude='.git' --exclude='dist' --exclude='*.tar.xz' \
+	    Makefile package.json package-lock.json tsconfig.json build.js \
+	    eslint.config.js .stylelintrc.json build src test docs packaging \
+	    README.md LICENSE
+	@echo "wrote $(TARBALL)"
+
+rpm: dist
+	rpmbuild -ta $(TARBALL)
+
+deb: dist
+	@echo "Unpack $(TARBALL), copy packaging/debian to debian/, then run dpkg-buildpackage -us -uc"
+
 clean:
-	rm -rf dist
+	rm -rf dist $(PACKAGE_NAME)-*.tar.xz

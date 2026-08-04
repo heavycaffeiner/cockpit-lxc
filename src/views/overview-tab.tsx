@@ -44,7 +44,8 @@ interface OverviewTabProps {
     etag: string | null;
     info: ServerInfo;
     profiles: readonly Profile[];
-    metrics: Metrics | undefined;
+    /** Null while the container is not running. */
+    metrics: Metrics | null;
     driver: ContainerDriver;
     onSaved: () => void;
 }
@@ -87,7 +88,7 @@ export const OverviewTab = ({
         }
     };
 
-    const memoryPercent = metrics !== undefined && metrics.memoryTotalBytes > 0
+    const memoryPercent = metrics !== null && metrics.memoryTotalBytes > 0
         ? Math.round((metrics.memoryUsedBytes / metrics.memoryTotalBytes) * 100)
         : null;
 
@@ -194,7 +195,7 @@ export const OverviewTab = ({
                 <Card isPlain>
                     <CardTitle>Resource usage</CardTitle>
                     <CardBody>
-                        {metrics === undefined || container.state !== "Running"
+                        {metrics === null
                             ? (
                                 <p className="lxc-muted">
                                     Usage is reported only while the container runs.

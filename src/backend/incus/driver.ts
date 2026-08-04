@@ -399,6 +399,74 @@ export class IncusDriver implements ContainerDriver {
 
         return wire.map(mapImage).filter((i): i is Image => i !== null);
     }
+
+    /**
+     * Pull an image onto this host.
+     *
+     * Progress is reported through the operation's metadata while the download
+     * runs, which is the only feedback available for something that can take
+     * minutes on a slow link.
+     */
+    async pullImage(
+        alias: string,
+        remote: string,
+        onProgress?: (text: string) => void,
+    ): Promise<void> {
+        await this.client.request<unknown>("/1.0/images", {
+            method: "POST",
+            body: {
+                source: {
+                    type: "image",
+                    mode: "pull",
+                    protocol: "simplestreams",
+                    server: IMAGE_SERVERS[remote] ?? IMAGE_SERVERS["images"],
+                    alias,
+                },
+                // Cached rather than public: the image is for this host's use,
+                // not for serving on to others.
+                public: false,
+                auto_update: false,
+            },
+            ...(onProgress === undefined ? {} : {
+                onProgress: (metadata) => {
+                    const progress = metadata?.["download_progress"];
+                    if (typeof progress === "string")
+                        onProgress(progress);
+                },
+            }),
+        });
+    }
+
+    async deleteImage(fingerprint: string): Promise<void> {
+        await this.client.request<unknown>(
+            `/1.0/images/${encodeURIComponent(fingerprint)}`,
+            { method: "DELETE" },
+        );
+    }
+
+    /**
+     * Give a local image a name.
+     *
+     * A cached image has no alias, so its only handle is a 64-character
+     * fingerprint. An alias is what makes it usable in the create dialog.
+     */
+    async createImageAlias(
+        fingerprint: string,
+        alias: string,
+        description: string,
+    ): Promise<void> {
+        await this.client.request<unknown>("/1.0/images/aliases", {
+            method: "POST",
+            body: { name: alias, target: fingerprint, description },
+        });
+    }
+
+    async deleteImageAlias(alias: string): Promise<void> {
+        await this.client.request<unknown>(
+            `/1.0/images/aliases/${encodeURIComponent(alias)}`,
+            { method: "DELETE" },
+        );
+    }
 }
 
 /** Re-exported so callers can catch it without reaching into the errors module. */

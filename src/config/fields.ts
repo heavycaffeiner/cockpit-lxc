@@ -249,6 +249,51 @@ export const FIELD_GROUPS: readonly FieldGroup[] = [
         ],
     },
     {
+        id: "snapshots",
+        title: "Automatic snapshots",
+        description:
+            "Incus can take snapshots on a schedule and expire them. Leave the schedule " +
+            "empty to take snapshots only by hand.",
+        fields: [
+            {
+                key: "snapshots.schedule",
+                label: "Schedule",
+                kind: "text",
+                placeholder: "@daily or 0 6 * * *",
+                help: "A cron expression, or one of @hourly, @daily, @weekly, @monthly.",
+                extension: "snapshot_scheduling",
+            },
+            {
+                key: "snapshots.schedule.stopped",
+                label: "Snapshot while stopped",
+                kind: "select",
+                help: "Whether the schedule also applies when the container is not running.",
+                options: [...BOOLEAN_OPTIONS],
+                extension: "snapshot_scheduling",
+            },
+            {
+                key: "snapshots.pattern",
+                label: "Name pattern",
+                kind: "text",
+                placeholder: "snap%d",
+                help: "How scheduled snapshots are named. Supports pongo2 templating.",
+                extension: "snapshot_scheduling",
+            },
+            {
+                key: "snapshots.expiry",
+                label: "Expiry",
+                kind: "text",
+                placeholder: "2w",
+                help: "How long a snapshot is kept, for example 6H, 3d, 2w, 1M, 1y.",
+                extension: "snapshot_scheduling",
+                validate: (value) =>
+                    value === "" || /^(\d+[SMHdwmy])+$/.test(value.trim())
+                        ? null
+                        : "Expected a duration such as 6H, 3d, 2w, 1M or 1y",
+            },
+        ],
+    },
+    {
         id: "cloudinit",
         title: "cloud-init",
         description:

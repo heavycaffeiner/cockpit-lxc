@@ -1,0 +1,15 @@
+#!/usr/bin/make -f
+
+%:
+	dh $@
+
+override_dh_auto_build:
+	make build
+
+override_dh_auto_install:
+	make install DESTDIR=debian/cockpit-lxc PREFIX=/usr
+
+# The bundle is already minified by esbuild, and compressing it again in the
+# package saves little while making the diff between builds unreadable.
+override_dh_compress:
+	dh_compress -X.js -X.css

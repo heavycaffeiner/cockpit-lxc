@@ -110,6 +110,23 @@ export interface ContainerDriver {
     listStoragePools(): Promise<StoragePool[]>;
     listImages(): Promise<Image[]>;
 
+    /** Pull an image from a configured remote onto this host. */
+    pullImage(
+        alias: string,
+        remote: string,
+        onProgress?: (text: string) => void,
+    ): Promise<void>;
+
+    deleteImage(fingerprint: string): Promise<void>;
+
+    /**
+     * Name a local image. A cached image arrives with no alias, leaving a
+     * 64-character fingerprint as its only handle.
+     */
+    createImageAlias(fingerprint: string, alias: string, description: string): Promise<void>;
+
+    deleteImageAlias(alias: string): Promise<void>;
+
     /**
      * Per-container metrics, parsed from the OpenMetrics text body and keyed by
      * container name. Polled; Incus offers no push equivalent.

@@ -83,6 +83,15 @@ export interface Container {
     /** Instance-local devices, for writing. */
     localDevices: Record<string, Record<string, string>>;
     interfaces: readonly ContainerInterface[];
+    /**
+     * Resource usage, null while the container is not running.
+     *
+     * Carried on the container rather than fetched separately because the
+     * recursion=2 listing already contains it. Asking for it again would mean a
+     * second full instance fetch on every refresh, and the event stream makes
+     * those frequent.
+     */
+    metrics: Metrics | null;
 }
 
 /**
