@@ -65,9 +65,15 @@ interface ContainerListProps {
     containers: Container[];
     driver: ContainerDriver;
     onRefresh: () => void;
+    onOpen: (name: string) => void;
 }
 
-export const ContainerList = ({ containers, driver, onRefresh }: ContainerListProps) => {
+export const ContainerList = ({
+    containers,
+    driver,
+    onRefresh,
+    onOpen,
+}: ContainerListProps) => {
     const [search, setSearch] = useState("");
     const [stateFilter, setStateFilter] = useState<ContainerState | "All">("All");
     const [filterOpen, setFilterOpen] = useState(false);
@@ -331,7 +337,20 @@ export const ContainerList = ({ containers, driver, onRefresh }: ContainerListPr
                     {visible.map((container) => (
                         <Tr key={container.name}>
                             <Td dataLabel="Name">
-                                <strong>{container.name}</strong>
+                                {/*
+                                  * A button rather than a link: this changes a
+                                  * view rather than navigating to a URL, so a
+                                  * link would offer a middle-click that leads
+                                  * nowhere.
+                                  */}
+                                <Button
+                                    variant="link"
+                                    isInline
+                                    onClick={() => onOpen(container.name)}
+                                    className="lxc-row__name"
+                                >
+                                    {container.name}
+                                </Button>
                                 {container.description !== "" && (
                                     <div className="lxc-row__description">
                                         {container.description}

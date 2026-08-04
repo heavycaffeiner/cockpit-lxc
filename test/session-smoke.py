@@ -215,8 +215,8 @@ def main() -> int:
 
         report = session.evaluate(prelude + """
         JSON.stringify({
-            rows: Array.from(d.querySelectorAll('tbody tr td:first-child strong'))
-                .map(function (e) { return e.textContent; }),
+            rows: Array.from(d.querySelectorAll('tbody tr td[data-label="Name"]'))
+                .map(function (e) { return (e.innerText || '').trim().split('\\n')[0]; }),
             spinner: !!d.querySelector('.pf-v6-c-spinner'),
             dark: d.documentElement.classList.contains('pf-v6-theme-dark'),
             text: (d.body.innerText || '').replace(/\\n{2,}/g, '\\n').slice(0, 600)

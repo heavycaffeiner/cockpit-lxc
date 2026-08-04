@@ -46,6 +46,41 @@ body {
     margin-block-end: var(--pf-t--global--spacer--md);
 }
 
+.lxc-row__name {
+    font-weight: var(--pf-t--global--font--weight--body--bold);
+}
+
+.lxc-detail__crumbs {
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
+.lxc-detail__header {
+    margin-block-end: var(--pf-t--global--spacer--sm);
+}
+
+.lxc-terminal__hint {
+    margin-block-end: var(--pf-t--global--spacer--sm);
+    color: var(--pf-t--global--text--color--subtle);
+    font-size: var(--pf-t--global--font--size--sm);
+}
+
+.lxc-terminal__closed {
+    margin-block-end: var(--pf-t--global--spacer--sm);
+}
+
+/*
+ * The viewport is sized in whole 4px steps. xterm reports a fractional cell
+ * height, and letting it drive the container height directly would put every
+ * element below the terminal off the baseline.
+ */
+.lxc-terminal__viewport {
+    block-size: 480px;
+    padding: var(--pf-t--global--spacer--sm);
+    background-color: var(--pf-t--global--background--color--primary--default);
+    border: 1px solid var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+}
+
 .lxc-address-list {
     margin: 0;
     padding: 0;

@@ -3,6 +3,7 @@
     "requires": {
         "cockpit": "300"
     },
+    "content-security-policy": "img-src 'self' data:; style-src 'self' 'unsafe-inline'",
     "menu": {
         "index": {
             "label": "LXC Containers",

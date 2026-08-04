@@ -16,6 +16,7 @@ import type {
 } from "../types";
 import { IncusClient } from "./client";
 import { subscribeLifecycle } from "./events";
+import { openTerminal } from "./terminal";
 
 /**
  * Image servers by remote name.
@@ -261,10 +262,15 @@ export class IncusDriver implements ContainerDriver {
         return subscribeLifecycle(handlers);
     }
 
-    /* Phase 4: terminal. */
-
-    openTerminal(_name: string, _mode: TerminalMode): TerminalHandle {
-        return notImplemented("Phase 4", "openTerminal");
+    /**
+     * Open an interactive pty into a running container.
+     *
+     * The caller owns the returned handle and must close() it on unmount. An
+     * orphaned pty is a process left running on the host, and Cockpit gives no
+     * guarantee the iframe survives navigation, so nothing else will reap it.
+     */
+    openTerminal(name: string, mode: TerminalMode): TerminalHandle {
+        return openTerminal(name, mode);
     }
 
     /* Phase 5: configuration writes. */

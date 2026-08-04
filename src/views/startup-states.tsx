@@ -72,11 +72,18 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                     titleText="Administrative access is required"
                     status="warning"
                 >
+                    {/*
+                      * The access control is named by where it is, not by its
+                      * label. Cockpit's shell is localized and the plugin is not
+                      * yet, so quoting the English string sends a Korean or
+                      * German operator looking for a button that does not exist
+                      * under that name.
+                      */}
                     <EmptyStateBody>
                         The Incus socket is owned by <code>root:incus-admin</code>, so reading
-                        it needs administrative access. Select{" "}
-                        <strong>Limited access</strong> in Cockpit&apos;s header and turn it on.
-                        This page loads the containers by itself once you do.
+                        it needs administrative access. Turn it on from the access button in
+                        Cockpit&apos;s top bar. This page loads the containers by itself once
+                        you do.
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
