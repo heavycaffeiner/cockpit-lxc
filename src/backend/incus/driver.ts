@@ -269,6 +269,23 @@ export class IncusDriver implements ContainerDriver {
         });
     }
 
+    /**
+     * Copy a container.
+     *
+     * The source is expressed as a `copy` source rather than an image, which is
+     * what makes this a clone of the running configuration and disk rather than
+     * a fresh instance from the original image.
+     */
+    async copyContainer(name: string, newName: string): Promise<void> {
+        await this.client.request<unknown>("/1.0/instances", {
+            method: "POST",
+            body: {
+                name: newName,
+                source: { type: "copy", source: name },
+            },
+        });
+    }
+
     async renameContainer(name: string, newName: string): Promise<void> {
         await this.client.request<unknown>(`/1.0/instances/${encodeURIComponent(name)}`, {
             method: "POST",

@@ -22,6 +22,8 @@ import { cp, mkdir, rm } from "node:fs/promises";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 
+import { cockpitPoPlugin } from "./build/po-plugin.js";
+
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const outDir = path.join(rootDir, "dist");
 const srcDir = path.join(rootDir, "src");
@@ -93,7 +95,12 @@ const ctx = await context({
     define: {
         "process.env.NODE_ENV": JSON.stringify(production ? "production" : "development"),
     },
-    plugins: [sassPlugin({ loadPaths: ["node_modules"] }), copyAssetsPlugin, notifyPlugin],
+    plugins: [
+        sassPlugin({ loadPaths: ["node_modules"] }),
+        copyAssetsPlugin,
+        cockpitPoPlugin(path.join(rootDir, "po"), outDir),
+        notifyPlugin,
+    ],
 });
 
 if (watch) {

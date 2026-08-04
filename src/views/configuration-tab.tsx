@@ -28,6 +28,7 @@ import {
     type ServerInfo,
 } from "../backend";
 import { FIELD_GROUPS, TYPED_KEYS, formLevelProblems, type FieldSpec } from "../config/fields";
+import { EnvironmentEditor } from "./environment-editor";
 import { RawConfigEditor } from "./raw-config-editor";
 
 interface ConfigurationTabProps {
@@ -59,6 +60,7 @@ export const ConfigurationTab = ({
     // Edits only. A key absent here has not been touched.
     const [edits, setEdits] = useState<Record<string, string>>({});
     const [rawEdits, setRawEdits] = useState<Record<string, string> | null>(null);
+    const [envEdits, setEnvEdits] = useState<Record<string, string> | null>(null);
 
     /*
      * The snapshot this edit is based on, pinned at the first keystroke.
@@ -95,6 +97,8 @@ export const ConfigurationTab = ({
 
     const merged = useMemo(() => {
         const base: Record<string, string> = { ...baseConfig, ...edits };
+        if (envEdits !== null)
+            Object.assign(base, envEdits);
         if (rawEdits !== null)
             Object.assign(base, rawEdits);
         // An emptied field means "unset", which PUT expresses by omission.
@@ -103,7 +107,7 @@ export const ConfigurationTab = ({
                 delete base[key];
         }
         return base;
-    }, [baseConfig, edits, rawEdits]);
+    }, [baseConfig, edits, envEdits, rawEdits]);
 
     const fieldProblems = useMemo(() => {
         const problems: Record<string, string> = {};
@@ -122,7 +126,8 @@ export const ConfigurationTab = ({
 
     const crossFieldProblems = useMemo(() => formLevelProblems(merged), [merged]);
 
-    const dirty = Object.keys(edits).length > 0 || rawEdits !== null;
+    const dirty =
+        Object.keys(edits).length > 0 || rawEdits !== null || envEdits !== null;
     const canSave = dirty && Object.keys(fieldProblems).length === 0 && saveEtag !== null && !busy;
 
     /*
@@ -135,6 +140,7 @@ export const ConfigurationTab = ({
     const discard = () => {
         setEdits({});
         setRawEdits(null);
+        setEnvEdits(null);
         setBaseline(null);
         setError(null);
     };
@@ -155,9 +161,7 @@ export const ConfigurationTab = ({
         setError(null);
         try {
             await driver.updateConfig(container.name, buildUpdate(), saveEtag);
-            setEdits({});
-            setRawEdits(null);
-            setBaseline(null);
+            discard();
             onSaved();
         } catch (caught) {
             if (caught instanceof ConflictError) {
@@ -282,6 +286,22 @@ export const ConfigurationTab = ({
                         {group.fields.map(renderField)}
                     </FormSection>
                 ))}
+
+                <FormSection title="Environment" titleElement="h3">
+                    <p className="lxc-config__description">
+                        Variables put into the environment of processes started with{" "}
+                        <code>incus exec</code>. A container&apos;s own init does not see
+                        them, so this is not a substitute for the image&apos;s configuration.
+                    </p>
+                    <EnvironmentEditor
+                        key={`env-${JSON.stringify(baseConfig)}`}
+                        localConfig={baseConfig}
+                        onChange={(next) => {
+                            beginEdit();
+                            setEnvEdits(next);
+                        }}
+                    />
+                </FormSection>
 
                 <FormSection title="Other keys" titleElement="h3">
                     <p className="lxc-config__description">

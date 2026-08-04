@@ -100,6 +100,12 @@ export interface ContainerDriver {
 
     renameContainer(name: string, newName: string): Promise<void>;
 
+    /**
+     * Clone a container, configuration and disk together. Distinct from
+     * creating a fresh instance from the same image.
+     */
+    copyContainer(name: string, newName: string): Promise<void>;
+
     listSnapshots(name: string): Promise<Snapshot[]>;
     createSnapshot(name: string, snapshot: string, stateful: boolean): Promise<void>;
     restoreSnapshot(name: string, snapshot: string): Promise<void>;

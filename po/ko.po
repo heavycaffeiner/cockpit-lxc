@@ -1,0 +1,182 @@
+# Korean translation for cockpit-lxc.
+# Copyright (C) 2026 heavycaffeiner
+# This file is distributed under the same license as the cockpit-lxc package.
+#
+msgid ""
+msgstr ""
+"Project-Id-Version: cockpit-lxc 0.1.0\n"
+"Report-Msgid-Bugs-To: \n"
+"Language: ko\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=1; plural=0;\n"
+
+msgid "LXC containers"
+msgstr "LXC 컨테이너"
+
+msgid "Containers"
+msgstr "컨테이너"
+
+msgid "Images and resources"
+msgstr "이미지 및 자원"
+
+msgid "Create container"
+msgstr "컨테이너 만들기"
+
+msgid "Search containers"
+msgstr "컨테이너 검색"
+
+msgid "Search containers by name, description or address"
+msgstr "이름, 설명, 주소로 컨테이너 검색"
+
+msgid "All states"
+msgstr "모든 상태"
+
+msgid "Refresh"
+msgstr "새로 고침"
+
+msgid "System containers"
+msgstr "시스템 컨테이너"
+
+msgid "Name"
+msgstr "이름"
+
+msgid "State"
+msgstr "상태"
+
+msgid "Addresses"
+msgstr "주소"
+
+msgid "Architecture"
+msgstr "아키텍처"
+
+msgid "Profiles"
+msgstr "프로파일"
+
+msgid "Created"
+msgstr "생성 시각"
+
+msgid "Actions"
+msgstr "작업"
+
+msgid "None"
+msgstr "없음"
+
+msgid "No container matches the current filter."
+msgstr "현재 필터에 해당하는 컨테이너가 없습니다."
+
+msgid "Dismiss error"
+msgstr "오류 닫기"
+
+msgid "$0 of $1"
+msgstr "$1개 중 $0개"
+
+msgid "Running"
+msgstr "실행 중"
+
+msgid "Stopped"
+msgstr "정지됨"
+
+msgid "Frozen"
+msgstr "동결됨"
+
+msgid "Start"
+msgstr "시작"
+
+msgid "Stop"
+msgstr "정지"
+
+msgid "Force stop"
+msgstr "강제 정지"
+
+msgid "Restart"
+msgstr "재시작"
+
+msgid "Freeze"
+msgstr "동결"
+
+msgid "Unfreeze"
+msgstr "동결 해제"
+
+msgid "Rename"
+msgstr "이름 바꾸기"
+
+msgid "Copy"
+msgstr "복사"
+
+msgid "Delete"
+msgstr "삭제"
+
+msgid "Actions for $0"
+msgstr "$0 작업"
+
+msgid "$0 is changing state"
+msgstr "$0 상태 변경 중"
+
+msgid "Contacting Incus"
+msgstr "Incus에 연결하는 중"
+
+msgid "LXC views"
+msgstr "LXC 화면"
+
+msgid "Live updates unavailable. The list refreshes only when you ask it to."
+msgstr "실시간 갱신을 쓸 수 없습니다. 새로 고침을 눌러야 목록이 갱신됩니다."
+
+msgid "Incus is not installed"
+msgstr "Incus가 설치되어 있지 않습니다"
+
+msgid ""
+"No Incus socket was found at $0. Install Incus and start its socket unit, "
+"then reload this page."
+msgstr ""
+"$0에서 Incus 소켓을 찾지 못했습니다. Incus를 설치하고 소켓 유닛을 시작한 뒤 "
+"이 페이지를 새로 고치십시오."
+
+msgid "Copy"
+msgstr "복사"
+
+msgid "Copied"
+msgstr "복사됨"
+
+msgid "Check again"
+msgstr "다시 확인"
+
+msgid "Administrative access is required"
+msgstr "관리자 권한이 필요합니다"
+
+msgid ""
+"The Incus socket is owned by root:incus-admin, so reading it needs "
+"administrative access. Turn it on from the access button in Cockpit's top "
+"bar. This page loads the containers by itself once you do."
+msgstr ""
+"Incus 소켓의 소유자가 root:incus-admin이라 읽으려면 관리자 권한이 필요합니다. "
+"Cockpit 상단 표시줄의 접근 버튼에서 권한을 켜십시오. 켜면 이 페이지가 알아서 "
+"컨테이너를 불러옵니다."
+
+msgid "Try again"
+msgstr "다시 시도"
+
+msgid "Incus does not trust this connection"
+msgstr "Incus가 이 연결을 신뢰하지 않습니다"
+
+msgid ""
+"Incus answered but reported the connection as untrusted, so it will not "
+"return any data. This is an Incus authorization setting rather than a "
+"Cockpit one, and granting administrative access here will not change it."
+msgstr ""
+"Incus가 응답했지만 이 연결을 신뢰하지 않는다고 알려 데이터를 반환하지 않습니다. "
+"이는 Cockpit이 아니라 Incus의 권한 설정이므로 여기서 관리자 권한을 켜도 "
+"바뀌지 않습니다."
+
+msgid "Cannot reach Incus"
+msgstr "Incus에 연결할 수 없습니다"
+
+msgid "Incus returned something unexpected"
+msgstr "Incus가 예상치 못한 응답을 반환했습니다"
+
+msgid "No containers yet"
+msgstr "아직 컨테이너가 없습니다"
+
+msgid "This host runs Incus but has no system containers."
+msgstr "이 호스트에서 Incus가 실행 중이지만 시스템 컨테이너가 없습니다."

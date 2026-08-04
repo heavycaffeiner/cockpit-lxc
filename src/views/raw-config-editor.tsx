@@ -36,7 +36,9 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
         let id = 0;
         return Object.entries(localConfig)
             .filter(([key]) => !excluded.has(key) && !key.startsWith("volatile."))
-            .filter(([key]) => !key.startsWith("image."))
+            // image.* is metadata Incus records about the source image, and
+            // environment.* has its own section, so neither belongs here.
+            .filter(([key]) => !key.startsWith("image.") && !key.startsWith("environment."))
             .sort(([a], [b]) => a.localeCompare(b))
             .map(([key, value]): RawRow => ({ id: id++, key, value, originalKey: key }));
     }, [localConfig, excluded]);

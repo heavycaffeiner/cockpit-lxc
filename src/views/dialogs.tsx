@@ -178,6 +178,76 @@ export const RenameDialog = ({ container, onClose, onConfirm }: RenameDialogProp
     );
 };
 
+interface CopyDialogProps {
+    container: Container;
+    existing: readonly string[];
+    onClose: () => void;
+    onConfirm: (newName: string) => Promise<void>;
+}
+
+export const CopyDialog = ({ container, existing, onClose, onConfirm }: CopyDialogProps) => {
+    const [name, setName] = useState(`${container.name}-copy`);
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const duplicate = existing.includes(name);
+    const valid = name !== "" && /^[a-zA-Z0-9-]+$/.test(name) && !duplicate;
+
+    const run = async () => {
+        setBusy(true);
+        setError(null);
+        try {
+            await onConfirm(name);
+            onClose();
+        } catch (caught) {
+            setError(errorText(caught));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    return (
+        <Modal isOpen variant="small" onClose={onClose} aria-label="Copy container">
+            <ModalHeader title={`Copy ${container.name}`} />
+            <ModalBody>
+                <Form onSubmit={(event) => { event.preventDefault(); if (valid) void run(); }}>
+                    <p>
+                        The copy takes this container&apos;s configuration and its disk. It is
+                        not the same as creating a new container from the same image.
+                    </p>
+                    {error !== null && <Alert variant="danger" isInline title={error} />}
+                    <FormGroup label="Name for the copy" fieldId="lxc-copy-name" isRequired>
+                        <TextInput
+                            id="lxc-copy-name"
+                            value={name}
+                            onChange={(_event, value) => setName(value)}
+                            validated={name === "" ? "default" : valid ? "success" : "error"}
+                            aria-label="Name for the copy"
+                            autoComplete="off"
+                        />
+                        <FormHelperText>
+                            <HelperText>
+                                <HelperTextItem variant={duplicate ? "error" : "default"}>
+                                    {duplicate
+                                        ? "A container with that name already exists"
+                                        : "Letters, digits and hyphens only."}
+                                </HelperTextItem>
+                            </HelperText>
+                        </FormHelperText>
+                    </FormGroup>
+                </Form>
+            </ModalBody>
+            <ModalFooter>
+                <Button variant="primary" isDisabled={!valid || busy} isLoading={busy}
+                    onClick={() => void run()}>
+                    Copy
+                </Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>Cancel</Button>
+            </ModalFooter>
+        </Modal>
+    );
+};
+
 export interface CreateSpec {
     name: string;
     image: string;

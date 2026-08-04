@@ -72,5 +72,23 @@ rpm: dist
 deb: dist
 	@echo "Unpack $(TARBALL), copy packaging/debian to debian/, then run dpkg-buildpackage -us -uc"
 
+# Rebuild the template from the source strings. Run after adding or changing
+# any user-facing text; the catalogues below are merged against it.
+po/$(PACKAGE_NAME).pot: $(shell find src -name '*.ts' -o -name '*.tsx')
+	mkdir -p po
+	xgettext --default-domain=$(PACKAGE_NAME) --output=$@ \
+	    --language=JavaScript --from-code=UTF-8 \
+	    --keyword=_ --keyword=N_:1,2 \
+	    --package-name=$(PACKAGE_NAME) --package-version=$(VERSION) \
+	    --copyright-holder='heavycaffeiner' \
+	    $(shell find src -name '*.ts' -o -name '*.tsx' | sort)
+
+.PHONY: po
+po: po/$(PACKAGE_NAME).pot
+	for f in po/*.po; do \
+	    [ -e "$$f" ] || continue; \
+	    msgmerge --update --backup=none "$$f" po/$(PACKAGE_NAME).pot; \
+	done
+
 clean:
 	rm -rf dist $(PACKAGE_NAME)-*.tar.xz

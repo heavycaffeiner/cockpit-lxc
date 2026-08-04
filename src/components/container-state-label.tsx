@@ -9,7 +9,7 @@ import {
 } from "@patternfly/react-icons";
 import type { ComponentType } from "react";
 
-import type { ContainerState } from "../backend";
+import { _, type ContainerState } from "../backend";
 
 type LabelColor = "green" | "grey" | "blue" | "orange" | "red";
 
@@ -36,13 +36,30 @@ const APPEARANCE: Record<ContainerState, Appearance> = {
     Unknown: { color: "grey", icon: OutlinedQuestionCircleIcon },
 };
 
+/**
+ * Listed rather than translated by variable, so that xgettext can find them.
+ * A bare `_(state)` extracts nothing and would ship an untranslated label.
+ */
+export const stateName = (state: ContainerState): string => STATE_TEXT()[state];
+
+const STATE_TEXT = (): Record<ContainerState, string> => ({
+    Running: _("Running"),
+    Stopped: _("Stopped"),
+    Frozen: _("Frozen"),
+    Starting: _("Starting"),
+    Stopping: _("Stopping"),
+    Freezing: _("Freezing"),
+    Error: _("Error"),
+    Unknown: _("Unknown"),
+});
+
 export const ContainerStateLabel = ({ state }: { state: ContainerState }) => {
     const appearance = APPEARANCE[state];
     const Icon = appearance.icon;
 
     return (
         <Label color={appearance.color} icon={<Icon />} isCompact>
-            {state}
+            {STATE_TEXT()[state]}
         </Label>
     );
 };

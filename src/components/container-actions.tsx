@@ -10,7 +10,7 @@ import {
 import { EllipsisVIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 
-import type { Container, ContainerState } from "../backend";
+import { _, format, type Container, type ContainerState } from "../backend";
 
 export type RowAction =
     | "start"
@@ -20,6 +20,7 @@ export type RowAction =
     | "freeze"
     | "unfreeze"
     | "rename"
+    | "copy"
     | "delete";
 
 /**
@@ -30,8 +31,11 @@ export type RowAction =
  * did not already tell them.
  */
 const AVAILABLE: Record<ContainerState, RowAction[]> = {
+    // Copy is offered only on a stopped container: Incus can clone a running
+    // one, but the copy captures the disk mid-write, which is a footgun rather
+    // than a feature.
     Running: ["stop", "force-stop", "restart", "freeze"],
-    Stopped: ["start", "rename", "delete"],
+    Stopped: ["start", "copy", "rename", "delete"],
     Frozen: ["unfreeze", "stop", "force-stop"],
     // Transitional states: nothing to offer until they settle.
     Starting: [],
@@ -41,16 +45,21 @@ const AVAILABLE: Record<ContainerState, RowAction[]> = {
     Unknown: ["start", "stop", "force-stop"],
 };
 
-const LABELS: Record<RowAction, string> = {
-    start: "Start",
-    stop: "Stop",
-    "force-stop": "Force stop",
-    restart: "Restart",
-    freeze: "Freeze",
-    unfreeze: "Unfreeze",
-    rename: "Rename",
-    delete: "Delete",
-};
+/**
+ * Built on each render rather than at module scope, because the catalogue is
+ * not loaded when this module is first evaluated.
+ */
+const labels = (): Record<RowAction, string> => ({
+    start: _("Start"),
+    stop: _("Stop"),
+    "force-stop": _("Force stop"),
+    restart: _("Restart"),
+    freeze: _("Freeze"),
+    unfreeze: _("Unfreeze"),
+    rename: _("Rename"),
+    copy: _("Copy"),
+    delete: _("Delete"),
+});
 
 interface ContainerActionsProps {
     container: Container;
@@ -61,9 +70,16 @@ interface ContainerActionsProps {
 export const ContainerActions = ({ container, busy, onAction }: ContainerActionsProps) => {
     const [open, setOpen] = useState(false);
     const actions = AVAILABLE[container.state];
+    const LABELS = labels();
 
-    if (busy)
-        return <Spinner size="md" aria-label={`${container.name} is changing state`} />;
+    if (busy) {
+        return (
+            <Spinner
+                size="md"
+                aria-label={format(_("$0 is changing state"), container.name)}
+            />
+        );
+    }
 
     return (
         <Dropdown
@@ -78,7 +94,7 @@ export const ContainerActions = ({ container, busy, onAction }: ContainerActions
                     isDisabled={actions.length === 0}
                     onClick={() => setOpen((value) => !value)}
                     isExpanded={open}
-                    aria-label={`Actions for ${container.name}`}
+                    aria-label={format(_("Actions for $0"), container.name)}
                 >
                     <EllipsisVIcon />
                 </MenuToggle>

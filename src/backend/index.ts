@@ -12,6 +12,8 @@ export type {
     SetStateOptions,
 } from "./driver";
 
+export { _, N_, format } from "./i18n";
+
 export { watchAdmin } from "./permission";
 export type { AdminWatch } from "./permission";
 

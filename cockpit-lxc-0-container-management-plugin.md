@@ -855,6 +855,36 @@ Cockpit at runtime and is marked external in the esbuild config rather than bund
 - The terminal and event transports depend on the `incus` CLI's output format. `incus monitor --format=json` is stable across the 6.x line but is not covered by the API-extension mechanism, so a format change would not be detectable in advance. Mitigation: the NDJSON parser drops unparseable lines and degrades to polling (4.3.5) rather than failing.
 - PatternFly 6 to 7 would be a breaking upgrade. It is out of scope here and would be its own proposal.
 
+## 6-3. Implementation status
+
+All seven phases are implemented and verified against Incus 6.23 and Cockpit 356.2 on
+Rocky Linux 10.2. Four decisions in this document turned out to be wrong when checked
+against the running system, and the code follows the system rather than the document:
+
+| This document said | The system says |
+|---|---|
+| The Incus socket is at `/var/lib/incus/unix.socket` | It is at `/run/incus/unix.socket`; the systemd unit declares it |
+| `cockpit.superuser` reports administrative access | That helper is in Cockpit's pkg/lib, not the base1 global. `cockpit.permission({admin: true})` is the real one |
+| `updateConfig` takes a config map | Incus's PUT is a true replace, so the whole editable half has to go back or the instance loses its devices |
+| The ETag from the current fetch guards a write | It has to be pinned when editing starts. The live event stream refetches constantly, and a fresh ETag lets a save overwrite the concurrent change the ETag existed to catch |
+
+Two further constraints emerged that this document did not anticipate:
+
+- `cockpit.http()` `request()` hangs indefinitely when `body` is omitted, because Cockpit
+  reads a missing body as a promise to stream one later.
+- xterm's screen reader support needs `style-src 'unsafe-inline'`, which section 4.3.8
+  implicitly required without saying so. `docs/csp.md` records the trade.
+
+Deferred from section 3.1, and not claimed as done:
+
+- Translation covers the container list, its actions, the container states and the startup
+  screens: 61 strings across 5 of 17 view files, with a Korean catalogue. The detail tabs
+  and dialogs still render source strings. The extraction and build pipeline is complete,
+  so the remainder is mechanical.
+- Profiles, networks and storage pools are read-only. Editing a profile changes every
+  container using it and deserves its own confirmation design.
+- Image pulling takes an alias rather than browsing a remote's catalogue.
+
 ## 7. References
 
 **Cockpit**

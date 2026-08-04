@@ -15,10 +15,16 @@ import { PlusCircleIcon, SyncAltIcon } from "@patternfly/react-icons";
 import { Table, Tbody, Td, Th, Thead, Tr, type ThProps } from "@patternfly/react-table";
 import { useMemo, useState } from "react";
 
-import type { Container, ContainerDriver, ContainerState } from "../backend";
+import { _, format, type Container, type ContainerDriver, type ContainerState } from "../backend";
 import { ContainerActions, type RowAction } from "../components/container-actions";
-import { ContainerStateLabel } from "../components/container-state-label";
-import { CreateDialog, DeleteDialog, RenameDialog, type CreateSpec } from "./dialogs";
+import { ContainerStateLabel, stateName } from "../components/container-state-label";
+import {
+    CopyDialog,
+    CreateDialog,
+    DeleteDialog,
+    RenameDialog,
+    type CreateSpec,
+} from "./dialogs";
 import { NoContainers } from "./startup-states";
 
 type SortableColumn = "name" | "state" | "architecture" | "created";
@@ -84,6 +90,7 @@ export const ContainerList = ({
     const [actionError, setActionError] = useState<string | null>(null);
     const [deleting, setDeleting] = useState<Container | null>(null);
     const [renaming, setRenaming] = useState<Container | null>(null);
+    const [copying, setCopying] = useState<Container | null>(null);
     const [creating, setCreating] = useState(false);
 
     const markBusy = (name: string, value: boolean) =>
@@ -139,6 +146,10 @@ export const ContainerList = ({
         }
         if (action === "rename") {
             setRenaming(container);
+            return;
+        }
+        if (action === "copy") {
+            setCopying(container);
             return;
         }
         void runStateChange(container, action);
@@ -206,6 +217,17 @@ export const ContainerList = ({
                     }}
                 />
             )}
+            {copying !== null && (
+                <CopyDialog
+                    container={copying}
+                    existing={containers.map((c) => c.name)}
+                    onClose={() => setCopying(null)}
+                    onConfirm={async (newName) => {
+                        await driver.copyContainer(copying.name, newName);
+                        onRefresh();
+                    }}
+                />
+            )}
             {creating && (
                 <CreateDialog
                     existing={containers.map((c) => c.name)}
@@ -245,7 +267,7 @@ export const ContainerList = ({
                     title={actionError}
                     actionClose={
                         <Button variant="plain" onClick={() => setActionError(null)}
-                            aria-label="Dismiss error">
+                            aria-label={_("Dismiss error")}>
                             &times;
                         </Button>
                     }
@@ -258,13 +280,13 @@ export const ContainerList = ({
                     <ToolbarItem>
                         <Button variant="primary" icon={<PlusCircleIcon />}
                             onClick={() => setCreating(true)}>
-                            Create container
+                            {_("Create container")}
                         </Button>
                     </ToolbarItem>
                     <ToolbarItem>
                         <SearchInput
-                            aria-label="Search containers by name, description or address"
-                            placeholder="Search containers"
+                            aria-label={_("Search containers by name, description or address")}
+                            placeholder={_("Search containers")}
                             value={search}
                             onChange={(_event, value) => setSearch(value)}
                             onClear={() => setSearch("")}
@@ -286,14 +308,14 @@ export const ContainerList = ({
                                     onClick={() => setFilterOpen((open) => !open)}
                                     isExpanded={filterOpen}
                                 >
-                                    {stateFilter === "All" ? "All states" : stateFilter}
+                                    {stateFilter === "All" ? _("All states") : stateName(stateFilter)}
                                 </MenuToggle>
                             )}
                         >
                             <SelectList>
                                 {STATE_FILTERS.map((option) => (
                                     <SelectOption key={option} value={option}>
-                                        {option === "All" ? "All states" : option}
+                                        {option === "All" ? _("All states") : stateName(option)}
                                     </SelectOption>
                                 ))}
                             </SelectList>
@@ -301,18 +323,18 @@ export const ContainerList = ({
                     </ToolbarItem>
                     <ToolbarItem>
                         <Button variant="secondary" icon={<SyncAltIcon />} onClick={onRefresh}>
-                            Refresh
+                            {_("Refresh")}
                         </Button>
                     </ToolbarItem>
                     <ToolbarItem align={{ default: "alignEnd" }}>
                         <span className="lxc-count">
-                            {visible.length} of {containers.length}
+                            {format(_("$0 of $1"), visible.length, containers.length)}
                         </span>
                     </ToolbarItem>
                 </ToolbarContent>
             </Toolbar>
 
-            <Table aria-label="System containers" variant="compact">
+            <Table aria-label={_("System containers")} variant="compact">
                 <Thead>
                     {/*
                       * nowrap on every header: a sortable Th puts its label in a
@@ -322,21 +344,21 @@ export const ContainerList = ({
                       * IPv6 address is the only cell here that genuinely needs it.
                       */}
                     <Tr>
-                        <Th modifier="nowrap" sort={sortParams("name", 0)}>Name</Th>
-                        <Th modifier="nowrap" sort={sortParams("state", 1)}>State</Th>
-                        <Th>Addresses</Th>
+                        <Th modifier="nowrap" sort={sortParams("name", 0)}>{_("Name")}</Th>
+                        <Th modifier="nowrap" sort={sortParams("state", 1)}>{_("State")}</Th>
+                        <Th>{_("Addresses")}</Th>
                         <Th modifier="nowrap" sort={sortParams("architecture", 2)}>
-                            Architecture
+                            {_("Architecture")}
                         </Th>
-                        <Th modifier="nowrap">Profiles</Th>
-                        <Th modifier="nowrap" sort={sortParams("created", 3)}>Created</Th>
-                        <Th screenReaderText="Actions" />
+                        <Th modifier="nowrap">{_("Profiles")}</Th>
+                        <Th modifier="nowrap" sort={sortParams("created", 3)}>{_("Created")}</Th>
+                        <Th screenReaderText={_("Actions")} />
                     </Tr>
                 </Thead>
                 <Tbody>
                     {visible.map((container) => (
                         <Tr key={container.name}>
-                            <Td dataLabel="Name">
+                            <Td dataLabel={_("Name")}>
                                 {/*
                                   * A button rather than a link: this changes a
                                   * view rather than navigating to a URL, so a
@@ -357,12 +379,12 @@ export const ContainerList = ({
                                     </div>
                                 )}
                             </Td>
-                            <Td dataLabel="State">
+                            <Td dataLabel={_("State")}>
                                 <ContainerStateLabel state={container.state} />
                             </Td>
-                            <Td dataLabel="Addresses">
+                            <Td dataLabel={_("Addresses")}>
                                 {displayAddresses(container).length === 0
-                                    ? <span className="lxc-muted">None</span>
+                                    ? <span className="lxc-muted">{_("None")}</span>
                                     : (
                                         <ul className="lxc-address-list">
                                             {displayAddresses(container).map((address) => (
@@ -371,9 +393,9 @@ export const ContainerList = ({
                                         </ul>
                                     )}
                             </Td>
-                            <Td dataLabel="Architecture">{container.architecture}</Td>
-                            <Td dataLabel="Profiles">{container.profiles.join(", ")}</Td>
-                            <Td dataLabel="Created">{formatCreated(container.createdAt)}</Td>
+                            <Td dataLabel={_("Architecture")}>{container.architecture}</Td>
+                            <Td dataLabel={_("Profiles")}>{container.profiles.join(", ")}</Td>
+                            <Td dataLabel={_("Created")}>{formatCreated(container.createdAt)}</Td>
                             <Td isActionCell>
                                 <ContainerActions
                                     container={container}
@@ -387,7 +409,7 @@ export const ContainerList = ({
                         <Tr>
                             <Td colSpan={7}>
                                 <span className="lxc-muted">
-                                    No container matches the current filter.
+                                    {_("No container matches the current filter.")}
                                 </span>
                             </Td>
                         </Tr>

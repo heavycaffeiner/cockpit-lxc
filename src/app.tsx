@@ -11,6 +11,7 @@ import {
 } from "@patternfly/react-core";
 import { useState } from "react";
 
+import { _ } from "./backend";
 import { GridOverlay } from "./grid-overlay";
 import { useContainers } from "./hooks/use-containers";
 import { ContainerDetail } from "./views/container-detail";
@@ -48,7 +49,7 @@ export const Application = () => {
         <Page className="lxc-page">
             <PageSection>
                 <Content component="h1" className="lxc-page__title">
-                    LXC containers
+                    {_("LXC containers")}
                 </Content>
             </PageSection>
 
@@ -63,14 +64,14 @@ export const Application = () => {
                         variant="warning"
                         isInline
                         isPlain
-                        title="Live updates unavailable. The list refreshes only when you ask it to."
+                        title={_("Live updates unavailable. The list refreshes only when you ask it to.")}
                         className="lxc-degraded"
                     />
                 )}
 
                 {state.status === "loading" && (
                     <Bullseye className="lxc-loading">
-                        <Spinner aria-label="Contacting Incus" />
+                        <Spinner aria-label={_("Contacting Incus")} />
                     </Bullseye>
                 )}
 
@@ -98,10 +99,10 @@ export const Application = () => {
                     <Tabs
                         activeKey={topTab}
                         onSelect={(_event, key) => setTopTab(key as TopTab)}
-                        aria-label="LXC views"
+                        aria-label={_("LXC views")}
                         role="region"
                     >
-                        <Tab eventKey="containers" title={<TabTitleText>Containers</TabTitleText>}>
+                        <Tab eventKey="containers" title={<TabTitleText>{_("Containers")}</TabTitleText>}>
                             <ContainerList
                                 containers={state.containers}
                                 driver={driver}
@@ -109,7 +110,7 @@ export const Application = () => {
                                 onOpen={setSelected}
                             />
                         </Tab>
-                        <Tab eventKey="resources" title={<TabTitleText>Images and resources</TabTitleText>}>
+                        <Tab eventKey="resources" title={<TabTitleText>{_("Images and resources")}</TabTitleText>}>
                             <ResourcesView
                                 driver={driver}
                                 profiles={state.profiles}
