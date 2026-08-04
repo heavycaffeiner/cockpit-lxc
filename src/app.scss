@@ -41,6 +41,11 @@ body {
     font-size: var(--pf-t--global--font--size--sm);
 }
 
+.lxc-degraded,
+.lxc-action-error {
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
 .lxc-address-list {
     margin: 0;
     padding: 0;

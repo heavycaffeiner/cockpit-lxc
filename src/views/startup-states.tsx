@@ -141,15 +141,23 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
 };
 
 /** Shown when Incus is reachable and healthy but holds no system containers. */
-export const NoContainers = ({ onRefresh }: { onRefresh: () => void }) => (
+export const NoContainers = ({
+    onRefresh,
+    onCreate,
+}: {
+    onRefresh: () => void;
+    onCreate: () => void;
+}) => (
     <EmptyState headingLevel="h1" icon={CubesIcon} titleText="No containers yet">
         <EmptyStateBody>
-            This host runs Incus but has no system containers. Creating them from here
-            arrives in a later release; until then use <code>incus launch</code>.
+            This host runs Incus but has no system containers.
         </EmptyStateBody>
         <EmptyStateFooter>
             <EmptyStateActions>
-                <Button variant="secondary" onClick={onRefresh}>
+                <Button variant="primary" onClick={onCreate}>
+                    Create container
+                </Button>
+                <Button variant="link" onClick={onRefresh}>
                     Refresh
                 </Button>
             </EmptyStateActions>

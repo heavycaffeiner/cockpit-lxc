@@ -1,5 +1,5 @@
 import type { ContainerDriver, EventHandlers, SetStateOptions } from "../driver";
-import { ConflictError, DriverError } from "../errors";
+import { ApiError, ConflictError, DriverError } from "../errors";
 import type {
     Container,
     ContainerConfig,
@@ -15,6 +15,19 @@ import type {
     TerminalMode,
 } from "../types";
 import { IncusClient } from "./client";
+import { subscribeLifecycle } from "./events";
+
+/**
+ * Image servers by remote name.
+ *
+ * Incus stores remotes client-side, so the daemon cannot resolve "images:" for
+ * us. Only the one remote a stock install ships with is mapped; anything else
+ * falls back to it rather than failing, since a wrong server produces a clear
+ * "image not found" while an unmapped name would produce a confusing crash.
+ */
+const IMAGE_SERVERS: Record<string, string> = {
+    images: "https://images.linuxcontainers.org",
+};
 import {
     isContainer,
     mapContainer,
@@ -158,28 +171,94 @@ export class IncusDriver implements ContainerDriver {
         return metrics;
     }
 
-    /* Phase 3: lifecycle and events. */
-
-    setState(_name: string, _action: string, _options?: SetStateOptions): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 3", "setState"));
+    /**
+     * Change run state.
+     *
+     * `stateful` is pinned false: a stateful stop needs CRIU, which is not
+     * present on a stock host, and asking for it turns a working stop into a
+     * confusing failure.
+     */
+    async setState(
+        name: string,
+        action: "start" | "stop" | "restart" | "freeze" | "unfreeze",
+        options: SetStateOptions = {},
+    ): Promise<void> {
+        await this.client.request<unknown>(
+            `/1.0/instances/${encodeURIComponent(name)}/state`,
+            {
+                method: "PUT",
+                body: {
+                    action,
+                    force: options.force ?? false,
+                    timeout: options.timeout ?? 30,
+                    stateful: false,
+                },
+            },
+        );
     }
 
-    createContainer(_spec: CreateContainerSpec): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 3", "createContainer"));
+    async createContainer(spec: CreateContainerSpec): Promise<void> {
+        /*
+         * The remote name is a client-side concept; the API wants a concrete
+         * server and protocol. "local" means an image already pulled onto this
+         * host, anything else is treated as a simplestreams image server.
+         */
+        const source = spec.remote === "local"
+            ? { type: "image", alias: spec.image }
+            : {
+                type: "image",
+                protocol: "simplestreams",
+                server: IMAGE_SERVERS[spec.remote] ?? IMAGE_SERVERS["images"],
+                alias: spec.image,
+            };
+
+        await this.client.request<unknown>("/1.0/instances", {
+            method: "POST",
+            body: {
+                name: spec.name,
+                type: "container",
+                source,
+                profiles: spec.profiles.length > 0 ? spec.profiles : ["default"],
+                config: spec.config,
+                ephemeral: spec.ephemeral,
+            },
+        });
+
+        if (spec.start)
+            await this.setState(spec.name, "start");
     }
 
-    deleteContainer(_name: string): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 3", "deleteContainer"));
+    /**
+     * Delete a container and its snapshots.
+     *
+     * Incus refuses to delete a running instance, but this checks first so that
+     * the operator gets a sentence explaining why rather than a raw API error,
+     * and so the plugin never has a reason to reach for a force-stop on a path
+     * whose whole purpose is destruction.
+     */
+    async deleteContainer(name: string): Promise<void> {
+        const { container } = await this.getContainer(name);
+        if (container.state !== "Stopped") {
+            throw new ApiError(
+                400,
+                `${name} is ${container.state.toLowerCase()}. Stop it before deleting it.`,
+            );
+        }
+
+        await this.client.request<unknown>(`/1.0/instances/${encodeURIComponent(name)}`, {
+            method: "DELETE",
+        });
     }
 
-    renameContainer(_name: string, _newName: string): Promise<void> {
-        return Promise.resolve(notImplemented("Phase 3", "renameContainer"));
+    async renameContainer(name: string, newName: string): Promise<void> {
+        await this.client.request<unknown>(`/1.0/instances/${encodeURIComponent(name)}`, {
+            method: "POST",
+            body: { name: newName },
+        });
     }
 
-    subscribeEvents(_handlers: EventHandlers): () => void {
-        // Returning a no-op unsubscribe keeps callers from having to special-case
-        // the unimplemented phase in their cleanup path.
-        return () => undefined;
+    subscribeEvents(handlers: EventHandlers): () => void {
+        return subscribeLifecycle(handlers);
     }
 
     /* Phase 4: terminal. */

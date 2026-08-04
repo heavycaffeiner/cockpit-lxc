@@ -1,5 +1,7 @@
 import {
+    Alert,
     Button,
+    MenuToggle,
     SearchInput,
     Select,
     SelectList,
@@ -7,15 +9,16 @@ import {
     Toolbar,
     ToolbarContent,
     ToolbarItem,
-    MenuToggle,
     type MenuToggleElement,
 } from "@patternfly/react-core";
-import { SyncAltIcon } from "@patternfly/react-icons";
+import { PlusCircleIcon, SyncAltIcon } from "@patternfly/react-icons";
 import { Table, Tbody, Td, Th, Thead, Tr, type ThProps } from "@patternfly/react-table";
 import { useMemo, useState } from "react";
 
-import type { Container, ContainerState } from "../backend";
+import type { Container, ContainerDriver, ContainerState } from "../backend";
+import { ContainerActions, type RowAction } from "../components/container-actions";
 import { ContainerStateLabel } from "../components/container-state-label";
+import { CreateDialog, DeleteDialog, RenameDialog, type CreateSpec } from "./dialogs";
 import { NoContainers } from "./startup-states";
 
 type SortableColumn = "name" | "state" | "architecture" | "created";
@@ -31,11 +34,8 @@ const STATE_FILTERS: readonly (ContainerState | "All")[] = [
 /** IPv4 first, then IPv6, and link-local last: it is never the useful one. */
 const displayAddresses = (container: Container): string[] => {
     const addresses = container.interfaces.flatMap((iface) => iface.addresses);
-    const rank = (scope: string, family: string): number => {
-        if (scope === "link")
-            return 2;
-        return family === "inet" ? 0 : 1;
-    };
+    const rank = (scope: string, family: string): number =>
+        scope === "link" ? 2 : family === "inet" ? 0 : 1;
     return [...addresses]
         .sort((a, b) => rank(a.scope, a.family) - rank(b.scope, b.family))
         .map((address) => address.address);
@@ -63,15 +63,80 @@ const compare = (a: Container, b: Container, column: SortableColumn): number => 
 
 interface ContainerListProps {
     containers: Container[];
+    driver: ContainerDriver;
     onRefresh: () => void;
 }
 
-export const ContainerList = ({ containers, onRefresh }: ContainerListProps) => {
+export const ContainerList = ({ containers, driver, onRefresh }: ContainerListProps) => {
     const [search, setSearch] = useState("");
     const [stateFilter, setStateFilter] = useState<ContainerState | "All">("All");
     const [filterOpen, setFilterOpen] = useState(false);
     const [sortColumn, setSortColumn] = useState<SortableColumn>("name");
     const [sortDirection, setSortDirection] = useState<SortDirection>("asc");
+
+    const [busy, setBusy] = useState<ReadonlySet<string>>(new Set());
+    const [actionError, setActionError] = useState<string | null>(null);
+    const [deleting, setDeleting] = useState<Container | null>(null);
+    const [renaming, setRenaming] = useState<Container | null>(null);
+    const [creating, setCreating] = useState(false);
+
+    const markBusy = (name: string, value: boolean) =>
+        setBusy((current) => {
+            const next = new Set(current);
+            if (value)
+                next.add(name);
+            else
+                next.delete(name);
+            return next;
+        });
+
+    const runStateChange = async (container: Container, action: RowAction) => {
+        markBusy(container.name, true);
+        setActionError(null);
+        try {
+            switch (action) {
+                case "start":
+                    await driver.setState(container.name, "start");
+                    break;
+                case "stop":
+                    await driver.setState(container.name, "stop");
+                    break;
+                case "force-stop":
+                    // Explicitly separate from a graceful stop in the menu, so
+                    // SIGKILL is never what a mis-click produces.
+                    await driver.setState(container.name, "stop", { force: true });
+                    break;
+                case "restart":
+                    await driver.setState(container.name, "restart");
+                    break;
+                case "freeze":
+                    await driver.setState(container.name, "freeze");
+                    break;
+                case "unfreeze":
+                    await driver.setState(container.name, "unfreeze");
+                    break;
+                default:
+                    break;
+            }
+            onRefresh();
+        } catch (error) {
+            setActionError(error instanceof Error ? error.message : String(error));
+        } finally {
+            markBusy(container.name, false);
+        }
+    };
+
+    const onAction = (container: Container, action: RowAction) => {
+        if (action === "delete") {
+            setDeleting(container);
+            return;
+        }
+        if (action === "rename") {
+            setRenaming(container);
+            return;
+        }
+        void runStateChange(container, action);
+    };
 
     const visible = useMemo(() => {
         const needle = search.trim().toLowerCase();
@@ -113,13 +178,83 @@ export const ContainerList = ({ containers, onRefresh }: ContainerListProps) => 
         columnIndex: index,
     });
 
-    if (containers.length === 0)
-        return <NoContainers onRefresh={onRefresh} />;
+    const dialogs = (
+        <>
+            {deleting !== null && (
+                <DeleteDialog
+                    container={deleting}
+                    onClose={() => setDeleting(null)}
+                    onConfirm={async () => {
+                        await driver.deleteContainer(deleting.name);
+                        onRefresh();
+                    }}
+                />
+            )}
+            {renaming !== null && (
+                <RenameDialog
+                    container={renaming}
+                    onClose={() => setRenaming(null)}
+                    onConfirm={async (newName) => {
+                        await driver.renameContainer(renaming.name, newName);
+                        onRefresh();
+                    }}
+                />
+            )}
+            {creating && (
+                <CreateDialog
+                    existing={containers.map((c) => c.name)}
+                    onClose={() => setCreating(false)}
+                    onConfirm={async (spec: CreateSpec) => {
+                        await driver.createContainer({
+                            name: spec.name,
+                            image: spec.image,
+                            remote: spec.remote,
+                            profiles: [],
+                            config: {},
+                            ephemeral: false,
+                            start: spec.start,
+                        });
+                        onRefresh();
+                    }}
+                />
+            )}
+        </>
+    );
+
+    if (containers.length === 0) {
+        return (
+            <>
+                <NoContainers onRefresh={onRefresh} onCreate={() => setCreating(true)} />
+                {dialogs}
+            </>
+        );
+    }
 
     return (
         <>
+            {actionError !== null && (
+                <Alert
+                    variant="danger"
+                    isInline
+                    title={actionError}
+                    actionClose={
+                        <Button variant="plain" onClick={() => setActionError(null)}
+                            aria-label="Dismiss error">
+                            &times;
+                        </Button>
+                    }
+                    className="lxc-action-error"
+                />
+            )}
+
             <Toolbar id="lxc-container-toolbar" className="lxc-page__toolbar-wrap">
                 <ToolbarContent>
+                    <ToolbarItem>
+                        <Button variant="primary" icon={<PlusCircleIcon />}
+                            onClick={() => setCreating(true)}>
+                            Create container
+                        </Button>
+                    </ToolbarItem>
                     <ToolbarItem>
                         <SearchInput
                             aria-label="Search containers by name, description or address"
@@ -159,11 +294,7 @@ export const ContainerList = ({ containers, onRefresh }: ContainerListProps) => 
                         </Select>
                     </ToolbarItem>
                     <ToolbarItem>
-                        <Button
-                            variant="secondary"
-                            icon={<SyncAltIcon />}
-                            onClick={onRefresh}
-                        >
+                        <Button variant="secondary" icon={<SyncAltIcon />} onClick={onRefresh}>
                             Refresh
                         </Button>
                     </ToolbarItem>
@@ -193,6 +324,7 @@ export const ContainerList = ({ containers, onRefresh }: ContainerListProps) => 
                         </Th>
                         <Th modifier="nowrap">Profiles</Th>
                         <Th modifier="nowrap" sort={sortParams("created", 3)}>Created</Th>
+                        <Th screenReaderText="Actions" />
                     </Tr>
                 </Thead>
                 <Tbody>
@@ -223,11 +355,18 @@ export const ContainerList = ({ containers, onRefresh }: ContainerListProps) => 
                             <Td dataLabel="Architecture">{container.architecture}</Td>
                             <Td dataLabel="Profiles">{container.profiles.join(", ")}</Td>
                             <Td dataLabel="Created">{formatCreated(container.createdAt)}</Td>
+                            <Td isActionCell>
+                                <ContainerActions
+                                    container={container}
+                                    busy={busy.has(container.name)}
+                                    onAction={(action) => onAction(container, action)}
+                                />
+                            </Td>
                         </Tr>
                     ))}
                     {visible.length === 0 && (
                         <Tr>
-                            <Td colSpan={6}>
+                            <Td colSpan={7}>
                                 <span className="lxc-muted">
                                     No container matches the current filter.
                                 </span>
@@ -236,6 +375,8 @@ export const ContainerList = ({ containers, onRefresh }: ContainerListProps) => 
                     )}
                 </Tbody>
             </Table>
+
+            {dialogs}
         </>
     );
 };
