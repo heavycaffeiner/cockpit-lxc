@@ -27,7 +27,18 @@ const outDir = path.join(rootDir, "dist");
 const srcDir = path.join(rootDir, "src");
 
 const watch = process.argv.includes("--watch");
-const production = process.env.NODE_ENV === "production" || !watch;
+
+/*
+ * NODE_ENV wins when it is set either way.
+ *
+ * A plain `npm run build` still produces a production bundle, but setting
+ * NODE_ENV=development has to be able to force a readable one. Without that
+ * escape hatch the only build installable on a host is minified, and a runtime
+ * fault there reports its class name as "ee", which says nothing.
+ */
+const production = process.env.NODE_ENV === undefined
+    ? !watch
+    : process.env.NODE_ENV === "production";
 
 /** Copies the files esbuild does not process itself. */
 const copyAssetsPlugin = {

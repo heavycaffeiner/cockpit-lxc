@@ -26,7 +26,16 @@ interface CockpitHttpOptions {
 interface CockpitHttpRequestOptions {
     method: string;
     path: string;
-    body?: string;
+    /**
+     * Required, and "" for a request that has no body.
+     *
+     * Omitting it does not mean "no body": Cockpit reads a missing `body` as a
+     * promise to stream one later, so it never signals end-of-input and the
+     * request hangs forever with no error. cockpit.http's own get() passes an
+     * empty string, which is why that helper works where a hand-built request
+     * does not. Declared non-optional so the mistake cannot be made again.
+     */
+    body: string;
     headers?: Record<string, string>;
 }
 
@@ -101,11 +110,16 @@ interface CockpitSpawnProcess extends Promise<string> {
     close(problem?: string): void;
 }
 
-interface CockpitSuperuserProxy {
+/**
+ * What `cockpit.permission({ admin: true })` returns.
+ *
+ * `allowed` starts as null and becomes a boolean once the transport answers.
+ */
+interface CockpitPermission {
     allowed: boolean | null;
+    is_superuser?: boolean;
+    close(): void;
     addEventListener(event: "changed", handler: () => void): void;
-    removeEventListener(event: "changed", handler: () => void): void;
-    reload_page_on_change(): void;
 }
 
 interface CockpitApi {
@@ -117,8 +131,16 @@ interface CockpitApi {
     gettext(context: string, message: string): string;
     ngettext(message: string, plural: string, count: number): string;
     format(template: string, ...args: unknown[]): string;
-    superuser: CockpitSuperuserProxy;
-    transport: { host: string };
+    permission(options: { admin?: boolean; group?: string }): CockpitPermission;
+    /**
+     * Note the absence of `host`. base1's transport exposes the page origin and
+     * the application name, not the host it is connected to.
+     */
+    transport: {
+        origin: string;
+        uri(suffix?: string): string;
+        application(): string;
+    };
 }
 
 interface Window {

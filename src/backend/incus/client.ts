@@ -132,7 +132,13 @@ export class IncusClient {
         const { method = "GET", body, headers = {}, onHeaders } = options;
 
         const requestHeaders: Record<string, string> = { ...headers };
-        let encodedBody: string | undefined;
+
+        /*
+         * The empty string matters. Cockpit treats a missing `body` as a promise
+         * to stream one later, so the channel never signals end-of-input and the
+         * request hangs with no error and no timeout.
+         */
+        let encodedBody = "";
         if (body !== undefined) {
             encodedBody = JSON.stringify(body);
             requestHeaders["Content-Type"] = "application/json";
@@ -141,7 +147,7 @@ export class IncusClient {
         const request = this.http.request({
             method,
             path,
-            ...(encodedBody === undefined ? {} : { body: encodedBody }),
+            body: encodedBody,
             headers: requestHeaders,
         });
 

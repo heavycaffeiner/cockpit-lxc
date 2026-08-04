@@ -28,6 +28,25 @@ const resolve = (): CockpitApi => {
         );
     }
 
+    /*
+     * Assert the surface this plugin actually calls.
+     *
+     * These declarations are hand-maintained against a library the plugin does
+     * not bundle, so a name that is wrong or has moved is a live possibility.
+     * It already happened once: cockpit.superuser does not exist on the base1
+     * global, and the mistake surfaced as a TypeError inside a component rather
+     * than as anything that named the cause. Failing here instead turns that
+     * class of error into one line that says which name is missing.
+     */
+    for (const name of ["http", "channel", "spawn", "permission", "transport"] as const) {
+        if (api[name] === undefined) {
+            throw new Error(
+                `cockpit-lxc: window.cockpit.${name} is missing. The declarations in ` +
+                "src/types/cockpit.d.ts do not match the Cockpit on this host.",
+            );
+        }
+    }
+
     return api;
 };
 

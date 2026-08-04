@@ -12,8 +12,8 @@ export type {
     SetStateOptions,
 } from "./driver";
 
-export { getHostName } from "./host";
-export { hasSuperuser, reloadOnSuperuserChange } from "./superuser";
+export { watchAdmin } from "./permission";
+export type { AdminWatch } from "./permission";
 
 export {
     ApiError,

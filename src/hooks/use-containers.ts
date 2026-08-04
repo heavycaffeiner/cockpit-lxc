@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useState } from "react";
 import {
     DriverError,
     IncusDriver,
+    watchAdmin,
     type Container,
     type DriverErrorKind,
     type ServerInfo,
@@ -61,6 +62,19 @@ export const useContainers = (): LoadState & { reload: () => void } => {
             cancelled = true;
         };
     }, [driver, generation]);
+
+    /*
+     * Re-run when administrative access changes.
+     *
+     * The startup sequence branches on whether the session can reach the Incus
+     * socket, so granting access has to repeat it. Reloading in place rather
+     * than reloading the page keeps the operator's scroll position and filters,
+     * and avoids a full bundle re-parse for what is a data change.
+     */
+    useEffect(() => {
+        const watch = watchAdmin(reload);
+        return () => watch.close();
+    }, [reload]);
 
     // The driver owns a Cockpit HTTP client, which holds channels open. Closing
     // it on unmount keeps a navigation away from leaking them.

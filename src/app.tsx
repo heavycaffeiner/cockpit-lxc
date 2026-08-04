@@ -5,9 +5,6 @@ import {
     Spinner,
     Bullseye,
 } from "@patternfly/react-core";
-import { useEffect } from "react";
-
-import { reloadOnSuperuserChange } from "./backend";
 import { GridOverlay } from "./grid-overlay";
 import { useContainers } from "./hooks/use-containers";
 import { ContainerList } from "./views/container-list";
@@ -22,13 +19,6 @@ import { StartupFailure } from "./views/startup-states";
  */
 export const Application = () => {
     const state = useContainers();
-
-    /*
-     * Escalating administrative access has to re-run the startup sequence, and
-     * Cockpit already knows when that happens. Without this the operator would
-     * grant access and keep looking at the same screen.
-     */
-    useEffect(() => reloadOnSuperuserChange(), []);
 
     return (
         <Page className="lxc-page">

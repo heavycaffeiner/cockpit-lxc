@@ -74,8 +74,9 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 >
                     <EmptyStateBody>
                         The Incus socket is owned by <code>root:incus-admin</code>, so reading
-                        it needs administrative access. Use the button in Cockpit&apos;s header
-                        to turn it on; this page reloads by itself once you do.
+                        it needs administrative access. Select{" "}
+                        <strong>Limited access</strong> in Cockpit&apos;s header and turn it on.
+                        This page loads the containers by itself once you do.
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
