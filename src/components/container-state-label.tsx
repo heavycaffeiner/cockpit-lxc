@@ -9,7 +9,11 @@ import {
 } from "@patternfly/react-icons";
 import type { ComponentType } from "react";
 
-import { _, type ContainerState } from "../backend";
+import {
+    K,
+    _,
+    type ContainerState,
+} from "../backend";
 
 type LabelColor = "green" | "grey" | "blue" | "orange" | "red";
 
@@ -43,14 +47,14 @@ const APPEARANCE: Record<ContainerState, Appearance> = {
 export const stateName = (state: ContainerState): string => STATE_TEXT()[state];
 
 const STATE_TEXT = (): Record<ContainerState, string> => ({
-    Running: _("Running"),
-    Stopped: _("Stopped"),
-    Frozen: _("Frozen"),
-    Starting: _("Starting"),
-    Stopping: _("Stopping"),
-    Freezing: _("Freezing"),
-    Error: _("Error"),
-    Unknown: _("Unknown"),
+    Running: _(K.container_state_label.running),
+    Stopped: _(K.container_state_label.stopped),
+    Frozen: _(K.container_state_label.frozen),
+    Starting: _(K.container_state_label.starting),
+    Stopping: _(K.container_state_label.stopping),
+    Freezing: _(K.container_state_label.freezing),
+    Error: _(K.container_state_label.error),
+    Unknown: _(K.container_state_label.unknown),
 });
 
 export const ContainerStateLabel = ({ state }: { state: ContainerState }) => {

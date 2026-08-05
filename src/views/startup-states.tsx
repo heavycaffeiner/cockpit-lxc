@@ -14,7 +14,12 @@ import {
 } from "@patternfly/react-icons";
 
 import type { DriverErrorKind } from "../backend";
-import { INCUS_SOCKET, _, format } from "../backend";
+import {
+    K,
+    INCUS_SOCKET,
+    _,
+    format,
+} from "../backend";
 
 interface StartupFailureProps {
     kind: DriverErrorKind | "unknown";
@@ -37,20 +42,20 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 <EmptyState
                     headingLevel="h1"
                     icon={CubesIcon}
-                    titleText={_("Incus is not installed")}
+                    titleText={_(K.startup_states.incus_is_not_installed)}
                     status="info"
                 >
                     <EmptyStateBody>
                         <p>
                             {format(
-                                _("No Incus socket was found at $0. Install Incus and start its socket unit, then reload this page."),
+                                _(K.startup_states.no_incus_socket_was_found_at),
                                 INCUS_SOCKET,
                             )}
                         </p>
                         <ClipboardCopy
                             isReadOnly
-                            hoverTip={_("Copy")}
-                            clickTip={_("Copied")}
+                            hoverTip={_(K.container_actions.copy)}
+                            clickTip={_(K.startup_states.copied)}
                             variant="expansion"
                         >
                             sudo dnf install incus incus-tools &amp;&amp; sudo systemctl enable --now incus.socket
@@ -59,7 +64,7 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_("Check again")}
+                                {_(K.startup_states.check_again)}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -71,7 +76,7 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 <EmptyState
                     headingLevel="h1"
                     icon={LockIcon}
-                    titleText={_("Administrative access is required")}
+                    titleText={_(K.startup_states.administrative_access_is_required)}
                     status="warning"
                 >
                     {/*
@@ -81,12 +86,12 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                       * button that does not exist under that name.
                       */}
                     <EmptyStateBody>
-                        {_("The Incus socket is owned by root:incus-admin, so reading it needs administrative access. Turn it on from the access button in Cockpit's top bar. This page loads the containers by itself once you do.")}
+                        {_(K.startup_states.the_incus_socket_is_owned_by)}
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_("Try again")}
+                                {_(K.startup_states.try_again)}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -98,16 +103,16 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 <EmptyState
                     headingLevel="h1"
                     icon={LockIcon}
-                    titleText={_("Incus does not trust this connection")}
+                    titleText={_(K.startup_states.incus_does_not_trust_this_connection)}
                     status="warning"
                 >
                     <EmptyStateBody>
-                        {_("Incus answered but reported the connection as untrusted, so it will not return any data. This is an Incus authorization setting rather than a Cockpit one, and granting administrative access here will not change it.")}
+                        {_(K.startup_states.incus_answered_but_reported_the_connection)}
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_("Try again")}
+                                {_(K.startup_states.try_again)}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -123,15 +128,15 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                     headingLevel="h1"
                     icon={kind === "transport" ? PlugIcon : ExclamationCircleIcon}
                     titleText={kind === "transport"
-                        ? _("Cannot reach Incus")
-                        : _("Incus returned something unexpected")}
+                        ? _(K.startup_states.cannot_reach_incus)
+                        : _(K.startup_states.incus_returned_something_unexpected)}
                     status="danger"
                 >
                     <EmptyStateBody>{message}</EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_("Try again")}
+                                {_(K.startup_states.try_again)}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -148,17 +153,17 @@ export const NoContainers = ({
     onRefresh: () => void;
     onCreate: () => void;
 }) => (
-    <EmptyState headingLevel="h1" icon={CubesIcon} titleText={_("No containers yet")}>
+    <EmptyState headingLevel="h1" icon={CubesIcon} titleText={_(K.startup_states.no_containers_yet)}>
         <EmptyStateBody>
-            {_("This host runs Incus but has no system containers.")}
+            {_(K.startup_states.this_host_runs_incus_but_has)}
         </EmptyStateBody>
         <EmptyStateFooter>
             <EmptyStateActions>
                 <Button variant="primary" onClick={onCreate}>
-                    {_("Create container")}
+                    {_(K.container_list.create_container)}
                 </Button>
                 <Button variant="link" onClick={onRefresh}>
-                    {_("Refresh")}
+                    {_(K.container_list.refresh)}
                 </Button>
             </EmptyStateActions>
         </EmptyStateFooter>

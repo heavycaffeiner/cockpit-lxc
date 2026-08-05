@@ -20,11 +20,14 @@ import {
 import { PlayIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 
-import type {
-    Container,
-    ContainerDriver,
-    Profile,
-    ServerInfo,
+import {
+    K,
+    _,
+    format,
+    type Container,
+    type ContainerDriver,
+    type Profile,
+    type ServerInfo,
 } from "../backend";
 import { ContainerStateLabel } from "../components/container-state-label";
 import { TerminalPane } from "../components/terminal";
@@ -95,17 +98,17 @@ export const ContainerDetail = ({
         <EmptyState
             headingLevel="h2"
             icon={PlayIcon}
-            titleText={`${container.name} is not running`}
+            titleText={format(_(K.container_detail.is_not_running), container.name)}
             status="info"
         >
             <EmptyStateBody>
-                A shell needs a running container. Start it to open a session.
+                {_(K.container_detail.a_shell_needs_a_running_container)}
             </EmptyStateBody>
             <EmptyStateFooter>
                 <EmptyStateActions>
                     <Button variant="primary" isLoading={starting} isDisabled={starting}
                         onClick={() => void start()}>
-                        Start {container.name}
+                        {format(_(K.container_detail.start), container.name)}
                     </Button>
                 </EmptyStateActions>
             </EmptyStateFooter>
@@ -116,14 +119,14 @@ export const ContainerDetail = ({
         <Alert
             variant="warning"
             isInline
-            title={detail.error ?? "This container could not be loaded for editing."}
+            title={detail.error ?? _(K.container_detail.this_container_could_not_be_loaded)}
         />
     );
 
     return (
         <div className="lxc-detail">
             <Breadcrumb className="lxc-detail__crumbs">
-                <BreadcrumbItem to="#" onClick={onBack}>Containers</BreadcrumbItem>
+                <BreadcrumbItem to="#" onClick={onBack}>{_(K.app.containers)}</BreadcrumbItem>
                 <BreadcrumbItem isActive>{container.name}</BreadcrumbItem>
             </Breadcrumb>
 
@@ -141,12 +144,12 @@ export const ContainerDetail = ({
                     <Tabs
                         activeKey={tab}
                         onSelect={(_event, key) => setTab(key as DetailTab)}
-                        aria-label={`Views for ${container.name}`}
+                        aria-label={format(_(K.container_detail.views_for), container.name)}
                         role="region"
                     >
-                        <Tab eventKey="overview" title={<TabTitleText>Overview</TabTitleText>}>
+                        <Tab eventKey="overview" title={<TabTitleText>{_(K.container_detail.overview)}</TabTitleText>}>
                             {detail.loading && editable === null
-                                ? <Spinner aria-label="Loading container" />
+                                ? <Spinner aria-label={_(K.container_detail.loading_container)} />
                                 : editable === null
                                     ? editingUnavailable
                                     : (
@@ -162,9 +165,9 @@ export const ContainerDetail = ({
                                     )}
                         </Tab>
 
-                        <Tab eventKey="configuration" title={<TabTitleText>Configuration</TabTitleText>}>
+                        <Tab eventKey="configuration" title={<TabTitleText>{_(K.container_detail.configuration)}</TabTitleText>}>
                             {editable === null
-                                ? (detail.loading ? <Spinner aria-label="Loading" /> : editingUnavailable)
+                                ? (detail.loading ? <Spinner aria-label={_(K.container_detail.loading)} /> : editingUnavailable)
                                 : (
                                     <ConfigurationTab
                                         container={editable}
@@ -176,9 +179,9 @@ export const ContainerDetail = ({
                                 )}
                         </Tab>
 
-                        <Tab eventKey="network" title={<TabTitleText>Network</TabTitleText>}>
+                        <Tab eventKey="network" title={<TabTitleText>{_(K.container_detail.network)}</TabTitleText>}>
                             {editable === null
-                                ? (detail.loading ? <Spinner aria-label="Loading" /> : editingUnavailable)
+                                ? (detail.loading ? <Spinner aria-label={_(K.container_detail.loading)} /> : editingUnavailable)
                                 : (
                                     <DevicesTab
                                         spec={NIC_SPEC}
@@ -190,9 +193,9 @@ export const ContainerDetail = ({
                                 )}
                         </Tab>
 
-                        <Tab eventKey="storage" title={<TabTitleText>Storage</TabTitleText>}>
+                        <Tab eventKey="storage" title={<TabTitleText>{_(K.container_detail.storage)}</TabTitleText>}>
                             {editable === null
-                                ? (detail.loading ? <Spinner aria-label="Loading" /> : editingUnavailable)
+                                ? (detail.loading ? <Spinner aria-label={_(K.container_detail.loading)} /> : editingUnavailable)
                                 : (
                                     <DevicesTab
                                         spec={DISK_SPEC}
@@ -204,7 +207,7 @@ export const ContainerDetail = ({
                                 )}
                         </Tab>
 
-                        <Tab eventKey="snapshots" title={<TabTitleText>Snapshots</TabTitleText>}>
+                        <Tab eventKey="snapshots" title={<TabTitleText>{_(K.container_detail.snapshots)}</TabTitleText>}>
                             <SnapshotsTab
                                 container={container}
                                 driver={driver}
@@ -212,13 +215,13 @@ export const ContainerDetail = ({
                             />
                         </Tab>
 
-                        <Tab eventKey="terminal" title={<TabTitleText>Terminal</TabTitleText>}>
+                        <Tab eventKey="terminal" title={<TabTitleText>{_(K.container_detail.terminal)}</TabTitleText>}>
                             {running
                                 ? <TerminalPane driver={driver} container={container.name} mode="exec" />
                                 : notRunning}
                         </Tab>
 
-                        <Tab eventKey="console" title={<TabTitleText>Console</TabTitleText>}>
+                        <Tab eventKey="console" title={<TabTitleText>{_(K.container_detail.console)}</TabTitleText>}>
                             {running
                                 ? <TerminalPane driver={driver} container={container.name} mode="console" />
                                 : notRunning}

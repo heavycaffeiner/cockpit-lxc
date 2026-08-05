@@ -11,7 +11,7 @@ import {
 } from "@patternfly/react-core";
 import { useState } from "react";
 
-import { _ } from "./backend";
+import { K, _ } from "./backend";
 import { GridOverlay } from "./grid-overlay";
 import { useContainers } from "./hooks/use-containers";
 import { ContainerDetail } from "./views/container-detail";
@@ -49,7 +49,7 @@ export const Application = () => {
         <Page className="lxc-page">
             <PageSection>
                 <Content component="h1" className="lxc-page__title">
-                    {_("LXC containers")}
+                    {_(K.app.lxc_containers)}
                 </Content>
             </PageSection>
 
@@ -64,14 +64,14 @@ export const Application = () => {
                         variant="warning"
                         isInline
                         isPlain
-                        title={_("Live updates unavailable. The list refreshes only when you ask it to.")}
+                        title={_(K.app.live_updates_unavailable_the_list_refreshes)}
                         className="lxc-degraded"
                     />
                 )}
 
                 {state.status === "loading" && (
                     <Bullseye className="lxc-loading">
-                        <Spinner aria-label={_("Contacting Incus")} />
+                        <Spinner aria-label={_(K.app.contacting_incus)} />
                     </Bullseye>
                 )}
 
@@ -99,10 +99,10 @@ export const Application = () => {
                     <Tabs
                         activeKey={topTab}
                         onSelect={(_event, key) => setTopTab(key as TopTab)}
-                        aria-label={_("LXC views")}
+                        aria-label={_(K.app.lxc_views)}
                         role="region"
                     >
-                        <Tab eventKey="containers" title={<TabTitleText>{_("Containers")}</TabTitleText>}>
+                        <Tab eventKey="containers" title={<TabTitleText>{_(K.app.containers)}</TabTitleText>}>
                             <ContainerList
                                 containers={state.containers}
                                 driver={driver}
@@ -110,7 +110,7 @@ export const Application = () => {
                                 onOpen={setSelected}
                             />
                         </Tab>
-                        <Tab eventKey="resources" title={<TabTitleText>{_("Images and resources")}</TabTitleText>}>
+                        <Tab eventKey="resources" title={<TabTitleText>{_(K.app.images_and_resources)}</TabTitleText>}>
                             <ResourcesView
                                 driver={driver}
                                 profiles={state.profiles}

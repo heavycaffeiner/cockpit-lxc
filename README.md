@@ -141,7 +141,10 @@ block-size: 417px;
 ```
 build.js                     esbuild driver
 build/stylelint-4px-grid.js  the 4px gate
+build/gen-en.mjs             bundles po/en.po and generates the key object
+build/check-catalogues.mjs   the catalogue gate, in place of xgettext
 packaging/                   rpm spec and debian packaging
+po/en.po, po/ko.po           the catalogues, keyed by stable message id
 test/session-smoke.py        real-session verification
 docs/csp.md                  why the style CSP is widened
 src/
@@ -151,7 +154,9 @@ src/
   config/fields.ts           the typed configuration surface
   backend/                   the only place that may import cockpit
     driver.ts                the ContainerDriver interface
+    i18n.ts                  translation, with English as the fallback layer
     incus/                   the Incus implementation
+  generated/                 written by gen-en.mjs, not edited
   views/, components/, hooks/
 ```
 
@@ -165,6 +170,30 @@ The boundary keeps Incus's wire format out of the UI, which is what would otherw
 driver for another container manager a rewrite rather than an addition. It is not
 speculative generality: the same seam is what makes the driver testable without a live
 Incus.
+
+### Adding a string
+
+Message ids are stable keys, not English text. Source text as the id is the gettext
+convention and it silently orphans translations: edit the English wording and the id
+changes with it, no catalogue matches any more, and the UI quietly falls back to English
+without anything failing.
+
+To add a string, put it in `po/en.po` and in every other catalogue you can, then use it:
+
+```tsx
+_(K.container_list.create_container)
+```
+
+`K` is generated from `po/en.po`, so the key is completed by the editor and a typo is a
+compile error rather than a key showing through in the UI. `npm run check` fails on a key
+`src` uses that `en.po` lacks, on a key `en.po` carries that nothing uses, and on a key in
+another catalogue that English does not have.
+
+English is bundled rather than fetched. Cockpit serves exactly one translation file per
+package, resolved from the request's Accept-Language, and a session in a language with no
+catalogue gets an empty file rather than a fallback: a locale with no catalogue therefore
+renders bundled English, and a partly translated catalogue renders English for whatever it
+has not reached.
 
 ## Notable behaviour
 

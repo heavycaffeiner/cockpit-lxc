@@ -16,10 +16,14 @@
     -->
     <script type="text/javascript" src="../base1/cockpit.js"></script>
     <!--
-      The catalogue for the session's locale. Cockpit resolves po.js to the
-      right po.<locale>.js, the same way its own pages load theirs. A locale
-      with no catalogue simply 404s and the source strings are used, so no
-      error handler is needed and an inline one would violate the CSP anyway.
+      The session's catalogue. Cockpit resolves po.js from the request's
+      Accept-Language and serves nothing when no catalogue matches, which is
+      fine: English is bundled, so an unmatched locale falls back to it rather
+      than to bare keys.
+
+      Only po.js is fetchable. Asking for po.<locale>.js by name returns 404,
+      even for Cockpit's own packages, which is why English cannot be a second
+      script tag here.
     -->
     <script type="text/javascript" src="po.js"></script>
     <script type="text/javascript" src="index.js" defer></script>

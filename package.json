@@ -6,6 +6,9 @@
     "type": "module",
     "private": true,
     "scripts": {
+        "generate": "node build/gen-en.mjs",
+        "prebuild": "npm run generate",
+        "pretypecheck": "npm run generate",
         "build": "node build.js",
         "watch": "node build.js --watch",
         "typecheck": "tsc --noEmit",
@@ -14,7 +17,8 @@
         "lint:css": "stylelint \"src/**/*.{css,scss}\"",
         "lint:css:fix": "stylelint --fix \"src/**/*.{css,scss}\"",
         "lint": "npm run lint:js && npm run lint:css",
-        "check": "npm run typecheck && npm run lint"
+        "check:po": "node build/check-catalogues.mjs",
+        "check": "npm run typecheck && npm run lint && npm run check:po"
     },
     "dependencies": {
         "@patternfly/patternfly": "^6.6.1",

@@ -875,12 +875,29 @@ Two further constraints emerged that this document did not anticipate:
 - xterm's screen reader support needs `style-src 'unsafe-inline'`, which section 4.3.8
   implicitly required without saying so. `docs/csp.md` records the trade.
 
+Section 7's `xgettext` extraction was replaced rather than implemented. Message ids are
+stable keys such as `resources_view.pull_image`, not English source text, because using
+the source text as the id orphans every translation of a string the moment its English
+wording is edited: the id changes, no catalogue matches it any more, and the UI silently
+falls back to English without anything failing. Three things follow from that:
+
+- `po/en.po` is a real catalogue rather than an implicit default, and it is bundled into
+  the build. Cockpit serves exactly one translation file per package, resolved from
+  Accept-Language, and a session in a language with no catalogue gets an empty one rather
+  than a fallback, so English cannot be fetched the way the other languages are.
+- Call sites address keys through a generated object, `_(K.resources_view.pull_image)`,
+  so a mistyped key fails to compile instead of rendering as itself.
+- `build/check-catalogues.mjs` takes extraction's place in the build: it fails when a key
+  used in `src` is missing from `en.po`, when `en.po` carries a key nothing uses, or when
+  another catalogue contains a key English does not have.
+
+Coverage is now the full UI: 342 keys across all 16 view and component files, with Korean
+at 342/342. Both directions were verified in a real session: a Korean session loads the
+`ko` catalogue and renders Korean; a session set to a language with no catalogue loads
+none and renders the bundled English.
+
 Deferred from section 3.1, and not claimed as done:
 
-- Translation covers the container list, its actions, the container states and the startup
-  screens: 61 strings across 5 of 17 view files, with a Korean catalogue. The detail tabs
-  and dialogs still render source strings. The extraction and build pipeline is complete,
-  so the remainder is mechanical.
 - Profiles, networks and storage pools are read-only. Editing a profile changes every
   container using it and deserves its own confirmation design.
 - Image pulling takes an alias rather than browsing a remote's catalogue.

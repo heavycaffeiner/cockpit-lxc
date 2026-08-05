@@ -19,7 +19,15 @@ import {
 import { Table, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { useCallback, useEffect, useState } from "react";
 
-import type { Container, ContainerDriver, Snapshot } from "../backend";
+import {
+    K,
+    _,
+    N_,
+    format,
+    type Container,
+    type ContainerDriver,
+    type Snapshot,
+} from "../backend";
 
 const errorText = (error: unknown): string =>
     error instanceof Error ? error.message : String(error);
@@ -31,22 +39,32 @@ const formatTime = (iso: string): string => {
     return Number.isNaN(date.getTime()) ? iso : date.toLocaleString();
 };
 
-/** How long ago, in the coarsest unit that is still informative. */
+/**
+ * How long ago, in the coarsest unit that is still informative.
+ *
+ * Each unit is a separate plural form rather than one string with a unit
+ * variable, because languages do not agree on how a count and a unit combine
+ * and a translator needs the whole phrase.
+ */
 const relativeAge = (iso: string): string => {
     const then = new Date(iso).getTime();
     if (Number.isNaN(then))
         return "";
+
     const seconds = Math.max(0, Math.floor((Date.now() - then) / 1000));
     if (seconds < 60)
-        return "moments ago";
+        return _(K.snapshots_tab.moments_ago);
+
     const minutes = Math.floor(seconds / 60);
     if (minutes < 60)
-        return `${minutes} minute${minutes === 1 ? "" : "s"} ago`;
+        return format(N_(K.snapshots_tab.minute_ago, minutes), minutes);
+
     const hours = Math.floor(minutes / 60);
     if (hours < 24)
-        return `${hours} hour${hours === 1 ? "" : "s"} ago`;
+        return format(N_(K.snapshots_tab.hour_ago, hours), hours);
+
     const days = Math.floor(hours / 24);
-    return `${days} day${days === 1 ? "" : "s"} ago`;
+    return format(N_(K.snapshots_tab.day_ago, days), days);
 };
 
 interface SnapshotsTabProps {
@@ -93,7 +111,7 @@ export const SnapshotsTab = ({ container, driver, onChanged }: SnapshotsTabProps
     };
 
     if (snapshots === null)
-        return <Spinner aria-label="Loading snapshots" />;
+        return <Spinner aria-label={_(K.snapshots_tab.loading_snapshots)} />;
 
     return (
         <div className="lxc-snapshots">
@@ -101,41 +119,41 @@ export const SnapshotsTab = ({ container, driver, onChanged }: SnapshotsTabProps
 
             <div className="lxc-page__toolbar">
                 <Button variant="primary" onClick={() => setCreating(true)} isDisabled={busy}>
-                    Create snapshot
+                    {_(K.snapshots_tab.create_snapshot)}
                 </Button>
             </div>
 
             {snapshots.length === 0
-                ? <p className="lxc-muted">This container has no snapshots.</p>
+                ? <p className="lxc-muted">{_(K.snapshots_tab.this_container_has_no_snapshots)}</p>
                 : (
-                    <Table aria-label={`Snapshots of ${container.name}`} variant="compact">
+                    <Table aria-label={format(_(K.snapshots_tab.snapshots_of), container.name)} variant="compact">
                         <Thead>
                             <Tr>
-                                <Th modifier="nowrap">Name</Th>
-                                <Th modifier="nowrap">Taken</Th>
-                                <Th modifier="nowrap">Contents</Th>
-                                <Th modifier="nowrap">Expires</Th>
-                                <Th screenReaderText="Actions" />
+                                <Th modifier="nowrap">{_(K.container_list.name)}</Th>
+                                <Th modifier="nowrap">{_(K.snapshots_tab.taken)}</Th>
+                                <Th modifier="nowrap">{_(K.snapshots_tab.contents)}</Th>
+                                <Th modifier="nowrap">{_(K.snapshots_tab.expires)}</Th>
+                                <Th screenReaderText={_(K.container_list.actions)} />
                             </Tr>
                         </Thead>
                         <Tbody>
                             {snapshots.map((snapshot) => (
                                 <Tr key={snapshot.name}>
-                                    <Td dataLabel="Name"><strong>{snapshot.name}</strong></Td>
-                                    <Td dataLabel="Taken">
+                                    <Td dataLabel={_(K.container_list.name)}><strong>{snapshot.name}</strong></Td>
+                                    <Td dataLabel={_(K.snapshots_tab.taken)}>
                                         {formatTime(snapshot.createdAt)}
                                         <div className="lxc-row__description">
                                             {relativeAge(snapshot.createdAt)}
                                         </div>
                                     </Td>
-                                    <Td dataLabel="Contents">
+                                    <Td dataLabel={_(K.snapshots_tab.contents)}>
                                         {snapshot.stateful
-                                            ? <Label isCompact color="blue">Disk and memory</Label>
-                                            : <Label isCompact color="grey">Disk only</Label>}
+                                            ? <Label isCompact color="blue">{_(K.snapshots_tab.disk_and_memory)}</Label>
+                                            : <Label isCompact color="grey">{_(K.snapshots_tab.disk_only)}</Label>}
                                     </Td>
-                                    <Td dataLabel="Expires">
+                                    <Td dataLabel={_(K.snapshots_tab.expires)}>
                                         {snapshot.expiresAt === null
-                                            ? <span className="lxc-muted">Never</span>
+                                            ? <span className="lxc-muted">{_(K.snapshots_tab.never)}</span>
                                             : formatTime(snapshot.expiresAt)}
                                     </Td>
                                     <Td isActionCell>
@@ -144,7 +162,7 @@ export const SnapshotsTab = ({ container, driver, onChanged }: SnapshotsTabProps
                                             isDisabled={busy}
                                             onClick={() => setRestoring(snapshot)}
                                         >
-                                            Restore
+                                            {_(K.snapshots_tab.restore)}
                                         </Button>
                                         <Button
                                             variant="link"
@@ -152,7 +170,7 @@ export const SnapshotsTab = ({ container, driver, onChanged }: SnapshotsTabProps
                                             isDisabled={busy}
                                             onClick={() => setDeleting(snapshot)}
                                         >
-                                            Delete
+                                            {_(K.container_actions.delete)}
                                         </Button>
                                     </Td>
                                 </Tr>
@@ -214,8 +232,8 @@ const CreateSnapshotDialog = ({
     const valid = name !== "" && /^[a-zA-Z0-9._-]+$/.test(name) && !duplicate;
 
     return (
-        <Modal isOpen variant="small" onClose={onClose} aria-label="Create snapshot">
-            <ModalHeader title={`Snapshot ${container.name}`} />
+        <Modal isOpen variant="small" onClose={onClose} aria-label={_(K.snapshots_tab.create_snapshot)}>
+            <ModalHeader title={format(_(K.snapshots_tab.snapshot), container.name)} />
             <ModalBody>
                 <Form onSubmit={(event) => {
                     event.preventDefault();
@@ -224,21 +242,21 @@ const CreateSnapshotDialog = ({
                         void onConfirm(name, stateful).finally(() => { setBusy(false); onClose(); });
                     }
                 }}>
-                    <FormGroup label="Snapshot name" fieldId="lxc-snap-name" isRequired>
+                    <FormGroup label={_(K.snapshots_tab.snapshot_name)} fieldId="lxc-snap-name" isRequired>
                         <TextInput
                             id="lxc-snap-name"
                             value={name}
                             onChange={(_event, value) => setName(value)}
                             validated={name === "" ? "default" : valid ? "success" : "error"}
-                            aria-label="Snapshot name"
+                            aria-label={_(K.snapshots_tab.snapshot_name)}
                             autoComplete="off"
                         />
                         <FormHelperText>
                             <HelperText>
                                 <HelperTextItem variant={duplicate ? "error" : "default"}>
                                     {duplicate
-                                        ? "A snapshot with that name already exists"
-                                        : "Letters, digits, dots, hyphens and underscores."}
+                                        ? _(K.snapshots_tab.a_snapshot_with_that_name_already)
+                                        : _(K.snapshots_tab.letters_digits_dots_hyphens_and_underscores)}
                                 </HelperTextItem>
                             </HelperText>
                         </FormHelperText>
@@ -246,7 +264,7 @@ const CreateSnapshotDialog = ({
                     <FormGroup fieldId="lxc-snap-stateful">
                         <Checkbox
                             id="lxc-snap-stateful"
-                            label="Include running process state"
+                            label={_(K.snapshots_tab.include_running_process_state)}
                             isChecked={stateful}
                             isDisabled={container.state !== "Running"}
                             onChange={(_event, checked) => setStateful(checked)}
@@ -255,8 +273,8 @@ const CreateSnapshotDialog = ({
                             <HelperText>
                                 <HelperTextItem>
                                     {container.state === "Running"
-                                        ? "Requires CRIU on the host. Without it the snapshot fails rather than falling back."
-                                        : "Only available while the container runs."}
+                                        ? _(K.snapshots_tab.requires_criu_on_the_host_without)
+                                        : _(K.snapshots_tab.only_available_while_the_container_runs)}
                                 </HelperTextItem>
                             </HelperText>
                         </FormHelperText>
@@ -269,9 +287,9 @@ const CreateSnapshotDialog = ({
                         setBusy(true);
                         void onConfirm(name, stateful).finally(() => { setBusy(false); onClose(); });
                     }}>
-                    Create
+                    {_(K.dialogs.create)}
                 </Button>
-                <Button variant="link" onClick={onClose} isDisabled={busy}>Cancel</Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>{_(K.dialogs.cancel)}</Button>
             </ModalFooter>
         </Modal>
     );
@@ -298,19 +316,22 @@ const RestoreDialog = ({
     const [busy, setBusy] = useState(false);
 
     return (
-        <Modal isOpen variant="small" onClose={onClose} aria-label="Restore snapshot">
-            <ModalHeader title={`Restore ${snapshot.name}?`} titleIconVariant="warning" />
+        <Modal isOpen variant="small" onClose={onClose} aria-label={_(K.snapshots_tab.restore_snapshot)}>
+            <ModalHeader title={format(_(K.snapshots_tab.restore_2), snapshot.name)} titleIconVariant="warning" />
             <ModalBody>
                 <p>
-                    This rolls {container.name} back to {formatTime(snapshot.createdAt)}, taken{" "}
-                    <strong>{relativeAge(snapshot.createdAt)}</strong>. Everything written to
-                    the container since then is discarded and cannot be recovered.
+                    {format(
+                        _(K.snapshots_tab.this_rolls_back_to_taken_everything),
+                        container.name,
+                        formatTime(snapshot.createdAt),
+                        relativeAge(snapshot.createdAt),
+                    )}
                 </p>
                 {container.state === "Running" && (
                     <Alert
                         variant="warning"
                         isInline
-                        title="Incus stops the container to restore it."
+                        title={_(K.snapshots_tab.incus_stops_the_container_to_restore)}
                     />
                 )}
             </ModalBody>
@@ -319,9 +340,9 @@ const RestoreDialog = ({
                     setBusy(true);
                     void onConfirm().finally(() => { setBusy(false); onClose(); });
                 }}>
-                    Restore
+                    {_(K.snapshots_tab.restore)}
                 </Button>
-                <Button variant="link" onClick={onClose} isDisabled={busy}>Cancel</Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>{_(K.dialogs.cancel)}</Button>
             </ModalFooter>
         </Modal>
     );
@@ -339,13 +360,10 @@ const DeleteSnapshotDialog = ({
     const [busy, setBusy] = useState(false);
 
     return (
-        <Modal isOpen variant="small" onClose={onClose} aria-label="Delete snapshot">
-            <ModalHeader title={`Delete snapshot ${snapshot.name}?`} titleIconVariant="danger" />
+        <Modal isOpen variant="small" onClose={onClose} aria-label={_(K.snapshots_tab.delete_snapshot)}>
+            <ModalHeader title={format(_(K.snapshots_tab.delete_snapshot_2), snapshot.name)} titleIconVariant="danger" />
             <ModalBody>
-                <p>
-                    The snapshot is destroyed. The container itself is untouched, but this
-                    rollback point is gone for good.
-                </p>
+                <p>{_(K.snapshots_tab.the_snapshot_is_destroyed_the_container)}</p>
             </ModalBody>
             <ModalFooter>
                 <Button variant="danger" isLoading={busy} isDisabled={busy} onClick={() => {
@@ -354,7 +372,7 @@ const DeleteSnapshotDialog = ({
                 }}>
                     Delete
                 </Button>
-                <Button variant="link" onClick={onClose} isDisabled={busy}>Cancel</Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>{_(K.dialogs.cancel)}</Button>
             </ModalFooter>
         </Modal>
     );

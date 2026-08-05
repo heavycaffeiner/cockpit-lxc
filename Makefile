@@ -29,7 +29,7 @@ watch: node_modules
 
 # The 4px grid gate (proposal 4.3.7) hangs off lint-css, and check depends on it,
 # so an off-grid length fails the build rather than surviving to review.
-check: typecheck lint
+check: typecheck lint check-po
 
 typecheck: node_modules
 	npm run typecheck
@@ -72,23 +72,13 @@ rpm: dist
 deb: dist
 	@echo "Unpack $(TARBALL), copy packaging/debian to debian/, then run dpkg-buildpackage -us -uc"
 
-# Rebuild the template from the source strings. Run after adding or changing
-# any user-facing text; the catalogues below are merged against it.
-po/$(PACKAGE_NAME).pot: $(shell find src -name '*.ts' -o -name '*.tsx')
-	mkdir -p po
-	xgettext --default-domain=$(PACKAGE_NAME) --output=$@ \
-	    --language=JavaScript --from-code=UTF-8 \
-	    --keyword=_ --keyword=N_:1,2 \
-	    --package-name=$(PACKAGE_NAME) --package-version=$(VERSION) \
-	    --copyright-holder='heavycaffeiner' \
-	    $(shell find src -name '*.ts' -o -name '*.tsx' | sort)
-
-.PHONY: po
-po: po/$(PACKAGE_NAME).pot
-	for f in po/*.po; do \
-	    [ -e "$$f" ] || continue; \
-	    msgmerge --update --backup=none "$$f" po/$(PACKAGE_NAME).pot; \
-	done
+# Message ids are stable keys, so there is nothing for xgettext to extract from
+# the source: po/en.po is the English catalogue, not a by-product. This checks
+# that the keys used in src and the keys in the catalogues agree, which is what
+# catches a typo that would otherwise render as a key in the UI.
+.PHONY: check-po
+check-po: node_modules
+	npm run check:po
 
 clean:
 	rm -rf dist $(PACKAGE_NAME)-*.tar.xz

@@ -22,12 +22,15 @@ import {
 import { useState } from "react";
 
 import {
+    K,
     ConflictError,
     type Container,
     type ContainerDriver,
     type Metrics,
     type Profile,
     type ServerInfo,
+    _,
+    format,
 } from "../backend";
 
 const formatBytes = (bytes: number): string => {
@@ -80,7 +83,7 @@ export const OverviewTab = ({
             onSaved();
         } catch (caught) {
             setError(caught instanceof ConflictError
-                ? "Another session changed this container. Reload and try again."
+                ? _(K.overview_tab.another_session_changed_this_container_reload)
                 : caught instanceof Error ? caught.message : String(caught));
         } finally {
             setBusy(false);
@@ -100,35 +103,35 @@ export const OverviewTab = ({
 
             <GridItem md={6} span={12}>
                 <Card isPlain>
-                    <CardTitle>Identity</CardTitle>
+                    <CardTitle>{_(K.overview_tab.identity)}</CardTitle>
                     <CardBody>
                         <DescriptionList isHorizontal isCompact>
                             <DescriptionListGroup>
-                                <DescriptionListTerm>Description</DescriptionListTerm>
+                                <DescriptionListTerm>{_(K.overview_tab.description)}</DescriptionListTerm>
                                 <DescriptionListDescription>
-                                    {container.description || <span className="lxc-muted">None</span>}
+                                    {container.description || <span className="lxc-muted">{_(K.container_list.none)}</span>}
                                 </DescriptionListDescription>
                             </DescriptionListGroup>
                             <DescriptionListGroup>
-                                <DescriptionListTerm>Architecture</DescriptionListTerm>
+                                <DescriptionListTerm>{_(K.container_list.architecture)}</DescriptionListTerm>
                                 <DescriptionListDescription>{container.architecture}</DescriptionListDescription>
                             </DescriptionListGroup>
                             <DescriptionListGroup>
-                                <DescriptionListTerm>Ephemeral</DescriptionListTerm>
+                                <DescriptionListTerm>{_(K.overview_tab.ephemeral)}</DescriptionListTerm>
                                 <DescriptionListDescription>
-                                    {container.ephemeral ? "Yes, deleted when stopped" : "No"}
+                                    {container.ephemeral ? _(K.overview_tab.yes_deleted_when_stopped) : _(K.overview_tab.no)}
                                 </DescriptionListDescription>
                             </DescriptionListGroup>
                             <DescriptionListGroup>
-                                <DescriptionListTerm>Created</DescriptionListTerm>
+                                <DescriptionListTerm>{_(K.container_list.created)}</DescriptionListTerm>
                                 <DescriptionListDescription>
                                     {container.createdAt === ""
-                                        ? <span className="lxc-muted">Unknown</span>
+                                        ? <span className="lxc-muted">{_(K.container_state_label.unknown)}</span>
                                         : new Date(container.createdAt).toLocaleString()}
                                 </DescriptionListDescription>
                             </DescriptionListGroup>
                             <DescriptionListGroup>
-                                <DescriptionListTerm>Incus</DescriptionListTerm>
+                                <DescriptionListTerm>{_(K.overview_tab.incus)}</DescriptionListTerm>
                                 <DescriptionListDescription>
                                     {info.serverVersion} (API {info.apiVersion})
                                 </DescriptionListDescription>
@@ -140,11 +143,10 @@ export const OverviewTab = ({
 
             <GridItem md={6} span={12}>
                 <Card isPlain>
-                    <CardTitle>Profiles</CardTitle>
+                    <CardTitle>{_(K.container_list.profiles)}</CardTitle>
                     <CardBody>
                         <p className="lxc-config__description">
-                            Profiles supply configuration and devices to every container that
-                            applies them. Order matters: a later profile wins.
+                            {_(K.overview_tab.profiles_supply_configuration_and_devices_to)}
                         </p>
                         {/* PatternFly 6 replaced Chip with Label. */}
                         <div className="lxc-chips">
@@ -170,7 +172,7 @@ export const OverviewTab = ({
                                     isExpanded={profileOpen}
                                     isDisabled={busy || etag === null}
                                 >
-                                    Change profiles
+                                    {_(K.overview_tab.change_profiles)}
                                 </MenuToggle>
                             )}
                         >
@@ -193,18 +195,18 @@ export const OverviewTab = ({
 
             <GridItem span={12}>
                 <Card isPlain>
-                    <CardTitle>Resource usage</CardTitle>
+                    <CardTitle>{_(K.overview_tab.resource_usage)}</CardTitle>
                     <CardBody>
                         {metrics === null
                             ? (
                                 <p className="lxc-muted">
-                                    Usage is reported only while the container runs.
+                                    {_(K.overview_tab.usage_is_reported_only_while_the)}
                                 </p>
                             )
                             : (
                                 <DescriptionList isHorizontal isCompact>
                                     <DescriptionListGroup>
-                                        <DescriptionListTerm>Memory</DescriptionListTerm>
+                                        <DescriptionListTerm>{_(K.fields.memory)}</DescriptionListTerm>
                                         <DescriptionListDescription>
                                             {memoryPercent === null
                                                 ? formatBytes(metrics.memoryUsedBytes)
@@ -212,24 +214,23 @@ export const OverviewTab = ({
                                                     <Progress
                                                         value={memoryPercent}
                                                         measureLocation={ProgressMeasureLocation.outside}
-                                                        aria-label="Memory usage"
+                                                        aria-label={_(K.overview_tab.memory_usage)}
                                                         title=""
-                                                        label={`${formatBytes(metrics.memoryUsedBytes)} of ${formatBytes(metrics.memoryTotalBytes)}`}
+                                                        label={format(_(K.container_list.of), formatBytes(metrics.memoryUsedBytes), formatBytes(metrics.memoryTotalBytes))}
                                                     />
                                                 )}
                                         </DescriptionListDescription>
                                     </DescriptionListGroup>
                                     <DescriptionListGroup>
-                                        <DescriptionListTerm>CPU time</DescriptionListTerm>
+                                        <DescriptionListTerm>{_(K.overview_tab.cpu_time)}</DescriptionListTerm>
                                         <DescriptionListDescription>
                                             {metrics.cpuSecondsTotal.toFixed(1)} s
                                         </DescriptionListDescription>
                                     </DescriptionListGroup>
                                     <DescriptionListGroup>
-                                        <DescriptionListTerm>Network</DescriptionListTerm>
+                                        <DescriptionListTerm>{_(K.container_detail.network)}</DescriptionListTerm>
                                         <DescriptionListDescription>
-                                            {formatBytes(metrics.networkReceiveBytes)} in,{" "}
-                                            {formatBytes(metrics.networkTransmitBytes)} out
+                                            {format(_(K.overview_tab.in_out), formatBytes(metrics.networkReceiveBytes), formatBytes(metrics.networkTransmitBytes))}
                                         </DescriptionListDescription>
                                     </DescriptionListGroup>
                                 </DescriptionList>
@@ -240,10 +241,10 @@ export const OverviewTab = ({
 
             <GridItem span={12}>
                 <Card isPlain>
-                    <CardTitle>Addresses</CardTitle>
+                    <CardTitle>{_(K.container_list.addresses)}</CardTitle>
                     <CardBody>
                         {container.interfaces.length === 0
-                            ? <p className="lxc-muted">No interfaces are up.</p>
+                            ? <p className="lxc-muted">{_(K.overview_tab.no_interfaces_are_up)}</p>
                             : (
                                 <DescriptionList isHorizontal isCompact>
                                     {container.interfaces.map((iface) => (

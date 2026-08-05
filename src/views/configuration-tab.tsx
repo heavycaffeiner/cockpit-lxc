@@ -21,13 +21,15 @@ import {
 import { useMemo, useState } from "react";
 
 import {
+    K,
     ConflictError,
     type Container,
     type ContainerDriver,
     type ContainerUpdate,
     type ServerInfo,
+    _,
 } from "../backend";
-import { FIELD_GROUPS, TYPED_KEYS, formLevelProblems, type FieldSpec } from "../config/fields";
+import { fieldGroups, TYPED_KEYS, formLevelProblems, type FieldSpec } from "../config/fields";
 import { EnvironmentEditor } from "./environment-editor";
 import { RawConfigEditor } from "./raw-config-editor";
 
@@ -111,7 +113,7 @@ export const ConfigurationTab = ({
 
     const fieldProblems = useMemo(() => {
         const problems: Record<string, string> = {};
-        for (const group of FIELD_GROUPS) {
+        for (const group of fieldGroups()) {
             for (const field of group.fields) {
                 const value = edits[field.key];
                 if (value === undefined || field.validate === undefined)
@@ -240,7 +242,7 @@ export const ConfigurationTab = ({
                         </HelperTextItem>
                         {isInherited && value !== "" && (
                             <HelperTextItem>
-                                Inherited from a profile. Editing copies it onto this container.
+                                {_(K.configuration_tab.inherited_from_a_profile_editing_copies)}
                             </HelperTextItem>
                         )}
                     </HelperText>
@@ -261,7 +263,7 @@ export const ConfigurationTab = ({
                 <Alert
                     variant="warning"
                     isInline
-                    title="This container could not be locked for editing, so saving is disabled."
+                    title={_(K.configuration_tab.this_container_could_not_be_locked)}
                 />
             )}
 
@@ -269,7 +271,7 @@ export const ConfigurationTab = ({
                 <Alert
                     variant="info"
                     isInline
-                    title="This container changed elsewhere while you were editing. Your changes are still here, and saving will show you what differs before anything is overwritten."
+                    title={_(K.configuration_tab.this_container_changed_elsewhere_while_you)}
                 />
             )}
 
@@ -280,18 +282,16 @@ export const ConfigurationTab = ({
                         void save();
                 }}
             >
-                {FIELD_GROUPS.map((group) => (
+                {fieldGroups().map((group) => (
                     <FormSection key={group.id} title={group.title} titleElement="h3">
                         <p className="lxc-config__description">{group.description}</p>
                         {group.fields.map(renderField)}
                     </FormSection>
                 ))}
 
-                <FormSection title="Environment" titleElement="h3">
+                <FormSection title={_(K.configuration_tab.environment)} titleElement="h3">
                     <p className="lxc-config__description">
-                        Variables put into the environment of processes started with{" "}
-                        <code>incus exec</code>. A container&apos;s own init does not see
-                        them, so this is not a substitute for the image&apos;s configuration.
+                        {_(K.configuration_tab.variables_put_into_the_environment_of)}
                     </p>
                     <EnvironmentEditor
                         key={`env-${JSON.stringify(baseConfig)}`}
@@ -303,11 +303,9 @@ export const ConfigurationTab = ({
                     />
                 </FormSection>
 
-                <FormSection title="Other keys" titleElement="h3">
+                <FormSection title={_(K.configuration_tab.other_keys)} titleElement="h3">
                     <p className="lxc-config__description">
-                        Everything the forms above do not cover, including{" "}
-                        <code>raw.lxc</code>. This is what keeps every Incus setting
-                        reachable as new keys are added.
+                        {_(K.configuration_tab.everything_the_forms_above_do_not)}
                     </p>
                     {/*
                       * Keyed on the server's own config, so a save or an
@@ -332,10 +330,10 @@ export const ConfigurationTab = ({
                         isLoading={busy}
                         onClick={() => void save()}
                     >
-                        Save
+                        {_(K.configuration_tab.save)}
                     </Button>
                     <Button variant="link" isDisabled={!dirty || busy} onClick={discard}>
-                        Discard changes
+                        {_(K.configuration_tab.discard_changes)}
                     </Button>
                 </ActionGroup>
             </Form>
@@ -379,30 +377,27 @@ const ConflictDialog = ({
     onReload,
     onKeepEditing,
 }: ConflictDialogProps) => (
-    <Modal isOpen variant="medium" onClose={onKeepEditing} aria-label="Configuration conflict">
-        <ModalHeader title="This container changed while you were editing" titleIconVariant="warning" />
+    <Modal isOpen variant="medium" onClose={onKeepEditing} aria-label={_(K.configuration_tab.configuration_conflict)}>
+        <ModalHeader title={_(K.configuration_tab.this_container_changed_while_you_were)} titleIconVariant="warning" />
         <ModalBody>
-            <p>
-                Another session saved a change after this form was opened, so the save was
-                refused rather than overwriting it. Nothing has been lost on either side.
-            </p>
+            <p>{_(K.configuration_tab.another_session_saved_a_change_after)}</p>
             {keys.length === 0
-                ? <p>No individual key differs; the container was changed in some other way.</p>
+                ? <p>{_(K.configuration_tab.no_individual_key_differs_the_container)}</p>
                 : (
                     <table className="lxc-conflict">
                         <thead>
                             <tr>
-                                <th scope="col">Key</th>
-                                <th scope="col">On the server</th>
-                                <th scope="col">In this form</th>
+                                <th scope="col">{_(K.configuration_tab.key)}</th>
+                                <th scope="col">{_(K.configuration_tab.on_the_server)}</th>
+                                <th scope="col">{_(K.configuration_tab.in_this_form)}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {keys.map((key) => (
                                 <tr key={key}>
                                     <th scope="row"><code>{key}</code></th>
-                                    <td>{theirs[key] ?? <em>unset</em>}</td>
-                                    <td>{mine[key] ?? <em>unset</em>}</td>
+                                    <td>{theirs[key] ?? <em>{_(K.configuration_tab.unset)}</em>}</td>
+                                    <td>{mine[key] ?? <em>{_(K.configuration_tab.unset)}</em>}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -411,10 +406,10 @@ const ConflictDialog = ({
         </ModalBody>
         <ModalFooter>
             <Button variant="secondary" onClick={onKeepEditing}>
-                Keep editing
+                {_(K.configuration_tab.keep_editing)}
             </Button>
             <Button variant="primary" onClick={onReload}>
-                Discard my changes and reload
+                {_(K.configuration_tab.discard_my_changes_and_reload)}
             </Button>
         </ModalFooter>
     </Modal>

@@ -6,6 +6,12 @@ import {
 import { MinusCircleIcon, PlusCircleIcon } from "@patternfly/react-icons";
 import { useMemo, useState } from "react";
 
+import {
+    K,
+    _,
+    format,
+} from "../backend";
+
 interface RawRow {
     id: number;
     key: string;
@@ -102,9 +108,9 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
             <table className="lxc-raw__table">
                 <thead>
                     <tr>
-                        <th scope="col">Key</th>
-                        <th scope="col">Value</th>
-                        <th scope="col"><span className="pf-v6-screen-reader">Remove</span></th>
+                        <th scope="col">{_(K.configuration_tab.key)}</th>
+                        <th scope="col">{_(K.environment_editor.value)}</th>
+                        <th scope="col"><span className="pf-v6-screen-reader">{_(K.environment_editor.remove)}</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -116,7 +122,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                                 <td>
                                     <TextInput
                                         value={row.key}
-                                        aria-label={`Configuration key ${index + 1}`}
+                                        aria-label={format(_(K.raw_config_editor.configuration_key), index + 1)}
                                         validated={duplicate ? "error" : "default"}
                                         onChange={(_event, value) =>
                                             update(rows.map((r) =>
@@ -126,18 +132,18 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                                 <td>
                                     <TextInput
                                         value={row.value}
-                                        aria-label={`Value for ${trimmed || `key ${index + 1}`}`}
+                                        aria-label={format(_(K.environment_editor.value_for), trimmed || format(_(K.raw_config_editor.key), index + 1))}
                                         onChange={(_event, value) =>
                                             update(rows.map((r) =>
                                                 r.id === row.id ? { ...r, value } : r))}
                                     />
                                 </td>
                                 <td>
-                                    <Tooltip content={`Remove ${trimmed || "this key"}`}>
+                                    <Tooltip content={format(_(K.devices_tab.remove), trimmed || _(K.raw_config_editor.this_key))}>
                                         <Button
                                             variant="plain"
                                             icon={<MinusCircleIcon />}
-                                            aria-label={`Remove ${trimmed || `key ${index + 1}`}`}
+                                            aria-label={format(_(K.devices_tab.remove), trimmed || format(_(K.raw_config_editor.key), index + 1))}
                                             onClick={() =>
                                                 update(rows.filter((r) => r.id !== row.id))}
                                         />
@@ -150,7 +156,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                         <tr>
                             <td colSpan={3}>
                                 <span className="lxc-muted">
-                                    No other keys are set on this container.
+                                    {_(K.raw_config_editor.no_other_keys_are_set_on)}
                                 </span>
                             </td>
                         </tr>
@@ -160,8 +166,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
 
             {duplicateKeys.size > 0 && (
                 <p className="lxc-raw__problem">
-                    Duplicate keys: {[...duplicateKeys].join(", ")}. Only the last would be
-                    saved.
+                    {format(_(K.raw_config_editor.duplicate_keys_only_the_last_would), [...duplicateKeys].join(", "))}
                 </p>
             )}
 
@@ -174,7 +179,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                     update(next);
                 }}
             >
-                Add key
+                {_(K.raw_config_editor.add_key)}
             </Button>
         </div>
     );

@@ -2,6 +2,12 @@ import { Button, TextInput, Tooltip } from "@patternfly/react-core";
 import { MinusCircleIcon, PlusCircleIcon } from "@patternfly/react-icons";
 import { useMemo, useState } from "react";
 
+import {
+    K,
+    _,
+    format,
+} from "../backend";
+
 /**
  * Incus stores environment variables as config keys under this prefix. The UI
  * shows the bare variable name, because `environment.PATH` is an implementation
@@ -84,9 +90,9 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
             <table className="lxc-raw__table">
                 <thead>
                     <tr>
-                        <th scope="col">Variable</th>
-                        <th scope="col">Value</th>
-                        <th scope="col"><span className="pf-v6-screen-reader">Remove</span></th>
+                        <th scope="col">{_(K.environment_editor.variable)}</th>
+                        <th scope="col">{_(K.environment_editor.value)}</th>
+                        <th scope="col"><span className="pf-v6-screen-reader">{_(K.environment_editor.remove)}</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -95,7 +101,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                             <td>
                                 <TextInput
                                     value={row.name}
-                                    aria-label={`Environment variable ${index + 1}`}
+                                    aria-label={format(_(K.environment_editor.environment_variable), index + 1)}
                                     validated={invalid(row.name) ? "error" : "default"}
                                     onChange={(_event, value) =>
                                         update(rows.map((r) =>
@@ -105,18 +111,18 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                             <td>
                                 <TextInput
                                     value={row.value}
-                                    aria-label={`Value for ${row.name.trim() || `variable ${index + 1}`}`}
+                                    aria-label={format(_(K.environment_editor.value_for), row.name.trim() || format(_(K.environment_editor.variable_2), index + 1))}
                                     onChange={(_event, value) =>
                                         update(rows.map((r) =>
                                             r.id === row.id ? { ...r, value } : r))}
                                 />
                             </td>
                             <td>
-                                <Tooltip content={`Remove ${row.name.trim() || "this variable"}`}>
+                                <Tooltip content={format(_(K.devices_tab.remove), row.name.trim() || _(K.environment_editor.this_variable))}>
                                     <Button
                                         variant="plain"
                                         icon={<MinusCircleIcon />}
-                                        aria-label={`Remove ${row.name.trim() || `variable ${index + 1}`}`}
+                                        aria-label={format(_(K.devices_tab.remove), row.name.trim() || format(_(K.environment_editor.variable_2), index + 1))}
                                         onClick={() => update(rows.filter((r) => r.id !== row.id))}
                                     />
                                 </Tooltip>
@@ -127,7 +133,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                         <tr>
                             <td colSpan={3}>
                                 <span className="lxc-muted">
-                                    No environment variables are set on this container.
+                                    {_(K.environment_editor.no_environment_variables_are_set_on)}
                                 </span>
                             </td>
                         </tr>
@@ -137,8 +143,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
 
             {rows.some((row) => invalid(row.name)) && (
                 <p className="lxc-raw__problem">
-                    A variable name must start with a letter or underscore and contain only
-                    letters, digits and underscores.
+                    {_(K.environment_editor.a_variable_name_must_start_with)}
                 </p>
             )}
 
@@ -151,7 +156,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                     update(next);
                 }}
             >
-                Add variable
+                {_(K.environment_editor.add_variable)}
             </Button>
         </div>
     );

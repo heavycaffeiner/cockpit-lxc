@@ -133,6 +133,11 @@ interface CockpitApi {
     format(template: string, ...args: unknown[]): string;
     permission(options: { admin?: boolean; group?: string }): CockpitPermission;
     /**
+     * The session's language, as Cockpit resolved it. Regional forms such as
+     * "ko-kr" appear here, so callers matching a catalogue have to normalise.
+     */
+    language: string;
+    /**
      * Note the absence of `host`. base1's transport exposes the page origin and
      * the application name, not the host it is connected to.
      */

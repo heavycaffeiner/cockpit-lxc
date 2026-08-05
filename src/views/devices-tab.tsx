@@ -21,10 +21,13 @@ import { PlusCircleIcon, TrashIcon } from "@patternfly/react-icons";
 import { useMemo, useState } from "react";
 
 import {
+    K,
     ConflictError,
     type Container,
     type ContainerDriver,
     type ContainerUpdate,
+    _,
+    format,
 } from "../backend";
 
 type DeviceMap = Record<string, Record<string, string>>;
@@ -48,36 +51,82 @@ interface DeviceKindSpec {
 
 export const NIC_SPEC: DeviceKindSpec = {
     type: "nic",
-    title: "Network interfaces",
-    description:
-        "Interfaces attached to this container. An interface supplied by a profile is " +
-        "shown as inherited; adding one here with the same name overrides it.",
-    addLabel: "Add interface",
+    title: _(K.devices_tab.network_interfaces),
+    description: _(K.devices_tab.interfaces_attached_to_this_container_an),
+    addLabel: _(K.devices_tab.add_interface),
     defaults: { type: "nic", network: "incusbr0", name: "eth0" },
     fields: [
-        { key: "network", label: "Network", help: "A managed Incus network, such as incusbr0.", required: true },
-        { key: "name", label: "Name in container", help: "The interface name the container sees.", placeholder: "eth0" },
-        { key: "hwaddr", label: "MAC address", help: "Leave empty to let Incus generate one.", placeholder: "00:16:3e:aa:bb:cc" },
-        { key: "mtu", label: "MTU", help: "Leave empty to inherit from the network." },
-        { key: "ipv4.address", label: "IPv4 address", help: "A fixed address on the network's subnet." },
-        { key: "ipv6.address", label: "IPv6 address", help: "A fixed IPv6 address." },
+        {
+            key: "network",
+            label: _(K.devices_tab.network),
+            help: _(K.devices_tab.a_managed_incus_network_such_as),
+            required: true,
+        },
+        {
+            key: "name",
+            label: _(K.devices_tab.name_in_container),
+            help: _(K.devices_tab.the_interface_name_the_container_sees),
+            placeholder: "eth0",
+        },
+        {
+            key: "hwaddr",
+            label: _(K.devices_tab.mac_address),
+            help: _(K.devices_tab.leave_empty_to_let_incus_generate),
+            placeholder: "00:16:3e:aa:bb:cc",
+        },
+        {
+            key: "mtu",
+            label: _(K.devices_tab.mtu),
+            help: _(K.devices_tab.leave_empty_to_inherit_from_the),
+        },
+        {
+            key: "ipv4.address",
+            label: _(K.devices_tab.ipv4_address),
+            help: _(K.devices_tab.a_fixed_address_on_the_networks),
+        },
+        {
+            key: "ipv6.address",
+            label: _(K.devices_tab.ipv6_address),
+            help: _(K.devices_tab.a_fixed_ipv6_address),
+        },
     ],
 };
 
 export const DISK_SPEC: DeviceKindSpec = {
     type: "disk",
-    title: "Disks and mounts",
-    description:
-        "The root disk and any host paths bound into the container. Removing the root " +
-        "disk leaves the container unable to start.",
-    addLabel: "Add mount",
+    title: _(K.devices_tab.disks_and_mounts),
+    description: _(K.devices_tab.the_root_disk_and_any_host),
+    addLabel: _(K.devices_tab.add_mount),
     defaults: { type: "disk" },
     fields: [
-        { key: "source", label: "Source", help: "A host path, or a storage volume name.", required: true },
-        { key: "path", label: "Path in container", help: "Where it appears inside the container.", placeholder: "/mnt/data" },
-        { key: "pool", label: "Storage pool", help: "Only for volumes, not for host paths." },
-        { key: "size", label: "Size", help: "Only meaningful on the root disk.", placeholder: "10GiB" },
-        { key: "readonly", label: "Read only", help: "Set to true to mount without write access." },
+        {
+            key: "source",
+            label: _(K.devices_tab.source),
+            help: _(K.devices_tab.a_host_path_or_a_storage),
+            required: true,
+        },
+        {
+            key: "path",
+            label: _(K.devices_tab.path_in_container),
+            help: _(K.devices_tab.where_it_appears_inside_the_container),
+            placeholder: "/mnt/data",
+        },
+        {
+            key: "pool",
+            label: _(K.devices_tab.storage_pool),
+            help: _(K.devices_tab.only_for_volumes_not_for_host),
+        },
+        {
+            key: "size",
+            label: _(K.devices_tab.size),
+            help: _(K.devices_tab.only_meaningful_on_the_root_disk),
+            placeholder: "10GiB",
+        },
+        {
+            key: "readonly",
+            label: _(K.devices_tab.read_only),
+            help: _(K.devices_tab.set_to_true_to_mount_without),
+        },
     ],
 };
 
@@ -168,8 +217,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
         } catch (caught) {
             if (caught instanceof ConflictError) {
                 setConflict(
-                    "Another session changed this container while you were editing. " +
-                    "Reload to see the current devices; nothing here has been saved.",
+                    _(K.devices_tab.another_session_changed_this_container_while),
                 );
             } else {
                 setError(errorText(caught));
@@ -194,14 +242,14 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                 <Alert
                     variant="info"
                     isInline
-                    title="This container changed elsewhere while you were editing. Saving will be refused rather than overwrite it."
+                    title={_(K.devices_tab.this_container_changed_elsewhere_while_you)}
                 />
             )}
             {rootDiskRemoved && (
                 <Alert
                     variant="warning"
                     isInline
-                    title="No root disk remains. Incus refuses to start a container without one."
+                    title={_(K.devices_tab.no_root_disk_remains_incus_refuses)}
                 />
             )}
 
@@ -209,19 +257,19 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
 
             {inheritedDevices.length > 0 && (
                 <Card isPlain className="lxc-devices__inherited">
-                    <CardTitle>Inherited from profiles</CardTitle>
+                    <CardTitle>{_(K.devices_tab.inherited_from_profiles)}</CardTitle>
                     <CardBody>
                         {inheritedDevices.map(([name, device]) => (
                             <DescriptionList key={name} isHorizontal isCompact>
                                 <DescriptionListGroup>
                                     <DescriptionListTerm>
-                                        {name} <Label isCompact color="grey">inherited</Label>
+                                        {name} <Label isCompact color="grey">{_(K.devices_tab.inherited)}</Label>
                                     </DescriptionListTerm>
                                     <DescriptionListDescription>
                                         {Object.entries(device)
                                             .filter(([key]) => key !== "type")
                                             .map(([key, value]) => `${key}=${value}`)
-                                            .join("  ") || "no settings"}
+                                            .join("  ") || _(K.devices_tab.no_settings)}
                                     </DescriptionListDescription>
                                 </DescriptionListGroup>
                             </DescriptionList>
@@ -245,7 +293,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                                 <Button
                                     variant="plain"
                                     icon={<TrashIcon />}
-                                    aria-label={`Remove ${name}`}
+                                    aria-label={format(_(K.devices_tab.remove), name)}
                                     onClick={() => {
                                         const next = { ...local };
                                         delete next[name];
@@ -266,7 +314,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                                         id={`lxc-dev-${name}-${field.key}`}
                                         value={device[field.key] ?? ""}
                                         placeholder={field.placeholder ?? ""}
-                                        aria-label={`${field.label} for ${name}`}
+                                        aria-label={format(_(K.devices_tab.for), field.label, name)}
                                         onChange={(_event, value) => {
                                             const nextDevice = { ...device };
                                             if (value === "")
@@ -289,7 +337,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
 
                 {ownDevices.length === 0 && (
                     <p className="lxc-muted">
-                        Nothing of this kind is set on the container itself.
+                        {_(K.devices_tab.nothing_of_this_kind_is_set)}
                     </p>
                 )}
 
@@ -316,10 +364,10 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                         isLoading={busy}
                         onClick={() => void save()}
                     >
-                        Save
+                        {_(K.configuration_tab.save)}
                     </Button>
                     <Button variant="link" isDisabled={!dirty || busy} onClick={discard}>
-                        Discard changes
+                        {_(K.configuration_tab.discard_changes)}
                     </Button>
                 </ActionGroup>
             </Form>

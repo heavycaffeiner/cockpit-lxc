@@ -1,3 +1,8 @@
+import {
+    K,
+    _,
+} from "../backend";
+
 /**
  * The typed configuration surface.
  *
@@ -5,6 +10,10 @@
  * reaches for often enough that a labelled field beats typing a key by hand;
  * everything else stays reachable through the raw editor, which is what keeps
  * the "every setting is editable" promise true as Incus adds keys.
+ *
+ * Built by a function rather than declared as a constant, because the strings
+ * have to be translated after Cockpit's catalogue has loaded. A module-scope
+ * constant would capture the untranslated text at import time.
  */
 
 export type FieldKind = "text" | "number" | "boolean" | "select" | "textarea";
@@ -40,7 +49,7 @@ const validateSize = (value: string): string | null => {
         return null;
     if (SIZE_PATTERN.test(value.trim()))
         return null;
-    return "Expected a size such as 512MiB, 2GiB or 1073741824";
+    return _(K.fields.expected_a_size_such_as_512mib);
 };
 
 const validateMemory = (value: string): string | null => {
@@ -61,262 +70,256 @@ const validateCpu = (value: string): string | null => {
         return null;
     if (/^\d+(-\d+)?(,\d+(-\d+)?)*$/.test(trimmed))
         return null;
-    return "Expected a count such as 4, or a CPU set such as 0-3 or 0,2,4";
+    return _(K.fields.expected_a_count_such_as_4);
 };
 
 const validatePositiveInteger = (value: string): string | null => {
     if (value === "")
         return null;
-    return /^\d+$/.test(value.trim()) ? null : "Expected a whole number";
+    return /^\d+$/.test(value.trim()) ? null : _(K.fields.expected_a_whole_number);
 };
 
 const validatePriority = (value: string): string | null => {
     if (value === "")
         return null;
     if (!/^\d+$/.test(value.trim()))
-        return "Expected a whole number between 0 and 10";
+        return _(K.fields.expected_a_whole_number_between_0);
     const n = Number(value);
-    return n >= 0 && n <= 10 ? null : "Expected a whole number between 0 and 10";
+    return n >= 0 && n <= 10 ? null : _(K.fields.expected_a_whole_number_between_0);
 };
 
-const BOOLEAN_OPTIONS = [
-    { value: "", label: "Inherited" },
-    { value: "true", label: "Enabled" },
-    { value: "false", label: "Disabled" },
-] as const;
+const booleanOptions = () => [
+    { value: "", label: _(K.fields.inherited) },
+    { value: "true", label: _(K.fields.enabled) },
+    { value: "false", label: _(K.fields.disabled) },
+];
 
-export const FIELD_GROUPS: readonly FieldGroup[] = [
+export const fieldGroups = (): readonly FieldGroup[] => [
     {
         id: "resources",
-        title: "Resource limits",
-        description: "Caps enforced through cgroups. An empty field inherits from the profile.",
+        title: _(K.fields.resource_limits),
+        description: _(K.fields.caps_enforced_through_cgroups_an_empty),
         fields: [
             {
                 key: "limits.cpu",
-                label: "CPU",
+                label: _(K.fields.cpu),
                 kind: "text",
-                placeholder: "4 or 0-3",
-                help: "A number of cores, or the exact cores to pin to.",
+                placeholder: _(K.fields.example_4_or_0_3),
+                help: _(K.fields.a_number_of_cores_or_the),
                 validate: validateCpu,
             },
             {
                 key: "limits.cpu.allowance",
-                label: "CPU allowance",
+                label: _(K.fields.cpu_allowance),
                 kind: "text",
-                placeholder: "50% or 25ms/100ms",
-                help: "A share of the available time, or a hard quota per period.",
+                placeholder: _(K.fields.example_50_or_25ms_100ms),
+                help: _(K.fields.a_share_of_the_available_time),
             },
             {
                 key: "limits.cpu.priority",
-                label: "CPU priority",
+                label: _(K.fields.cpu_priority),
                 kind: "number",
                 placeholder: "0-10",
-                help: "Relative weight when containers compete for CPU.",
+                help: _(K.fields.relative_weight_when_containers_compete_for),
                 validate: validatePriority,
             },
             {
                 key: "limits.memory",
-                label: "Memory",
+                label: _(K.fields.memory),
                 kind: "text",
                 placeholder: "512MiB",
-                help: "A size, or a percentage of the host's memory.",
+                help: _(K.fields.a_size_or_a_percentage_of),
                 validate: validateMemory,
             },
             {
                 key: "limits.memory.enforce",
-                label: "Memory enforcement",
+                label: _(K.fields.memory_enforcement),
                 kind: "select",
-                help: "Hard kills on overcommit; soft allows it when the host has room.",
+                help: _(K.fields.hard_kills_on_overcommit_soft_allows),
                 options: [
-                    { value: "", label: "Inherited" },
-                    { value: "hard", label: "Hard" },
-                    { value: "soft", label: "Soft" },
+                    { value: "", label: _(K.fields.inherited) },
+                    { value: "hard", label: _(K.fields.hard) },
+                    { value: "soft", label: _(K.fields.soft) },
                 ],
             },
             {
                 key: "limits.memory.swap",
-                label: "Allow swap",
+                label: _(K.fields.allow_swap),
                 kind: "select",
-                help: "Whether this container's pages may be swapped out.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.whether_this_container_s_pages_may),
+                options: booleanOptions(),
             },
             {
                 key: "limits.processes",
-                label: "Process limit",
+                label: _(K.fields.process_limit),
                 kind: "number",
                 placeholder: "2000",
-                help: "Maximum number of processes.",
+                help: _(K.fields.maximum_number_of_processes),
                 validate: validatePositiveInteger,
             },
             {
                 key: "limits.disk.priority",
-                label: "Disk priority",
+                label: _(K.fields.disk_priority),
                 kind: "number",
                 placeholder: "0-10",
-                help: "Relative I/O weight against other containers.",
+                help: _(K.fields.relative_i_o_weight_against_other),
                 validate: validatePriority,
             },
             {
                 key: "limits.network.priority",
-                label: "Network priority",
+                label: _(K.fields.network_priority),
                 kind: "number",
                 placeholder: "0-10",
-                help: "Relative network weight against other containers.",
+                help: _(K.fields.relative_network_weight_against_other_containers),
                 validate: validatePriority,
             },
         ],
     },
     {
         id: "security",
-        title: "Security",
-        description:
-            "A privileged container's root maps to the host's root. Turn it on only when " +
-            "something in the container genuinely needs it.",
+        title: _(K.fields.security),
+        description: _(K.fields.a_privileged_container_s_root_maps),
         fields: [
             {
                 key: "security.privileged",
-                label: "Privileged",
+                label: _(K.fields.privileged),
                 kind: "select",
-                help: "Runs without a UID mapping. Escaping such a container means host root.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.runs_without_a_uid_mapping_escaping),
+                options: booleanOptions(),
             },
             {
                 key: "security.nesting",
-                label: "Nesting",
+                label: _(K.fields.nesting),
                 kind: "select",
-                help: "Allows containers inside this container.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.allows_containers_inside_this_container),
+                options: booleanOptions(),
             },
             {
                 key: "security.protection.delete",
-                label: "Delete protection",
+                label: _(K.fields.delete_protection),
                 kind: "select",
-                help: "Refuses deletion while set, including from the CLI.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.refuses_deletion_while_set_including_from),
+                options: booleanOptions(),
             },
             {
                 key: "security.idmap.isolated",
-                label: "Isolated id map",
+                label: _(K.fields.isolated_id_map),
                 kind: "select",
-                help: "Gives this container a UID range shared with no other container.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.gives_this_container_a_uid_range),
+                options: booleanOptions(),
             },
             {
                 key: "security.syscalls.intercept.mknod",
-                label: "Intercept mknod",
+                label: _(K.fields.intercept_mknod),
                 kind: "select",
-                help: "Lets the container create device nodes through Incus.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.lets_the_container_create_device_nodes),
+                options: booleanOptions(),
             },
         ],
     },
     {
         id: "boot",
-        title: "Startup and shutdown",
-        description: "What happens to this container when the host boots or stops it.",
+        title: _(K.fields.startup_and_shutdown),
+        description: _(K.fields.what_happens_to_this_container_when),
         fields: [
             {
                 key: "boot.autostart",
-                label: "Start on boot",
+                label: _(K.fields.start_on_boot),
                 kind: "select",
-                help: "Starts with the host. Unset follows Incus's own heuristic.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.starts_with_the_host_unset_follows),
+                options: booleanOptions(),
             },
             {
                 key: "boot.autostart.priority",
-                label: "Autostart priority",
+                label: _(K.fields.autostart_priority),
                 kind: "number",
                 placeholder: "0",
-                help: "Higher starts earlier.",
+                help: _(K.fields.higher_starts_earlier),
                 validate: validatePositiveInteger,
             },
             {
                 key: "boot.autostart.delay",
-                label: "Autostart delay",
+                label: _(K.fields.autostart_delay),
                 kind: "number",
                 placeholder: "0",
-                help: "Seconds to wait after this container before starting the next.",
+                help: _(K.fields.seconds_to_wait_after_this_container),
                 validate: validatePositiveInteger,
             },
             {
                 key: "boot.host_shutdown_timeout",
-                label: "Shutdown timeout",
+                label: _(K.fields.shutdown_timeout),
                 kind: "number",
                 placeholder: "30",
-                help: "Seconds to wait for a clean stop before killing it.",
+                help: _(K.fields.seconds_to_wait_for_a_clean),
                 validate: validatePositiveInteger,
             },
         ],
     },
     {
         id: "snapshots",
-        title: "Automatic snapshots",
-        description:
-            "Incus can take snapshots on a schedule and expire them. Leave the schedule " +
-            "empty to take snapshots only by hand.",
+        title: _(K.fields.automatic_snapshots),
+        description: _(K.fields.incus_can_take_snapshots_on_a),
         fields: [
             {
                 key: "snapshots.schedule",
-                label: "Schedule",
+                label: _(K.fields.schedule),
                 kind: "text",
-                placeholder: "@daily or 0 6 * * *",
-                help: "A cron expression, or one of @hourly, @daily, @weekly, @monthly.",
+                placeholder: _(K.fields.daily_or_0_6),
+                help: _(K.fields.a_cron_expression_or_one_of),
                 extension: "snapshot_scheduling",
             },
             {
                 key: "snapshots.schedule.stopped",
-                label: "Snapshot while stopped",
+                label: _(K.fields.snapshot_while_stopped),
                 kind: "select",
-                help: "Whether the schedule also applies when the container is not running.",
-                options: [...BOOLEAN_OPTIONS],
+                help: _(K.fields.whether_the_schedule_also_applies_when),
+                options: booleanOptions(),
                 extension: "snapshot_scheduling",
             },
             {
                 key: "snapshots.pattern",
-                label: "Name pattern",
+                label: _(K.fields.name_pattern),
                 kind: "text",
                 placeholder: "snap%d",
-                help: "How scheduled snapshots are named. Supports pongo2 templating.",
+                help: _(K.fields.how_scheduled_snapshots_are_named_supports),
                 extension: "snapshot_scheduling",
             },
             {
                 key: "snapshots.expiry",
-                label: "Expiry",
+                label: _(K.fields.expiry),
                 kind: "text",
                 placeholder: "2w",
-                help: "How long a snapshot is kept, for example 6H, 3d, 2w, 1M, 1y.",
+                help: _(K.fields.how_long_a_snapshot_is_kept),
                 extension: "snapshot_scheduling",
                 validate: (value) =>
                     value === "" || /^(\d+[SMHdwmy])+$/.test(value.trim())
                         ? null
-                        : "Expected a duration such as 6H, 3d, 2w, 1M or 1y",
+                        : _(K.fields.expected_a_duration_such_as_6h),
             },
         ],
     },
     {
         id: "cloudinit",
-        title: "cloud-init",
-        description:
-            "Applied on first boot by images that ship cloud-init. Images without it " +
-            "ignore these entirely.",
+        title: _(K.fields.cloud_init),
+        description: _(K.fields.applied_on_first_boot_by_images),
         fields: [
             {
                 key: "cloud-init.user-data",
-                label: "User data",
+                label: _(K.fields.user_data),
                 kind: "textarea",
-                help: "A cloud-config document, starting with #cloud-config.",
+                help: _(K.fields.a_cloud_config_document_starting_with),
             },
             {
                 key: "cloud-init.network-config",
-                label: "Network config",
+                label: _(K.fields.network_config),
                 kind: "textarea",
-                help: "A cloud-init network configuration document.",
+                help: _(K.fields.a_cloud_init_network_configuration_document),
             },
             {
                 key: "cloud-init.vendor-data",
-                label: "Vendor data",
+                label: _(K.fields.vendor_data),
                 kind: "textarea",
-                help: "Vendor data, merged with user data by cloud-init.",
+                help: _(K.fields.vendor_data_merged_with_user_data),
             },
         ],
     },
@@ -327,37 +330,41 @@ export const formLevelProblems = (config: Record<string, string>): string[] => {
     const problems: string[] = [];
 
     const swap = config["limits.memory.swap"];
-    if ((swap === "true" || swap === "false") && !config["limits.memory"]) {
-        problems.push(
-            "A swap setting has no effect without a memory limit; set Memory or clear it.",
-        );
-    }
+    if ((swap === "true" || swap === "false") && !config["limits.memory"])
+        problems.push(_(K.fields.a_swap_setting_has_no_effect));
 
-    if (config["limits.memory.enforce"] && !config["limits.memory"]) {
-        problems.push(
-            "Memory enforcement has no effect without a memory limit; set Memory or clear it.",
-        );
-    }
+    if (config["limits.memory.enforce"] && !config["limits.memory"])
+        problems.push(_(K.fields.memory_enforcement_has_no_effect_without));
 
-    if (config["security.privileged"] === "true" && config["security.idmap.isolated"] === "true") {
-        problems.push(
-            "A privileged container has no id map, so an isolated id map cannot apply.",
-        );
-    }
+    if (config["security.privileged"] === "true" && config["security.idmap.isolated"] === "true")
+        problems.push(_(K.fields.a_privileged_container_has_no_id));
 
     const userData = config["cloud-init.user-data"];
     if (userData !== undefined && userData.trim() !== "" &&
         !userData.trimStart().startsWith("#cloud-config") &&
         !userData.trimStart().startsWith("#!")) {
-        problems.push(
-            "cloud-init user data usually has to begin with #cloud-config or a shebang.",
-        );
+        problems.push(_(K.fields.cloud_init_user_data_usually_has));
     }
 
     return problems;
 };
 
-/** Every key the typed forms own, so the raw editor can exclude them. */
-export const TYPED_KEYS: ReadonlySet<string> = new Set(
-    FIELD_GROUPS.flatMap((group) => group.fields.map((field) => field.key)),
-);
+/**
+ * Every key the typed forms own, so the raw editor can exclude them.
+ *
+ * Listed independently of the groups above, because the keys are not
+ * translatable and deriving them would mean building the translated groups just
+ * to read their key names.
+ */
+export const TYPED_KEYS: ReadonlySet<string> = new Set([
+    "limits.cpu", "limits.cpu.allowance", "limits.cpu.priority",
+    "limits.memory", "limits.memory.enforce", "limits.memory.swap",
+    "limits.processes", "limits.disk.priority", "limits.network.priority",
+    "security.privileged", "security.nesting", "security.protection.delete",
+    "security.idmap.isolated", "security.syscalls.intercept.mknod",
+    "boot.autostart", "boot.autostart.priority", "boot.autostart.delay",
+    "boot.host_shutdown_timeout",
+    "snapshots.schedule", "snapshots.schedule.stopped", "snapshots.pattern",
+    "snapshots.expiry",
+    "cloud-init.user-data", "cloud-init.network-config", "cloud-init.vendor-data",
+]);

@@ -15,7 +15,14 @@ import { PlusCircleIcon, SyncAltIcon } from "@patternfly/react-icons";
 import { Table, Tbody, Td, Th, Thead, Tr, type ThProps } from "@patternfly/react-table";
 import { useMemo, useState } from "react";
 
-import { _, format, type Container, type ContainerDriver, type ContainerState } from "../backend";
+import {
+    K,
+    _,
+    format,
+    type Container,
+    type ContainerDriver,
+    type ContainerState,
+} from "../backend";
 import { ContainerActions, type RowAction } from "../components/container-actions";
 import { ContainerStateLabel, stateName } from "../components/container-state-label";
 import {
@@ -267,7 +274,7 @@ export const ContainerList = ({
                     title={actionError}
                     actionClose={
                         <Button variant="plain" onClick={() => setActionError(null)}
-                            aria-label={_("Dismiss error")}>
+                            aria-label={_(K.container_list.dismiss_error)}>
                             &times;
                         </Button>
                     }
@@ -280,13 +287,13 @@ export const ContainerList = ({
                     <ToolbarItem>
                         <Button variant="primary" icon={<PlusCircleIcon />}
                             onClick={() => setCreating(true)}>
-                            {_("Create container")}
+                            {_(K.container_list.create_container)}
                         </Button>
                     </ToolbarItem>
                     <ToolbarItem>
                         <SearchInput
-                            aria-label={_("Search containers by name, description or address")}
-                            placeholder={_("Search containers")}
+                            aria-label={_(K.container_list.search_containers_by_name_description_or)}
+                            placeholder={_(K.container_list.search_containers)}
                             value={search}
                             onChange={(_event, value) => setSearch(value)}
                             onClear={() => setSearch("")}
@@ -308,14 +315,14 @@ export const ContainerList = ({
                                     onClick={() => setFilterOpen((open) => !open)}
                                     isExpanded={filterOpen}
                                 >
-                                    {stateFilter === "All" ? _("All states") : stateName(stateFilter)}
+                                    {stateFilter === "All" ? _(K.container_list.all_states) : stateName(stateFilter)}
                                 </MenuToggle>
                             )}
                         >
                             <SelectList>
                                 {STATE_FILTERS.map((option) => (
                                     <SelectOption key={option} value={option}>
-                                        {option === "All" ? _("All states") : stateName(option)}
+                                        {option === "All" ? _(K.container_list.all_states) : stateName(option)}
                                     </SelectOption>
                                 ))}
                             </SelectList>
@@ -323,18 +330,18 @@ export const ContainerList = ({
                     </ToolbarItem>
                     <ToolbarItem>
                         <Button variant="secondary" icon={<SyncAltIcon />} onClick={onRefresh}>
-                            {_("Refresh")}
+                            {_(K.container_list.refresh)}
                         </Button>
                     </ToolbarItem>
                     <ToolbarItem align={{ default: "alignEnd" }}>
                         <span className="lxc-count">
-                            {format(_("$0 of $1"), visible.length, containers.length)}
+                            {format(_(K.container_list.of), visible.length, containers.length)}
                         </span>
                     </ToolbarItem>
                 </ToolbarContent>
             </Toolbar>
 
-            <Table aria-label={_("System containers")} variant="compact">
+            <Table aria-label={_(K.container_list.system_containers)} variant="compact">
                 <Thead>
                     {/*
                       * nowrap on every header: a sortable Th puts its label in a
@@ -344,21 +351,21 @@ export const ContainerList = ({
                       * IPv6 address is the only cell here that genuinely needs it.
                       */}
                     <Tr>
-                        <Th modifier="nowrap" sort={sortParams("name", 0)}>{_("Name")}</Th>
-                        <Th modifier="nowrap" sort={sortParams("state", 1)}>{_("State")}</Th>
-                        <Th>{_("Addresses")}</Th>
+                        <Th modifier="nowrap" sort={sortParams("name", 0)}>{_(K.container_list.name)}</Th>
+                        <Th modifier="nowrap" sort={sortParams("state", 1)}>{_(K.container_list.state)}</Th>
+                        <Th>{_(K.container_list.addresses)}</Th>
                         <Th modifier="nowrap" sort={sortParams("architecture", 2)}>
-                            {_("Architecture")}
+                            {_(K.container_list.architecture)}
                         </Th>
-                        <Th modifier="nowrap">{_("Profiles")}</Th>
-                        <Th modifier="nowrap" sort={sortParams("created", 3)}>{_("Created")}</Th>
-                        <Th screenReaderText={_("Actions")} />
+                        <Th modifier="nowrap">{_(K.container_list.profiles)}</Th>
+                        <Th modifier="nowrap" sort={sortParams("created", 3)}>{_(K.container_list.created)}</Th>
+                        <Th screenReaderText={_(K.container_list.actions)} />
                     </Tr>
                 </Thead>
                 <Tbody>
                     {visible.map((container) => (
                         <Tr key={container.name}>
-                            <Td dataLabel={_("Name")}>
+                            <Td dataLabel={_(K.container_list.name)}>
                                 {/*
                                   * A button rather than a link: this changes a
                                   * view rather than navigating to a URL, so a
@@ -379,12 +386,12 @@ export const ContainerList = ({
                                     </div>
                                 )}
                             </Td>
-                            <Td dataLabel={_("State")}>
+                            <Td dataLabel={_(K.container_list.state)}>
                                 <ContainerStateLabel state={container.state} />
                             </Td>
-                            <Td dataLabel={_("Addresses")}>
+                            <Td dataLabel={_(K.container_list.addresses)}>
                                 {displayAddresses(container).length === 0
-                                    ? <span className="lxc-muted">{_("None")}</span>
+                                    ? <span className="lxc-muted">{_(K.container_list.none)}</span>
                                     : (
                                         <ul className="lxc-address-list">
                                             {displayAddresses(container).map((address) => (
@@ -393,9 +400,9 @@ export const ContainerList = ({
                                         </ul>
                                     )}
                             </Td>
-                            <Td dataLabel={_("Architecture")}>{container.architecture}</Td>
-                            <Td dataLabel={_("Profiles")}>{container.profiles.join(", ")}</Td>
-                            <Td dataLabel={_("Created")}>{formatCreated(container.createdAt)}</Td>
+                            <Td dataLabel={_(K.container_list.architecture)}>{container.architecture}</Td>
+                            <Td dataLabel={_(K.container_list.profiles)}>{container.profiles.join(", ")}</Td>
+                            <Td dataLabel={_(K.container_list.created)}>{formatCreated(container.createdAt)}</Td>
                             <Td isActionCell>
                                 <ContainerActions
                                     container={container}
@@ -409,7 +416,7 @@ export const ContainerList = ({
                         <Tr>
                             <Td colSpan={7}>
                                 <span className="lxc-muted">
-                                    {_("No container matches the current filter.")}
+                                    {_(K.container_list.no_container_matches_the_current_filter)}
                                 </span>
                             </Td>
                         </Tr>

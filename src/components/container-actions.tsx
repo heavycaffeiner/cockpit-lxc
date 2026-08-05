@@ -10,7 +10,13 @@ import {
 import { EllipsisVIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 
-import { _, format, type Container, type ContainerState } from "../backend";
+import {
+    K,
+    _,
+    format,
+    type Container,
+    type ContainerState,
+} from "../backend";
 
 export type RowAction =
     | "start"
@@ -50,15 +56,15 @@ const AVAILABLE: Record<ContainerState, RowAction[]> = {
  * not loaded when this module is first evaluated.
  */
 const labels = (): Record<RowAction, string> => ({
-    start: _("Start"),
-    stop: _("Stop"),
-    "force-stop": _("Force stop"),
-    restart: _("Restart"),
-    freeze: _("Freeze"),
-    unfreeze: _("Unfreeze"),
-    rename: _("Rename"),
-    copy: _("Copy"),
-    delete: _("Delete"),
+    start: _(K.container_actions.start),
+    stop: _(K.container_actions.stop),
+    "force-stop": _(K.container_actions.force_stop),
+    restart: _(K.container_actions.restart),
+    freeze: _(K.container_actions.freeze),
+    unfreeze: _(K.container_actions.unfreeze),
+    rename: _(K.container_actions.rename),
+    copy: _(K.container_actions.copy),
+    delete: _(K.container_actions.delete),
 });
 
 interface ContainerActionsProps {
@@ -76,7 +82,7 @@ export const ContainerActions = ({ container, busy, onAction }: ContainerActions
         return (
             <Spinner
                 size="md"
-                aria-label={format(_("$0 is changing state"), container.name)}
+                aria-label={format(_(K.container_actions.is_changing_state), container.name)}
             />
         );
     }
@@ -94,7 +100,7 @@ export const ContainerActions = ({ container, busy, onAction }: ContainerActions
                     isDisabled={actions.length === 0}
                     onClick={() => setOpen((value) => !value)}
                     isExpanded={open}
-                    aria-label={format(_("Actions for $0"), container.name)}
+                    aria-label={format(_(K.container_actions.actions_for), container.name)}
                 >
                     <EllipsisVIcon />
                 </MenuToggle>

@@ -3,7 +3,14 @@ import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerm } from "@xterm/xterm";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import type { ContainerDriver, TerminalHandle, TerminalMode } from "../backend";
+import {
+    K,
+    _,
+    format,
+    type ContainerDriver,
+    type TerminalHandle,
+    type TerminalMode,
+} from "../backend";
 
 import "@xterm/xterm/css/xterm.css";
 
@@ -95,8 +102,7 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
     return (
         <div className="lxc-terminal">
             <p className="lxc-terminal__hint" id={`lxc-term-hint-${mode}`}>
-                Keystrokes go to the container. Press <kbd>Ctrl</kbd> + <kbd>Shift</kbd> +{" "}
-                <kbd>Tab</kbd> to move focus out of the terminal.
+                {_(K.terminal.keystrokes_go_to_the_container_press)}
             </p>
 
             {mode === "console" && (
@@ -104,7 +110,7 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
                     variant="info"
                     isInline
                     isPlain
-                    title="Incus allows one console attachment at a time, so opening this may take the console away from another session."
+                    title={_(K.terminal.incus_allows_one_console_attachment_at)}
                 />
             )}
 
@@ -112,11 +118,11 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
                 <Alert
                     variant="warning"
                     isInline
-                    title={`Session ended: ${closedReason}`}
+                    title={format(_(K.terminal.session_ended), closedReason)}
                     className="lxc-terminal__closed"
                 >
                     <Button variant="link" isInline onClick={reconnect}>
-                        Reconnect
+                        {_(K.terminal.reconnect)}
                     </Button>
                 </Alert>
             )}
@@ -125,7 +131,7 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
                 className="lxc-terminal__viewport"
                 ref={hostRef}
                 role="application"
-                aria-label={`${mode === "console" ? "Console" : "Shell"} for ${container}`}
+                aria-label={format(mode === "console" ? _(K.terminal.console_for) : _(K.terminal.shell_for), container)}
                 aria-describedby={`lxc-term-hint-${mode}`}
             />
         </div>
