@@ -1,11 +1,15 @@
-import { Button, Alert } from "@patternfly/react-core";
+import {
+    Alert,
+    Button,
+    FormSelect,
+    FormSelectOption,
+} from "@patternfly/react-core";
 import { FitAddon } from "@xterm/addon-fit";
 import { Terminal as XTerm } from "@xterm/xterm";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import {
-    K,
-    _,
+    T,
     format,
     type ContainerDriver,
     type TerminalHandle,
@@ -14,10 +18,30 @@ import {
 
 import "@xterm/xterm/css/xterm.css";
 
+/**
+ * Font sizes offered, in whole 4px line-height steps.
+ *
+ * The viewport is `rows * cellHeight`, so a font whose line height is not a
+ * multiple of 4 puts everything below the terminal off the grid. Each size here
+ * is paired with the ratio that lands its line height on one.
+ */
+const FONT_SIZES: readonly { size: number; lineHeight: number }[] = [
+    { size: 12, lineHeight: 1.3333 },   // 16px
+    { size: 14, lineHeight: 1.42857 },  // 20px
+    { size: 16, lineHeight: 1.5 },      // 24px
+    { size: 18, lineHeight: 1.5556 },   // 28px
+];
+
+const DEFAULT_FONT = FONT_SIZES[1] as { size: number; lineHeight: number };
+
+const fontFor = (size: number) => FONT_SIZES.find((entry) => entry.size === size) ?? DEFAULT_FONT;
+
 interface TerminalPaneProps {
     driver: ContainerDriver;
     container: string;
     mode: TerminalMode;
+    fontSize: number;
+    onFontSizeChange: (size: number) => void;
 }
 
 /**
@@ -27,7 +51,13 @@ interface TerminalPaneProps {
  * an unexpected exit is usually the only evidence of why it exited, and clearing
  * it on close would throw that away exactly when it matters.
  */
-export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => {
+export const TerminalPane = ({
+    driver,
+    container,
+    mode,
+    fontSize,
+    onFontSizeChange,
+}: TerminalPaneProps) => {
     const hostRef = useRef<HTMLDivElement | null>(null);
     const termRef = useRef<XTerm | null>(null);
     const handleRef = useRef<TerminalHandle | null>(null);
@@ -35,6 +65,7 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
     const [generation, setGeneration] = useState(0);
 
     const reconnect = useCallback(() => setGeneration((n) => n + 1), []);
+    const font = fontFor(fontSize);
 
     useEffect(() => {
         const host = hostRef.current;
@@ -42,9 +73,8 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
             return;
 
         const term = new XTerm({
-            fontSize: 14,
-            // 4px grid: 14px text on a 1.42857 line height lands on 20px.
-            lineHeight: 1.42857,
+            fontSize: font.size,
+            lineHeight: font.lineHeight,
             cursorBlink: true,
             // xterm renders to a canvas and is otherwise opaque to a screen
             // reader. This maintains a live accessibility buffer instead.
@@ -97,20 +127,37 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
             termRef.current = null;
             handleRef.current = null;
         };
-    }, [driver, container, mode, generation]);
+    }, [driver, container, mode, generation, font.size, font.lineHeight]);
 
     return (
         <div className="lxc-terminal">
-            <p className="lxc-terminal__hint" id={`lxc-term-hint-${mode}`}>
-                {_(K.terminal.keystrokes_go_to_the_container_press)}
-            </p>
+            <div className="lxc-terminal__bar">
+                <p className="lxc-terminal__hint" id={`lxc-term-hint-${mode}`}>
+                    {T.terminal.keystrokes_go_to_the_container_press}
+                </p>
+                <FormSelect
+                    id={`lxc-term-font-${mode}`}
+                    value={String(font.size)}
+                    onChange={(_event, value) => onFontSizeChange(Number(value))}
+                    aria-label={T.terminal.terminal_font_size}
+                    className="lxc-terminal__font"
+                >
+                    {FONT_SIZES.map((entry) => (
+                        <FormSelectOption
+                            key={entry.size}
+                            value={String(entry.size)}
+                            label={format(T.terminal.px, entry.size)}
+                        />
+                    ))}
+                </FormSelect>
+            </div>
 
             {mode === "console" && (
                 <Alert
                     variant="info"
                     isInline
                     isPlain
-                    title={_(K.terminal.incus_allows_one_console_attachment_at)}
+                    title={T.terminal.incus_allows_one_console_attachment_at}
                 />
             )}
 
@@ -118,11 +165,11 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
                 <Alert
                     variant="warning"
                     isInline
-                    title={format(_(K.terminal.session_ended), closedReason)}
+                    title={format(T.terminal.session_ended, closedReason)}
                     className="lxc-terminal__closed"
                 >
                     <Button variant="link" isInline onClick={reconnect}>
-                        {_(K.terminal.reconnect)}
+                        {T.terminal.reconnect}
                     </Button>
                 </Alert>
             )}
@@ -131,7 +178,7 @@ export const TerminalPane = ({ driver, container, mode }: TerminalPaneProps) => 
                 className="lxc-terminal__viewport"
                 ref={hostRef}
                 role="application"
-                aria-label={format(mode === "console" ? _(K.terminal.console_for) : _(K.terminal.shell_for), container)}
+                aria-label={format(mode === "console" ? T.terminal.console_for : T.terminal.shell_for, container)}
                 aria-describedby={`lxc-term-hint-${mode}`}
             />
         </div>

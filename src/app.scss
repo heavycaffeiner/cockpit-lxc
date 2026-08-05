@@ -58,6 +58,17 @@ body {
     margin-block-end: var(--pf-t--global--spacer--sm);
 }
 
+.lxc-terminal__bar {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: baseline;
+    justify-content: space-between;
+}
+
+.lxc-terminal__font {
+    inline-size: 96px;
+}
+
 .lxc-terminal__hint {
     margin-block-end: var(--pf-t--global--spacer--sm);
     color: var(--pf-t--global--text--color--subtle);
@@ -163,4 +174,63 @@ body {
     li + li {
         margin-block-start: var(--pf-t--global--spacer--xs);
     }
+}
+
+.lxc-bulk {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: center;
+}
+
+.lxc-bulk__list {
+    margin-block: var(--pf-t--global--spacer--sm);
+    padding-inline-start: var(--pf-t--global--spacer--lg);
+}
+
+.lxc-blocker {
+    margin-block-start: var(--pf-t--global--spacer--sm);
+}
+
+.lxc-pull-progress {
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
+/*
+ * The remote catalogue can run to hundreds of images, so it scrolls inside the
+ * dialog rather than pushing its footer past the bottom of the window. The
+ * height is a whole number of 4px steps.
+ */
+.lxc-catalogue {
+    max-block-size: 400px;
+    overflow-y: auto;
+}
+
+.lxc-logs .lxc-page__toolbar {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: center;
+    margin-block-end: var(--pf-t--global--spacer--sm);
+}
+
+.lxc-logs__picker {
+    inline-size: 320px;
+}
+
+/*
+ * A fixed-height scroll region rather than a growing block: a log is read from
+ * its end, and a page that grows with the file puts that end below the fold.
+ */
+.lxc-logs__body {
+    max-block-size: 480px;
+    margin: 0;
+    padding: var(--pf-t--global--spacer--sm);
+    overflow: auto;
+    background-color: var(--pf-t--global--background--color--secondary--default);
+    border: 1px solid var(--pf-t--global--border--color--default);
+    border-radius: var(--pf-t--global--border--radius--small);
+    font-family: var(--pf-t--global--font--family--mono);
+    font-size: var(--pf-t--global--font--size--sm);
+    line-height: 20px;
+    white-space: pre-wrap;
+    overflow-wrap: break-word;
 }

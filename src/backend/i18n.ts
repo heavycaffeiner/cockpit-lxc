@@ -1,22 +1,28 @@
 import cockpit from "cockpit";
 
-import { EN_CATALOGUE, EN_PLURAL, type MessageKey } from "../generated/catalogue-en";
-
-export { K, type MessageKey } from "../generated/catalogue-en";
+import {
+    EN_CATALOGUE,
+    EN_PLURAL,
+    K,
+    PLURAL_KEYS,
+    type MessageKey,
+    type PluralKey,
+} from "../generated/catalogue-en";
 
 /**
- * Key-based translation with English as the fallback.
+ * Translation, reached as `T.list.create_container`.
  *
- * Call sites pass a stable key such as `K.list.create_container`, never an
- * English sentence. Using the source text as the identifier, which is the GNU
- * gettext convention, means every edit to the English copy silently orphans
- * every translation of it: the msgid changes, the catalogues no longer match,
- * and the UI quietly falls back to English without anything failing. Keys do
- * not move when wording does.
+ * Message ids are stable keys, never English sentences. Using the source text as
+ * the identifier, which is the GNU gettext convention, means every edit to the
+ * English copy silently orphans every translation of it: the msgid changes, the
+ * catalogues no longer match, and the UI quietly falls back to English without
+ * anything failing. Keys do not move when wording does.
  *
- * The keys are reached through the generated `K` object rather than written out
- * as strings, so a mistyped key fails to compile instead of rendering as itself,
- * and `MessageKey` closes the same hole for a string written by hand.
+ * `T` mirrors the generated key tree, so a call site reads a property instead of
+ * spelling a key into a function. A typo is a compile error rather than a key
+ * rendered into the UI, and an editor can complete and rename them. Entries with
+ * plural forms come out as functions of a count, `T.snapshots.day_ago(3)`, so
+ * there is one way to reach a string rather than two.
  *
  * `po/en.po` is a catalogue like any other rather than an implicit default, so
  * the English strings live in one reviewable place instead of being scattered
@@ -88,19 +94,16 @@ const sessionLocale = (): string => {
 
 const lookup = (key: MessageKey): string | string[] | undefined => {
     const { catalogues } = registry();
-    const locale = sessionLocale();
     // The session's catalogue first, then the bundled English underneath it.
-    return catalogues[locale]?.[key] ?? EN_CATALOGUE[key];
+    return catalogues[sessionLocale()]?.[key] ?? EN_CATALOGUE[key];
 };
 
 /**
- * Translate a key.
- *
  * Returns the key itself when nothing has it, which is deliberately ugly: a key
  * showing through in the UI is a missing entry in en.po, and that should be
  * obvious rather than blend in.
  */
-export const _ = (key: MessageKey): string => {
+const translate = (key: MessageKey): string => {
     const entry = lookup(key);
     if (entry === undefined)
         return key;
@@ -108,26 +111,57 @@ export const _ = (key: MessageKey): string => {
 };
 
 /**
- * Translate a key with a plural form selected by `count`.
+ * The plural form `count` selects.
  *
- * The selector comes from the catalogue's own Plural-Forms header, so a
- * language with one form or with several is handled by its own rule rather than
- * by an English assumption baked in here.
+ * The selector comes from the catalogue's own Plural-Forms header, so a language
+ * with one form and one with several are each handled by their own rule rather
+ * than by an English assumption baked in here.
  */
-export const N_ = (key: MessageKey, count: number): string => {
-    const { plurals } = registry();
-    const locale = sessionLocale();
+const pluralize = (key: MessageKey, count: number): string => {
     const entry = lookup(key);
-
     if (entry === undefined)
         return key;
     if (!Array.isArray(entry))
         return entry;
 
-    const select = plurals[locale] ?? EN_PLURAL;
-    const index = select(count);
-    return entry[index] ?? entry[0] ?? key;
+    const select = registry().plurals[sessionLocale()] ?? EN_PLURAL;
+    return entry[select(count)] ?? entry[0] ?? key;
 };
+
+type Leaf<S extends string> = S extends PluralKey ? (count: number) => string : string;
+
+type Accessor<Node> = {
+    readonly [Name in keyof Node]: Node[Name] extends string
+        ? Leaf<Node[Name]>
+        : Accessor<Node[Name]>;
+};
+
+/**
+ * Mirror the key tree with one that yields text.
+ *
+ * Singular entries are getters rather than precomputed values because the
+ * catalogue arrives with the page while module-scope constants are built at
+ * import time; reading at access time is what lets a spec object declared at
+ * module scope still come out translated.
+ */
+const accessor = (node: Record<string, unknown>): Record<string, unknown> => {
+    const out: Record<string, unknown> = {};
+    for (const [name, value] of Object.entries(node)) {
+        if (typeof value !== "string") {
+            out[name] = accessor(value as Record<string, unknown>);
+        } else if (PLURAL_KEYS.has(value)) {
+            out[name] = (count: number) => pluralize(value as MessageKey, count);
+        } else {
+            Object.defineProperty(out, name, {
+                get: () => translate(value as MessageKey),
+                enumerable: true,
+            });
+        }
+    }
+    return out;
+};
+
+export const T = accessor(K) as Accessor<typeof K>;
 
 /**
  * Substitute $0, $1, ... into a translated string.

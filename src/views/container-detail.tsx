@@ -21,8 +21,7 @@ import { PlayIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 
 import {
-    K,
-    _,
+    T,
     format,
     type Container,
     type ContainerDriver,
@@ -34,17 +33,25 @@ import { TerminalPane } from "../components/terminal";
 import { useContainerDetail } from "../hooks/use-container-detail";
 import { ConfigurationTab } from "./configuration-tab";
 import { DevicesTab, DISK_SPEC, NIC_SPEC } from "./devices-tab";
+import { LogsTab } from "./logs-tab";
 import { OverviewTab } from "./overview-tab";
 import { SnapshotsTab } from "./snapshots-tab";
 
-type DetailTab =
-    | "overview"
-    | "configuration"
-    | "network"
-    | "storage"
-    | "snapshots"
-    | "terminal"
-    | "console";
+const TABS = [
+    "overview",
+    "configuration",
+    "network",
+    "storage",
+    "snapshots",
+    "logs",
+    "terminal",
+    "console",
+] as const;
+
+type DetailTab = typeof TABS[number];
+
+const isDetailTab = (value: string): value is DetailTab =>
+    (TABS as readonly string[]).includes(value);
 
 interface ContainerDetailProps {
     /** From the list, so the header stays current with the event stream. */
@@ -53,6 +60,11 @@ interface ContainerDetailProps {
     profiles: readonly Profile[];
     driver: ContainerDriver;
     generation: number;
+    /** Restored from the stored preferences, so the tab survives a reload. */
+    initialTab: string;
+    terminalFontSize: number;
+    onTabChange: (tab: string) => void;
+    onFontSizeChange: (size: number) => void;
     onBack: () => void;
     onRefresh: () => void;
 }
@@ -63,11 +75,24 @@ export const ContainerDetail = ({
     profiles,
     driver,
     generation,
+    initialTab,
+    terminalFontSize,
+    onTabChange,
+    onFontSizeChange,
     onBack,
     onRefresh,
 }: ContainerDetailProps) => {
-    const [tab, setTab] = useState<DetailTab>("overview");
+    const [tab, setTab] = useState<DetailTab>(
+        isDetailTab(initialTab) ? initialTab : "overview",
+    );
     const [starting, setStarting] = useState(false);
+
+    const selectTab = (next: string) => {
+        if (!isDetailTab(next))
+            return;
+        setTab(next);
+        onTabChange(next);
+    };
 
     /*
      * A second fetch, because writing needs an ETag and the list's bulk request
@@ -98,17 +123,17 @@ export const ContainerDetail = ({
         <EmptyState
             headingLevel="h2"
             icon={PlayIcon}
-            titleText={format(_(K.container_detail.is_not_running), container.name)}
+            titleText={format(T.detail.is_not_running, container.name)}
             status="info"
         >
             <EmptyStateBody>
-                {_(K.container_detail.a_shell_needs_a_running_container)}
+                {T.detail.a_shell_needs_a_running_container}
             </EmptyStateBody>
             <EmptyStateFooter>
                 <EmptyStateActions>
                     <Button variant="primary" isLoading={starting} isDisabled={starting}
                         onClick={() => void start()}>
-                        {format(_(K.container_detail.start), container.name)}
+                        {format(T.detail.start, container.name)}
                     </Button>
                 </EmptyStateActions>
             </EmptyStateFooter>
@@ -119,14 +144,14 @@ export const ContainerDetail = ({
         <Alert
             variant="warning"
             isInline
-            title={detail.error ?? _(K.container_detail.this_container_could_not_be_loaded)}
+            title={detail.error ?? T.detail.this_container_could_not_be_loaded}
         />
     );
 
     return (
         <div className="lxc-detail">
             <Breadcrumb className="lxc-detail__crumbs">
-                <BreadcrumbItem to="#" onClick={onBack}>{_(K.app.containers)}</BreadcrumbItem>
+                <BreadcrumbItem to="#" onClick={onBack}>{T.app.containers}</BreadcrumbItem>
                 <BreadcrumbItem isActive>{container.name}</BreadcrumbItem>
             </Breadcrumb>
 
@@ -143,13 +168,13 @@ export const ContainerDetail = ({
                 <CardBody>
                     <Tabs
                         activeKey={tab}
-                        onSelect={(_event, key) => setTab(key as DetailTab)}
-                        aria-label={format(_(K.container_detail.views_for), container.name)}
+                        onSelect={(_event, key) => selectTab(String(key))}
+                        aria-label={format(T.detail.views_for, container.name)}
                         role="region"
                     >
-                        <Tab eventKey="overview" title={<TabTitleText>{_(K.container_detail.overview)}</TabTitleText>}>
+                        <Tab eventKey="overview" title={<TabTitleText>{T.detail.overview}</TabTitleText>}>
                             {detail.loading && editable === null
-                                ? <Spinner aria-label={_(K.container_detail.loading_container)} />
+                                ? <Spinner aria-label={T.detail.loading_container} />
                                 : editable === null
                                     ? editingUnavailable
                                     : (
@@ -165,9 +190,9 @@ export const ContainerDetail = ({
                                     )}
                         </Tab>
 
-                        <Tab eventKey="configuration" title={<TabTitleText>{_(K.container_detail.configuration)}</TabTitleText>}>
+                        <Tab eventKey="configuration" title={<TabTitleText>{T.detail.configuration}</TabTitleText>}>
                             {editable === null
-                                ? (detail.loading ? <Spinner aria-label={_(K.container_detail.loading)} /> : editingUnavailable)
+                                ? (detail.loading ? <Spinner aria-label={T.detail.loading} /> : editingUnavailable)
                                 : (
                                     <ConfigurationTab
                                         container={editable}
@@ -179,9 +204,9 @@ export const ContainerDetail = ({
                                 )}
                         </Tab>
 
-                        <Tab eventKey="network" title={<TabTitleText>{_(K.container_detail.network)}</TabTitleText>}>
+                        <Tab eventKey="network" title={<TabTitleText>{T.common.network}</TabTitleText>}>
                             {editable === null
-                                ? (detail.loading ? <Spinner aria-label={_(K.container_detail.loading)} /> : editingUnavailable)
+                                ? (detail.loading ? <Spinner aria-label={T.detail.loading} /> : editingUnavailable)
                                 : (
                                     <DevicesTab
                                         spec={NIC_SPEC}
@@ -193,9 +218,9 @@ export const ContainerDetail = ({
                                 )}
                         </Tab>
 
-                        <Tab eventKey="storage" title={<TabTitleText>{_(K.container_detail.storage)}</TabTitleText>}>
+                        <Tab eventKey="storage" title={<TabTitleText>{T.detail.storage}</TabTitleText>}>
                             {editable === null
-                                ? (detail.loading ? <Spinner aria-label={_(K.container_detail.loading)} /> : editingUnavailable)
+                                ? (detail.loading ? <Spinner aria-label={T.detail.loading} /> : editingUnavailable)
                                 : (
                                     <DevicesTab
                                         spec={DISK_SPEC}
@@ -207,7 +232,7 @@ export const ContainerDetail = ({
                                 )}
                         </Tab>
 
-                        <Tab eventKey="snapshots" title={<TabTitleText>{_(K.container_detail.snapshots)}</TabTitleText>}>
+                        <Tab eventKey="snapshots" title={<TabTitleText>{T.detail.snapshots}</TabTitleText>}>
                             <SnapshotsTab
                                 container={container}
                                 driver={driver}
@@ -215,15 +240,37 @@ export const ContainerDetail = ({
                             />
                         </Tab>
 
-                        <Tab eventKey="terminal" title={<TabTitleText>{_(K.container_detail.terminal)}</TabTitleText>}>
+                        <Tab eventKey="logs" title={<TabTitleText>{T.detail.logs}</TabTitleText>}>
+                            {tab === "logs" && (
+                                <LogsTab driver={driver} container={container.name} />
+                            )}
+                        </Tab>
+
+                        <Tab eventKey="terminal" title={<TabTitleText>{T.detail.terminal}</TabTitleText>}>
                             {running
-                                ? <TerminalPane driver={driver} container={container.name} mode="exec" />
+                                ? (
+                                    <TerminalPane
+                                        driver={driver}
+                                        container={container.name}
+                                        mode="exec"
+                                        fontSize={terminalFontSize}
+                                        onFontSizeChange={onFontSizeChange}
+                                    />
+                                )
                                 : notRunning}
                         </Tab>
 
-                        <Tab eventKey="console" title={<TabTitleText>{_(K.container_detail.console)}</TabTitleText>}>
+                        <Tab eventKey="console" title={<TabTitleText>{T.detail.console}</TabTitleText>}>
                             {running
-                                ? <TerminalPane driver={driver} container={container.name} mode="console" />
+                                ? (
+                                    <TerminalPane
+                                        driver={driver}
+                                        container={container.name}
+                                        mode="console"
+                                        fontSize={terminalFontSize}
+                                        onFontSizeChange={onFontSizeChange}
+                                    />
+                                )
                                 : notRunning}
                         </Tab>
                     </Tabs>

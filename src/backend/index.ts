@@ -12,7 +12,7 @@ export type {
     SetStateOptions,
 } from "./driver";
 
-export { K, _, N_, format, type MessageKey } from "./i18n";
+export { T, format } from "./i18n";
 
 export { watchAdmin } from "./permission";
 export type { AdminWatch } from "./permission";
@@ -41,10 +41,14 @@ export type {
     CreateContainerSpec,
     Image,
     LifecycleEvent,
+    LogFile,
     Metrics,
     Network,
     NetworkAddress,
     Profile,
+    Remote,
+    RemoteImage,
+    ResourceUpdate,
     ServerInfo,
     Snapshot,
     StoragePool,

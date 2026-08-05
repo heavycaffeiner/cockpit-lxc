@@ -9,18 +9,22 @@ second credential.
 
 ## What it does
 
-- **Lifecycle** — create, start, stop, force stop, restart, freeze, unfreeze, rename and
-  delete. Actions are offered per state, so the menu never shows something the API would
-  reject.
-- **Configuration** — resource limits, security posture, boot behaviour, automatic
+- **Lifecycle**: create, start, stop, force stop, restart, freeze, unfreeze, rename, copy
+  and delete, one container at a time or a selection at once. Actions are offered per
+  state, so the menu never shows something the API would reject.
+- **Configuration**: resource limits, security posture, boot behaviour, automatic
   snapshots and cloud-init as labelled fields, plus a raw key/value editor covering
   everything else including `raw.lxc`.
-- **Devices** — network interfaces and disk mounts, with profile-supplied devices shown as
+- **Devices**: network interfaces and disk mounts, with profile-supplied devices shown as
   inherited rather than silently copied onto the container.
-- **Snapshots** — create, restore and delete, with schedule and expiry configurable.
-- **Images** — browse what is cached, pull from a remote, name and delete.
-- **Terminal and console** — an interactive shell and the tty console, over xterm.js.
-- **Live updates** — the list follows `incus monitor`, and says so when it cannot.
+- **Snapshots**: create, restore, rename and delete, with schedule and expiry configurable.
+- **Images**: browse a remote's catalogue and pull from it, then name, list and delete what
+  is cached locally.
+- **Profiles, networks and storage pools**: their own pages, each with create, edit and
+  delete, because a container's configuration refers to all three.
+- **Logs**: the log files Incus keeps for an instance, tailed.
+- **Terminal and console**: an interactive shell and the tty console, over xterm.js.
+- **Live updates**: the list follows `incus monitor`, and says so when it cannot.
 
 ## Requirements
 
@@ -141,7 +145,7 @@ block-size: 417px;
 ```
 build.js                     esbuild driver
 build/stylelint-4px-grid.js  the 4px gate
-build/gen-en.mjs             bundles po/en.po and generates the key object
+build/gen-en.mjs             bundles po/en.po and generates the key tree
 build/check-catalogues.mjs   the catalogue gate, in place of xgettext
 packaging/                   rpm spec and debian packaging
 po/en.po, po/ko.po           the catalogues, keyed by stable message id
@@ -151,11 +155,13 @@ src/
   manifest.json              Cockpit package manifest, including its CSP
   index.html                 loads base1/cockpit.js as a classic script
   theme.ts                   follows Cockpit's dark/light setting
+  prefs.ts                   browser-local presentation state
   config/fields.ts           the typed configuration surface
   backend/                   the only place that may import cockpit
     driver.ts                the ContainerDriver interface
     i18n.ts                  translation, with English as the fallback layer
-    incus/                   the Incus implementation
+    incus/                   the Incus implementation, plus the CLI-backed
+                             remote list the REST API has no endpoint for
   generated/                 written by gen-en.mjs, not edited
   views/, components/, hooks/
 ```
@@ -178,14 +184,17 @@ convention and it silently orphans translations: edit the English wording and th
 changes with it, no catalogue matches any more, and the UI quietly falls back to English
 without anything failing.
 
-To add a string, put it in `po/en.po` and in every other catalogue you can, then use it:
+To add a string, put it in `po/en.po` and in every other catalogue you can, then read it:
 
 ```tsx
-_(K.container_list.create_container)
+T.list.create_container                 // a string
+T.snapshots.day_ago(days)               // an entry with plural forms
+format(T.list.selected, count)          // $0, $1, ... substituted
 ```
 
-`K` is generated from `po/en.po`, so the key is completed by the editor and a typo is a
-compile error rather than a key showing through in the UI. `npm run check` fails on a key
+`T` is generated from `po/en.po`, so the key is completed by the editor and a typo is a
+compile error rather than a key showing through in the UI. Put a string more than one view
+needs in the `common` namespace instead of once per view. `npm run check` fails on a key
 `src` uses that `en.po` lacks, on a key `en.po` carries that nothing uses, and on a key in
 another catalogue that English does not have.
 

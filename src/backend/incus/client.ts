@@ -127,8 +127,13 @@ export class IncusClient {
         this.http.close("terminated");
     }
 
-    /** Issue one HTTP request and return its parsed envelope. */
-    private async raw(path: string, options: RequestOptions = {}): Promise<Envelope> {
+    /**
+     * Issue one HTTP request and return its body verbatim.
+     *
+     * Most endpoints answer with an envelope, but not all: a log file comes back
+     * as the file, so the body cannot be parsed unconditionally.
+     */
+    async text(path: string, options: RequestOptions = {}): Promise<string> {
         const { method = "GET", body, headers = {}, onHeaders } = options;
 
         const requestHeaders: Record<string, string> = { ...headers };
@@ -154,14 +159,16 @@ export class IncusClient {
         if (onHeaders !== undefined)
             request.response((_status, responseHeaders) => onHeaders(responseHeaders));
 
-        let text: string;
         try {
-            text = await request;
+            return await request;
         } catch (reason) {
             throw classifyTransportError(reason);
         }
+    }
 
-        return parseEnvelope(text);
+    /** Issue one HTTP request and return its parsed envelope. */
+    private async raw(path: string, options: RequestOptions = {}): Promise<Envelope> {
+        return parseEnvelope(await this.text(path, options));
     }
 
     /**

@@ -2,11 +2,7 @@ import { Button, TextInput, Tooltip } from "@patternfly/react-core";
 import { MinusCircleIcon, PlusCircleIcon } from "@patternfly/react-icons";
 import { useMemo, useState } from "react";
 
-import {
-    K,
-    _,
-    format,
-} from "../backend";
+import { T, format } from "../backend";
 
 /**
  * Incus stores environment variables as config keys under this prefix. The UI
@@ -90,9 +86,9 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
             <table className="lxc-raw__table">
                 <thead>
                     <tr>
-                        <th scope="col">{_(K.environment_editor.variable)}</th>
-                        <th scope="col">{_(K.environment_editor.value)}</th>
-                        <th scope="col"><span className="pf-v6-screen-reader">{_(K.environment_editor.remove)}</span></th>
+                        <th scope="col">{T.environment.variable}</th>
+                        <th scope="col">{T.environment.value}</th>
+                        <th scope="col"><span className="pf-v6-screen-reader">{T.environment.remove}</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -101,7 +97,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                             <td>
                                 <TextInput
                                     value={row.name}
-                                    aria-label={format(_(K.environment_editor.environment_variable), index + 1)}
+                                    aria-label={format(T.environment.environment_variable, index + 1)}
                                     validated={invalid(row.name) ? "error" : "default"}
                                     onChange={(_event, value) =>
                                         update(rows.map((r) =>
@@ -111,18 +107,18 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                             <td>
                                 <TextInput
                                     value={row.value}
-                                    aria-label={format(_(K.environment_editor.value_for), row.name.trim() || format(_(K.environment_editor.variable_2), index + 1))}
+                                    aria-label={format(T.environment.value_for, row.name.trim() || format(T.environment.variable_2, index + 1))}
                                     onChange={(_event, value) =>
                                         update(rows.map((r) =>
                                             r.id === row.id ? { ...r, value } : r))}
                                 />
                             </td>
                             <td>
-                                <Tooltip content={format(_(K.devices_tab.remove), row.name.trim() || _(K.environment_editor.this_variable))}>
+                                <Tooltip content={format(T.devices.remove, row.name.trim() || T.environment.this_variable)}>
                                     <Button
                                         variant="plain"
                                         icon={<MinusCircleIcon />}
-                                        aria-label={format(_(K.devices_tab.remove), row.name.trim() || format(_(K.environment_editor.variable_2), index + 1))}
+                                        aria-label={format(T.devices.remove, row.name.trim() || format(T.environment.variable_2, index + 1))}
                                         onClick={() => update(rows.filter((r) => r.id !== row.id))}
                                     />
                                 </Tooltip>
@@ -133,7 +129,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                         <tr>
                             <td colSpan={3}>
                                 <span className="lxc-muted">
-                                    {_(K.environment_editor.no_environment_variables_are_set_on)}
+                                    {T.environment.no_environment_variables_are_set_on}
                                 </span>
                             </td>
                         </tr>
@@ -143,7 +139,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
 
             {rows.some((row) => invalid(row.name)) && (
                 <p className="lxc-raw__problem">
-                    {_(K.environment_editor.a_variable_name_must_start_with)}
+                    {T.environment.a_variable_name_must_start_with}
                 </p>
             )}
 
@@ -156,7 +152,7 @@ export const EnvironmentEditor = ({ localConfig, onChange }: EnvironmentEditorPr
                     update(next);
                 }}
             >
-                {_(K.environment_editor.add_variable)}
+                {T.environment.add_variable}
             </Button>
         </div>
     );

@@ -21,13 +21,12 @@ import { PlusCircleIcon, TrashIcon } from "@patternfly/react-icons";
 import { useMemo, useState } from "react";
 
 import {
-    K,
     ConflictError,
+    T,
+    format,
     type Container,
     type ContainerDriver,
     type ContainerUpdate,
-    _,
-    format,
 } from "../backend";
 
 type DeviceMap = Record<string, Record<string, string>>;
@@ -51,81 +50,81 @@ interface DeviceKindSpec {
 
 export const NIC_SPEC: DeviceKindSpec = {
     type: "nic",
-    title: _(K.devices_tab.network_interfaces),
-    description: _(K.devices_tab.interfaces_attached_to_this_container_an),
-    addLabel: _(K.devices_tab.add_interface),
+    title: T.devices.network_interfaces,
+    description: T.devices.interfaces_attached_to_this_container_an,
+    addLabel: T.devices.add_interface,
     defaults: { type: "nic", network: "incusbr0", name: "eth0" },
     fields: [
         {
             key: "network",
-            label: _(K.devices_tab.network),
-            help: _(K.devices_tab.a_managed_incus_network_such_as),
+            label: T.common.network,
+            help: T.devices.a_managed_incus_network_such_as,
             required: true,
         },
         {
             key: "name",
-            label: _(K.devices_tab.name_in_container),
-            help: _(K.devices_tab.the_interface_name_the_container_sees),
+            label: T.devices.name_in_container,
+            help: T.devices.the_interface_name_the_container_sees,
             placeholder: "eth0",
         },
         {
             key: "hwaddr",
-            label: _(K.devices_tab.mac_address),
-            help: _(K.devices_tab.leave_empty_to_let_incus_generate),
+            label: T.devices.mac_address,
+            help: T.devices.leave_empty_to_let_incus_generate,
             placeholder: "00:16:3e:aa:bb:cc",
         },
         {
             key: "mtu",
-            label: _(K.devices_tab.mtu),
-            help: _(K.devices_tab.leave_empty_to_inherit_from_the),
+            label: T.devices.mtu,
+            help: T.devices.leave_empty_to_inherit_from_the,
         },
         {
             key: "ipv4.address",
-            label: _(K.devices_tab.ipv4_address),
-            help: _(K.devices_tab.a_fixed_address_on_the_networks),
+            label: T.devices.ipv4_address,
+            help: T.devices.a_fixed_address_on_the_networks,
         },
         {
             key: "ipv6.address",
-            label: _(K.devices_tab.ipv6_address),
-            help: _(K.devices_tab.a_fixed_ipv6_address),
+            label: T.devices.ipv6_address,
+            help: T.devices.a_fixed_ipv6_address,
         },
     ],
 };
 
 export const DISK_SPEC: DeviceKindSpec = {
     type: "disk",
-    title: _(K.devices_tab.disks_and_mounts),
-    description: _(K.devices_tab.the_root_disk_and_any_host),
-    addLabel: _(K.devices_tab.add_mount),
+    title: T.devices.disks_and_mounts,
+    description: T.devices.the_root_disk_and_any_host,
+    addLabel: T.devices.add_mount,
     defaults: { type: "disk" },
     fields: [
         {
             key: "source",
-            label: _(K.devices_tab.source),
-            help: _(K.devices_tab.a_host_path_or_a_storage),
+            label: T.common.source,
+            help: T.devices.a_host_path_or_a_storage,
             required: true,
         },
         {
             key: "path",
-            label: _(K.devices_tab.path_in_container),
-            help: _(K.devices_tab.where_it_appears_inside_the_container),
+            label: T.devices.path_in_container,
+            help: T.devices.where_it_appears_inside_the_container,
             placeholder: "/mnt/data",
         },
         {
             key: "pool",
-            label: _(K.devices_tab.storage_pool),
-            help: _(K.devices_tab.only_for_volumes_not_for_host),
+            label: T.devices.storage_pool,
+            help: T.devices.only_for_volumes_not_for_host,
         },
         {
             key: "size",
-            label: _(K.devices_tab.size),
-            help: _(K.devices_tab.only_meaningful_on_the_root_disk),
+            label: T.common.size,
+            help: T.devices.only_meaningful_on_the_root_disk,
             placeholder: "10GiB",
         },
         {
             key: "readonly",
-            label: _(K.devices_tab.read_only),
-            help: _(K.devices_tab.set_to_true_to_mount_without),
+            label: T.devices.read_only,
+            help: T.devices.set_to_true_to_mount_without,
         },
     ],
 };
@@ -217,7 +216,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
         } catch (caught) {
             if (caught instanceof ConflictError) {
                 setConflict(
-                    _(K.devices_tab.another_session_changed_this_container_while),
+                    T.devices.another_session_changed_this_container_while,
                 );
             } else {
                 setError(errorText(caught));
@@ -242,14 +241,14 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                 <Alert
                     variant="info"
                     isInline
-                    title={_(K.devices_tab.this_container_changed_elsewhere_while_you)}
+                    title={T.devices.this_container_changed_elsewhere_while_you}
                 />
             )}
             {rootDiskRemoved && (
                 <Alert
                     variant="warning"
                     isInline
-                    title={_(K.devices_tab.no_root_disk_remains_incus_refuses)}
+                    title={T.devices.no_root_disk_remains_incus_refuses}
                 />
             )}
 
@@ -257,19 +256,19 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
 
             {inheritedDevices.length > 0 && (
                 <Card isPlain className="lxc-devices__inherited">
-                    <CardTitle>{_(K.devices_tab.inherited_from_profiles)}</CardTitle>
+                    <CardTitle>{T.devices.inherited_from_profiles}</CardTitle>
                     <CardBody>
                         {inheritedDevices.map(([name, device]) => (
                             <DescriptionList key={name} isHorizontal isCompact>
                                 <DescriptionListGroup>
                                     <DescriptionListTerm>
-                                        {name} <Label isCompact color="grey">{_(K.devices_tab.inherited)}</Label>
+                                        {name} <Label isCompact color="grey">{T.devices.inherited}</Label>
                                     </DescriptionListTerm>
                                     <DescriptionListDescription>
                                         {Object.entries(device)
                                             .filter(([key]) => key !== "type")
                                             .map(([key, value]) => `${key}=${value}`)
-                                            .join("  ") || _(K.devices_tab.no_settings)}
+                                            .join("  ") || T.devices.no_settings}
                                     </DescriptionListDescription>
                                 </DescriptionListGroup>
                             </DescriptionList>
@@ -293,7 +292,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                                 <Button
                                     variant="plain"
                                     icon={<TrashIcon />}
-                                    aria-label={format(_(K.devices_tab.remove), name)}
+                                    aria-label={format(T.devices.remove, name)}
                                     onClick={() => {
                                         const next = { ...local };
                                         delete next[name];
@@ -314,7 +313,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                                         id={`lxc-dev-${name}-${field.key}`}
                                         value={device[field.key] ?? ""}
                                         placeholder={field.placeholder ?? ""}
-                                        aria-label={format(_(K.devices_tab.for), field.label, name)}
+                                        aria-label={format(T.devices.for, field.label, name)}
                                         onChange={(_event, value) => {
                                             const nextDevice = { ...device };
                                             if (value === "")
@@ -337,7 +336,7 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
 
                 {ownDevices.length === 0 && (
                     <p className="lxc-muted">
-                        {_(K.devices_tab.nothing_of_this_kind_is_set)}
+                        {T.devices.nothing_of_this_kind_is_set}
                     </p>
                 )}
 
@@ -364,10 +363,10 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                         isLoading={busy}
                         onClick={() => void save()}
                     >
-                        {_(K.configuration_tab.save)}
+                        {T.common.save}
                     </Button>
                     <Button variant="link" isDisabled={!dirty || busy} onClick={discard}>
-                        {_(K.configuration_tab.discard_changes)}
+                        {T.config.discard_changes}
                     </Button>
                 </ActionGroup>
             </Form>

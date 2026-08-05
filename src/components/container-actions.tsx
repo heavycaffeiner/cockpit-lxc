@@ -11,8 +11,7 @@ import { EllipsisVIcon } from "@patternfly/react-icons";
 import { useState } from "react";
 
 import {
-    K,
-    _,
+    T,
     format,
     type Container,
     type ContainerState,
@@ -55,16 +54,16 @@ const AVAILABLE: Record<ContainerState, RowAction[]> = {
  * Built on each render rather than at module scope, because the catalogue is
  * not loaded when this module is first evaluated.
  */
-const labels = (): Record<RowAction, string> => ({
-    start: _(K.container_actions.start),
-    stop: _(K.container_actions.stop),
-    "force-stop": _(K.container_actions.force_stop),
-    restart: _(K.container_actions.restart),
-    freeze: _(K.container_actions.freeze),
-    unfreeze: _(K.container_actions.unfreeze),
-    rename: _(K.container_actions.rename),
-    copy: _(K.container_actions.copy),
-    delete: _(K.container_actions.delete),
+export const labels = (): Record<RowAction, string> => ({
+    start: T.actions.start,
+    stop: T.actions.stop,
+    "force-stop": T.actions.force_stop,
+    restart: T.actions.restart,
+    freeze: T.actions.freeze,
+    unfreeze: T.actions.unfreeze,
+    rename: T.common.rename,
+    copy: T.actions.copy,
+    delete: T.common.delete,
 });
 
 interface ContainerActionsProps {
@@ -82,7 +81,7 @@ export const ContainerActions = ({ container, busy, onAction }: ContainerActions
         return (
             <Spinner
                 size="md"
-                aria-label={format(_(K.container_actions.is_changing_state), container.name)}
+                aria-label={format(T.actions.is_changing_state, container.name)}
             />
         );
     }
@@ -100,7 +99,7 @@ export const ContainerActions = ({ container, busy, onAction }: ContainerActions
                     isDisabled={actions.length === 0}
                     onClick={() => setOpen((value) => !value)}
                     isExpanded={open}
-                    aria-label={format(_(K.container_actions.actions_for), container.name)}
+                    aria-label={format(T.actions.actions_for, container.name)}
                 >
                     <EllipsisVIcon />
                 </MenuToggle>

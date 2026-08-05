@@ -6,9 +6,13 @@ import type {
     ContainerUpdate,
     CreateContainerSpec,
     Image,
+    LogFile,
     Metrics,
     Network,
     Profile,
+    Remote,
+    RemoteImage,
+    ResourceUpdate,
     ServerInfo,
     Snapshot,
     StoragePool,
@@ -17,19 +21,18 @@ import type {
 } from "../types";
 import { IncusClient } from "./client";
 import { subscribeLifecycle } from "./events";
+import { listRemoteImages, listRemotes } from "./remotes";
 import { openTerminal } from "./terminal";
 
 /**
- * Image servers by remote name.
+ * The image server a stock install ships with.
  *
- * Incus stores remotes client-side, so the daemon cannot resolve "images:" for
- * us. Only the one remote a stock install ships with is mapped; anything else
- * falls back to it rather than failing, since a wrong server produces a clear
- * "image not found" while an unmapped name would produce a confusing crash.
+ * Used only when the CLI's remote list cannot be read or does not name the
+ * remote being asked for. A wrong server produces a clear "image not found",
+ * whereas failing outright would break a pull for a host whose CLI config is
+ * unreadable for some unrelated reason.
  */
-const IMAGE_SERVERS: Record<string, string> = {
-    images: "https://images.linuxcontainers.org",
-};
+const DEFAULT_IMAGE_SERVER = "https://images.linuxcontainers.org";
 
 /**
  * Keys where the operator's edit and the server's current value disagree.
@@ -88,6 +91,30 @@ export class IncusDriver implements ContainerDriver {
 
     close(): void {
         this.client.close();
+    }
+
+    /**
+     * Where a remote name points.
+     *
+     * The daemon has no idea what "images:" means, so the address has to come
+     * from the CLI's own remote list. Reading it per pull rather than caching it
+     * keeps a remote added while the page is open usable without a reload, and a
+     * pull is already a network operation measured in seconds.
+     */
+    private async imageServer(remote: string): Promise<{ server: string; protocol: string }> {
+        try {
+            const match = (await listRemotes()).find((entry) => entry.name === remote);
+            if (match !== undefined && match.address !== "" && !match.isLocal) {
+                return {
+                    server: match.address,
+                    protocol: match.protocol === "" ? "simplestreams" : match.protocol,
+                };
+            }
+        } catch {
+            // The CLI could not be read. The default server is a better answer
+            // than refusing to pull at all.
+        }
+        return { server: DEFAULT_IMAGE_SERVER, protocol: "simplestreams" };
     }
 
     async probe(): Promise<ServerInfo> {
@@ -151,6 +178,48 @@ export class IncusDriver implements ContainerDriver {
         return wire.map(mapProfile).filter((p): p is Profile => p !== null);
     }
 
+    async createProfile(name: string, update: ResourceUpdate): Promise<void> {
+        await this.client.request<unknown>("/1.0/profiles", {
+            method: "POST",
+            body: {
+                name,
+                description: update.description,
+                config: update.config,
+                devices: update.devices ?? {},
+            },
+        });
+    }
+
+    /**
+     * Replace a profile.
+     *
+     * PUT rather than PATCH for the same reason the instance forms use it: a key
+     * dropped from the form has to be removed, and PATCH cannot express removal.
+     */
+    async updateProfile(name: string, update: ResourceUpdate): Promise<void> {
+        await this.client.request<unknown>(`/1.0/profiles/${encodeURIComponent(name)}`, {
+            method: "PUT",
+            body: {
+                description: update.description,
+                config: update.config,
+                devices: update.devices ?? {},
+            },
+        });
+    }
+
+    /**
+     * Delete a profile.
+     *
+     * Incus refuses while containers still apply it, and that refusal is the
+     * right one: silently detaching a profile from running containers would
+     * change their configuration without anyone asking.
+     */
+    async deleteProfile(name: string): Promise<void> {
+        await this.client.request<unknown>(`/1.0/profiles/${encodeURIComponent(name)}`, {
+            method: "DELETE",
+        });
+    }
+
     async listNetworks(): Promise<Network[]> {
         const wire = await this.client.request<WireNetwork[]>("/1.0/networks?recursion=1");
         if (!Array.isArray(wire))
@@ -159,12 +228,72 @@ export class IncusDriver implements ContainerDriver {
         return wire.map(mapNetwork).filter((n): n is Network => n !== null);
     }
 
+    async createNetwork(name: string, type: string, update: ResourceUpdate): Promise<void> {
+        await this.client.request<unknown>("/1.0/networks", {
+            method: "POST",
+            body: {
+                name,
+                type,
+                description: update.description,
+                config: update.config,
+            },
+        });
+    }
+
+    async updateNetwork(name: string, update: ResourceUpdate): Promise<void> {
+        await this.client.request<unknown>(`/1.0/networks/${encodeURIComponent(name)}`, {
+            method: "PUT",
+            body: { description: update.description, config: update.config },
+        });
+    }
+
+    async deleteNetwork(name: string): Promise<void> {
+        await this.client.request<unknown>(`/1.0/networks/${encodeURIComponent(name)}`, {
+            method: "DELETE",
+        });
+    }
+
     async listStoragePools(): Promise<StoragePool[]> {
         const wire = await this.client.request<WireStoragePool[]>("/1.0/storage-pools?recursion=1");
         if (!Array.isArray(wire))
             throw new DriverError("parse", "Incus returned a non-list of storage pools");
 
         return wire.map(mapStoragePool).filter((s): s is StoragePool => s !== null);
+    }
+
+    async createStoragePool(
+        name: string,
+        driver: string,
+        update: ResourceUpdate,
+    ): Promise<void> {
+        await this.client.request<unknown>("/1.0/storage-pools", {
+            method: "POST",
+            body: {
+                name,
+                driver,
+                description: update.description,
+                config: update.config,
+            },
+        });
+    }
+
+    async updateStoragePool(name: string, update: ResourceUpdate): Promise<void> {
+        await this.client.request<unknown>(`/1.0/storage-pools/${encodeURIComponent(name)}`, {
+            method: "PUT",
+            body: { description: update.description, config: update.config },
+        });
+    }
+
+    /**
+     * Delete a storage pool.
+     *
+     * This destroys the pool's backing store. Incus refuses while any volume
+     * lives on it, which is what keeps the guard meaningful rather than advisory.
+     */
+    async deleteStoragePool(name: string): Promise<void> {
+        await this.client.request<unknown>(`/1.0/storage-pools/${encodeURIComponent(name)}`, {
+            method: "DELETE",
+        });
     }
 
     /**
@@ -224,12 +353,7 @@ export class IncusDriver implements ContainerDriver {
          */
         const source = spec.remote === "local"
             ? { type: "image", alias: spec.image }
-            : {
-                type: "image",
-                protocol: "simplestreams",
-                server: IMAGE_SERVERS[spec.remote] ?? IMAGE_SERVERS["images"],
-                alias: spec.image,
-            };
+            : { type: "image", alias: spec.image, ...await this.imageServer(spec.remote) };
 
         await this.client.request<unknown>("/1.0/instances", {
             method: "POST",
@@ -402,11 +526,71 @@ export class IncusDriver implements ContainerDriver {
         });
     }
 
+    async renameSnapshot(name: string, snapshot: string, newName: string): Promise<void> {
+        await this.client.request<unknown>(
+            `/1.0/instances/${encodeURIComponent(name)}/snapshots/${encodeURIComponent(snapshot)}`,
+            { method: "POST", body: { name: newName } },
+        );
+    }
+
     async deleteSnapshot(name: string, snapshot: string): Promise<void> {
         await this.client.request<unknown>(
             `/1.0/instances/${encodeURIComponent(name)}/snapshots/${encodeURIComponent(snapshot)}`,
             { method: "DELETE" },
         );
+    }
+
+    /**
+     * The instance's log files.
+     *
+     * Incus answers with a list of URLs rather than of names, so the last path
+     * segment is the file. An instance that has never run has no log directory
+     * and Incus answers 404; that is an empty list, not a failure.
+     *
+     * The list is shorter than the log directory: Incus serves lxc.log and
+     * rejects the rest, `console.log` included, with "log file name not valid".
+     * That is the API's decision, not a filter applied here. The console output
+     * is reachable live through the Console tab instead.
+     */
+    async listLogs(name: string): Promise<LogFile[]> {
+        const path = `/1.0/instances/${encodeURIComponent(name)}/logs`;
+
+        let wire: string[];
+        try {
+            wire = await this.client.request<string[]>(path);
+        } catch (error) {
+            if (error instanceof ApiError && error.status === 404)
+                return [];
+            throw error;
+        }
+
+        if (!Array.isArray(wire))
+            return [];
+
+        return wire
+            .filter((entry): entry is string => typeof entry === "string")
+            .map((entry) => {
+                const last = entry.split("/").filter((s) => s !== "").pop() ?? entry;
+                return { name: decodeURIComponent(last), size: null };
+            })
+            .sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    /**
+     * The tail of one log file.
+     *
+     * The body is the file itself rather than an envelope, so it is read raw.
+     * Only the tail is kept: a console log grows without bound, and rendering
+     * megabytes of it into the DOM would hang the page to show the part nobody
+     * asked for.
+     */
+    async readLog(name: string, file: string, tailLines: number): Promise<string> {
+        const text = await this.client.text(
+            `/1.0/instances/${encodeURIComponent(name)}/logs/${encodeURIComponent(file)}`,
+        );
+
+        const lines = text.split("\n");
+        return lines.length <= tailLines ? text : lines.slice(-tailLines).join("\n");
     }
 
     async listImages(): Promise<Image[]> {
@@ -415,6 +599,14 @@ export class IncusDriver implements ContainerDriver {
             throw new DriverError("parse", "Incus returned a non-list of images");
 
         return wire.map(mapImage).filter((i): i is Image => i !== null);
+    }
+
+    listRemotes(): Promise<Remote[]> {
+        return listRemotes();
+    }
+
+    listRemoteImages(remote: string): Promise<RemoteImage[]> {
+        return listRemoteImages(remote);
     }
 
     /**
@@ -435,9 +627,8 @@ export class IncusDriver implements ContainerDriver {
                 source: {
                     type: "image",
                     mode: "pull",
-                    protocol: "simplestreams",
-                    server: IMAGE_SERVERS[remote] ?? IMAGE_SERVERS["images"],
                     alias,
+                    ...await this.imageServer(remote),
                 },
                 // Cached rather than public: the image is for this host's use,
                 // not for serving on to others.

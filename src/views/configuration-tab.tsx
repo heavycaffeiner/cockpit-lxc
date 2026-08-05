@@ -21,13 +21,12 @@ import {
 import { useMemo, useState } from "react";
 
 import {
-    K,
     ConflictError,
+    T,
     type Container,
     type ContainerDriver,
     type ContainerUpdate,
     type ServerInfo,
-    _,
 } from "../backend";
 import { fieldGroups, TYPED_KEYS, formLevelProblems, type FieldSpec } from "../config/fields";
 import { EnvironmentEditor } from "./environment-editor";
@@ -242,7 +241,7 @@ export const ConfigurationTab = ({
                         </HelperTextItem>
                         {isInherited && value !== "" && (
                             <HelperTextItem>
-                                {_(K.configuration_tab.inherited_from_a_profile_editing_copies)}
+                                {T.config.inherited_from_a_profile_editing_copies}
                             </HelperTextItem>
                         )}
                     </HelperText>
@@ -263,7 +262,7 @@ export const ConfigurationTab = ({
                 <Alert
                     variant="warning"
                     isInline
-                    title={_(K.configuration_tab.this_container_could_not_be_locked)}
+                    title={T.config.this_container_could_not_be_locked}
                 />
             )}
 
@@ -271,7 +270,7 @@ export const ConfigurationTab = ({
                 <Alert
                     variant="info"
                     isInline
-                    title={_(K.configuration_tab.this_container_changed_elsewhere_while_you)}
+                    title={T.config.this_container_changed_elsewhere_while_you}
                 />
             )}
 
@@ -289,9 +288,9 @@ export const ConfigurationTab = ({
                     </FormSection>
                 ))}
 
-                <FormSection title={_(K.configuration_tab.environment)} titleElement="h3">
+                <FormSection title={T.config.environment} titleElement="h3">
                     <p className="lxc-config__description">
-                        {_(K.configuration_tab.variables_put_into_the_environment_of)}
+                        {T.config.variables_put_into_the_environment_of}
                     </p>
                     <EnvironmentEditor
                         key={`env-${JSON.stringify(baseConfig)}`}
@@ -303,9 +302,9 @@ export const ConfigurationTab = ({
                     />
                 </FormSection>
 
-                <FormSection title={_(K.configuration_tab.other_keys)} titleElement="h3">
+                <FormSection title={T.config.other_keys} titleElement="h3">
                     <p className="lxc-config__description">
-                        {_(K.configuration_tab.everything_the_forms_above_do_not)}
+                        {T.config.everything_the_forms_above_do_not}
                     </p>
                     {/*
                       * Keyed on the server's own config, so a save or an
@@ -330,10 +329,10 @@ export const ConfigurationTab = ({
                         isLoading={busy}
                         onClick={() => void save()}
                     >
-                        {_(K.configuration_tab.save)}
+                        {T.common.save}
                     </Button>
                     <Button variant="link" isDisabled={!dirty || busy} onClick={discard}>
-                        {_(K.configuration_tab.discard_changes)}
+                        {T.config.discard_changes}
                     </Button>
                 </ActionGroup>
             </Form>
@@ -377,27 +376,27 @@ const ConflictDialog = ({
     onReload,
     onKeepEditing,
 }: ConflictDialogProps) => (
-    <Modal isOpen variant="medium" onClose={onKeepEditing} aria-label={_(K.configuration_tab.configuration_conflict)}>
-        <ModalHeader title={_(K.configuration_tab.this_container_changed_while_you_were)} titleIconVariant="warning" />
+    <Modal isOpen variant="medium" onClose={onKeepEditing} aria-label={T.config.configuration_conflict}>
+        <ModalHeader title={T.config.this_container_changed_while_you_were} titleIconVariant="warning" />
         <ModalBody>
-            <p>{_(K.configuration_tab.another_session_saved_a_change_after)}</p>
+            <p>{T.config.another_session_saved_a_change_after}</p>
             {keys.length === 0
-                ? <p>{_(K.configuration_tab.no_individual_key_differs_the_container)}</p>
+                ? <p>{T.config.no_individual_key_differs_the_container}</p>
                 : (
                     <table className="lxc-conflict">
                         <thead>
                             <tr>
-                                <th scope="col">{_(K.configuration_tab.key)}</th>
-                                <th scope="col">{_(K.configuration_tab.on_the_server)}</th>
-                                <th scope="col">{_(K.configuration_tab.in_this_form)}</th>
+                                <th scope="col">{T.config.key}</th>
+                                <th scope="col">{T.config.on_the_server}</th>
+                                <th scope="col">{T.config.in_this_form}</th>
                             </tr>
                         </thead>
                         <tbody>
                             {keys.map((key) => (
                                 <tr key={key}>
                                     <th scope="row"><code>{key}</code></th>
-                                    <td>{theirs[key] ?? <em>{_(K.configuration_tab.unset)}</em>}</td>
-                                    <td>{mine[key] ?? <em>{_(K.configuration_tab.unset)}</em>}</td>
+                                    <td>{theirs[key] ?? <em>{T.config.unset}</em>}</td>
+                                    <td>{mine[key] ?? <em>{T.config.unset}</em>}</td>
                                 </tr>
                             ))}
                         </tbody>
@@ -406,10 +405,10 @@ const ConflictDialog = ({
         </ModalBody>
         <ModalFooter>
             <Button variant="secondary" onClick={onKeepEditing}>
-                {_(K.configuration_tab.keep_editing)}
+                {T.config.keep_editing}
             </Button>
             <Button variant="primary" onClick={onReload}>
-                {_(K.configuration_tab.discard_my_changes_and_reload)}
+                {T.config.discard_my_changes_and_reload}
             </Button>
         </ModalFooter>
     </Modal>

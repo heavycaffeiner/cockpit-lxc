@@ -115,21 +115,21 @@ able to say why. Catching this in code review does not scale. It has to be mecha
 
 ### 3.1 Goals
 
-- [ ] Present a container list with live state, and support create, start, stop, restart, freeze, thaw, rename, copy and delete.
-- [ ] Provide a container detail view with tabs for Overview, Configuration, Network, Storage, Snapshots, Terminal, Console and Logs.
-- [ ] Make every Incus-expressible container setting editable from the UI: resource limits (CPU count, CPU set, CPU allowance, memory limit, memory enforcement, swap, disk and network I/O priority, process limit), NIC devices, disk and bind-mount devices, applied profiles, security posture (privileged, nesting, idmap, AppArmor, seccomp, syscall interception), boot behaviour (autostart, priority, start delay, stop timeout), environment variables, and `cloud-init` user data.
-- [ ] Expose an escape hatch: a raw key/value editor over the instance `config` map for any key the typed forms do not cover, so "all settings" holds even as Incus adds keys. This necessarily includes `raw.lxc`, `raw.apparmor`, `raw.idmap` and `raw.seccomp`, which is what keeps the full `lxc.container.conf` surface reachable (see 2.2).
-- [ ] Provide an interactive terminal into a running container over xterm.js, with working resize, 256-colour output and correct signal handling.
-- [ ] Provide access to the container's tty console as a separate tab.
-- [ ] Reflect container state changes pushed by Incus without user-initiated refresh.
-- [ ] Show per-container CPU, memory, disk and network metrics.
-- [ ] Manage snapshots: create, restore, rename, delete, and configure snapshot expiry and schedule.
-- [ ] Manage images: browse configured remotes, pull an image, list and delete local images, set aliases.
-- [ ] Manage profiles, networks and storage pools as their own top-level pages, since container configuration is meaningless without them.
-- [ ] Render exclusively in PatternFly 6, with every spacing, sizing and layout value resolving to a multiple of 4px, enforced by an automated check in CI.
-- [ ] Degrade to a read-only view when the session lacks administrative access, rather than failing.
-- [ ] Localize all user-facing strings through Cockpit's gettext integration.
-- [ ] Ship as both a `.deb` and an `.rpm`, plus a source install path.
+- [x] Present a container list with live state, and support create, start, stop, restart, freeze, thaw, rename, copy and delete.
+- [x] Provide a container detail view with tabs for Overview, Configuration, Network, Storage, Snapshots, Terminal, Console and Logs.
+- [x] Make every Incus-expressible container setting editable from the UI: resource limits (CPU count, CPU set, CPU allowance, memory limit, memory enforcement, swap, disk and network I/O priority, process limit), NIC devices, disk and bind-mount devices, applied profiles, security posture (privileged, nesting, idmap, AppArmor, seccomp, syscall interception), boot behaviour (autostart, priority, start delay, stop timeout), environment variables, and `cloud-init` user data.
+- [x] Expose an escape hatch: a raw key/value editor over the instance `config` map for any key the typed forms do not cover, so "all settings" holds even as Incus adds keys. This necessarily includes `raw.lxc`, `raw.apparmor`, `raw.idmap` and `raw.seccomp`, which is what keeps the full `lxc.container.conf` surface reachable (see 2.2).
+- [x] Provide an interactive terminal into a running container over xterm.js, with working resize, 256-colour output and correct signal handling.
+- [x] Provide access to the container's tty console as a separate tab.
+- [x] Reflect container state changes pushed by Incus without user-initiated refresh.
+- [x] Show per-container CPU, memory, disk and network metrics.
+- [x] Manage snapshots: create, restore, rename, delete, and configure snapshot expiry and schedule.
+- [x] Manage images: browse configured remotes, pull an image, list and delete local images, set aliases.
+- [x] Manage profiles, networks and storage pools as their own top-level pages, since container configuration is meaningless without them.
+- [x] Render exclusively in PatternFly 6, with every spacing, sizing and layout value resolving to a multiple of 4px, enforced by an automated check in CI.
+- [x] Degrade to a read-only view when the session lacks administrative access, rather than failing.
+- [x] Localize all user-facing strings through Cockpit's gettext integration.
+- [x] Ship as both a `.deb` and an `.rpm`, plus a source install path.
 
 ### 3.2 Non-Goals
 
@@ -875,32 +875,49 @@ Two further constraints emerged that this document did not anticipate:
 - xterm's screen reader support needs `style-src 'unsafe-inline'`, which section 4.3.8
   implicitly required without saying so. `docs/csp.md` records the trade.
 
-Section 7's `xgettext` extraction was replaced rather than implemented. Message ids are
-stable keys such as `resources_view.pull_image`, not English source text, because using
-the source text as the id orphans every translation of a string the moment its English
-wording is edited: the id changes, no catalogue matches it any more, and the UI silently
-falls back to English without anything failing. Three things follow from that:
+Two design decisions departed from what this document sketched, and both are improvements
+rather than compromises.
+
+**Localization does not use `xgettext`.** Message ids are stable keys such as
+`images.pull_image`, not English source text, because using the source text as the id
+orphans every translation of a string the moment its English wording is edited: the id
+changes, no catalogue matches it any more, and the UI silently falls back to English
+without anything failing. Four things follow from that:
 
 - `po/en.po` is a real catalogue rather than an implicit default, and it is bundled into
   the build. Cockpit serves exactly one translation file per package, resolved from
   Accept-Language, and a session in a language with no catalogue gets an empty one rather
   than a fallback, so English cannot be fetched the way the other languages are.
-- Call sites address keys through a generated object, `_(K.resources_view.pull_image)`,
-  so a mistyped key fails to compile instead of rendering as itself.
+- Call sites read text off a generated accessor, `T.images.pull_image`, so a mistyped key
+  fails to compile instead of rendering as itself. Plural entries come out as functions of
+  a count, `T.snapshots.day_ago(3)`, so there is one way to reach a string rather than two.
+- Strings several views share live in a `common` namespace, so "Delete" and "Name" are one
+  entry each rather than one per view that happens to need them.
 - `build/check-catalogues.mjs` takes extraction's place in the build: it fails when a key
   used in `src` is missing from `en.po`, when `en.po` carries a key nothing uses, or when
   another catalogue contains a key English does not have.
 
-Coverage is now the full UI: 342 keys across all 16 view and component files, with Korean
-at 342/342. Both directions were verified in a real session: a Korean session loads the
-`ko` catalogue and renders Korean; a session set to a language with no catalogue loads
-none and renders the bundled English.
+Coverage is the full UI: 391 keys, with Korean at 391/391. Both directions were verified in
+a real session: a Korean session loads the `ko` catalogue and renders Korean; a session set
+to a language with no catalogue loads none and renders the bundled English.
 
-Deferred from section 3.1, and not claimed as done:
+**Image remotes are read from the CLI.** Section 5-1-1 lists no endpoint for them because
+there is none: remotes are client-side state that the daemon does not know, so
+`incus remote list --format=json` is not a shortcut around the API but the only source.
+The pull dialog browses the chosen remote's catalogue rather than taking a typed alias,
+and the image server a pull resolves to comes from that list rather than from a hardcoded
+address, so a host with extra remotes configured can use them.
 
-- Profiles, networks and storage pools are read-only. Editing a profile changes every
-  container using it and deserves its own confirmation design.
-- Image pulling takes an alias rather than browsing a remote's catalogue.
+Two things Incus itself constrains, recorded so they do not read as gaps:
+
+- `GET /1.0/instances/<name>/logs` serves `lxc.log` and refuses every other file in the log
+  directory, `console.log` included, with "log file name not valid". The Logs tab shows
+  what the API offers; console output is reachable live through the Console tab.
+- Storage pool drivers other than `dir` need their tools present and a device or file to
+  back them. The create dialog offers all four and lets Incus report what is missing,
+  rather than probing the host and being wrong about it.
+
+Everything in section 3.1 is implemented. Nothing is deferred.
 
 ## 7. References
 

@@ -15,9 +15,8 @@ import {
 
 import type { DriverErrorKind } from "../backend";
 import {
-    K,
     INCUS_SOCKET,
-    _,
+    T,
     format,
 } from "../backend";
 
@@ -42,20 +41,20 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 <EmptyState
                     headingLevel="h1"
                     icon={CubesIcon}
-                    titleText={_(K.startup_states.incus_is_not_installed)}
+                    titleText={T.startup.incus_is_not_installed}
                     status="info"
                 >
                     <EmptyStateBody>
                         <p>
                             {format(
-                                _(K.startup_states.no_incus_socket_was_found_at),
+                                T.startup.no_incus_socket_was_found_at,
                                 INCUS_SOCKET,
                             )}
                         </p>
                         <ClipboardCopy
                             isReadOnly
-                            hoverTip={_(K.container_actions.copy)}
-                            clickTip={_(K.startup_states.copied)}
+                            hoverTip={T.actions.copy}
+                            clickTip={T.startup.copied}
                             variant="expansion"
                         >
                             sudo dnf install incus incus-tools &amp;&amp; sudo systemctl enable --now incus.socket
@@ -64,7 +63,7 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_(K.startup_states.check_again)}
+                                {T.startup.check_again}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -76,7 +75,7 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 <EmptyState
                     headingLevel="h1"
                     icon={LockIcon}
-                    titleText={_(K.startup_states.administrative_access_is_required)}
+                    titleText={T.startup.administrative_access_is_required}
                     status="warning"
                 >
                     {/*
@@ -86,12 +85,12 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                       * button that does not exist under that name.
                       */}
                     <EmptyStateBody>
-                        {_(K.startup_states.the_incus_socket_is_owned_by)}
+                        {T.startup.the_incus_socket_is_owned_by}
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_(K.startup_states.try_again)}
+                                {T.startup.try_again}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -103,16 +102,16 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 <EmptyState
                     headingLevel="h1"
                     icon={LockIcon}
-                    titleText={_(K.startup_states.incus_does_not_trust_this_connection)}
+                    titleText={T.startup.incus_does_not_trust_this_connection}
                     status="warning"
                 >
                     <EmptyStateBody>
-                        {_(K.startup_states.incus_answered_but_reported_the_connection)}
+                        {T.startup.incus_answered_but_reported_the_connection}
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_(K.startup_states.try_again)}
+                                {T.startup.try_again}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -128,15 +127,15 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                     headingLevel="h1"
                     icon={kind === "transport" ? PlugIcon : ExclamationCircleIcon}
                     titleText={kind === "transport"
-                        ? _(K.startup_states.cannot_reach_incus)
-                        : _(K.startup_states.incus_returned_something_unexpected)}
+                        ? T.startup.cannot_reach_incus
+                        : T.startup.incus_returned_something_unexpected}
                     status="danger"
                 >
                     <EmptyStateBody>{message}</EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>
                             <Button variant="primary" onClick={onRetry}>
-                                {_(K.startup_states.try_again)}
+                                {T.startup.try_again}
                             </Button>
                         </EmptyStateActions>
                     </EmptyStateFooter>
@@ -153,17 +152,17 @@ export const NoContainers = ({
     onRefresh: () => void;
     onCreate: () => void;
 }) => (
-    <EmptyState headingLevel="h1" icon={CubesIcon} titleText={_(K.startup_states.no_containers_yet)}>
+    <EmptyState headingLevel="h1" icon={CubesIcon} titleText={T.startup.no_containers_yet}>
         <EmptyStateBody>
-            {_(K.startup_states.this_host_runs_incus_but_has)}
+            {T.startup.this_host_runs_incus_but_has}
         </EmptyStateBody>
         <EmptyStateFooter>
             <EmptyStateActions>
                 <Button variant="primary" onClick={onCreate}>
-                    {_(K.container_list.create_container)}
+                    {T.list.create_container}
                 </Button>
                 <Button variant="link" onClick={onRefresh}>
-                    {_(K.container_list.refresh)}
+                    {T.common.refresh}
                 </Button>
             </EmptyStateActions>
         </EmptyStateFooter>

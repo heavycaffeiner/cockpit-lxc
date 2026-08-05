@@ -157,6 +157,45 @@ export interface Image {
     uploadedAt: string;
 }
 
+/**
+ * A configured image server.
+ *
+ * Remotes are a client-side concept: the daemon has no endpoint for them,
+ * because it is the CLI that keeps the list. They are read by running the CLI
+ * rather than guessed at, so a host with extra remotes configured shows them.
+ */
+export interface Remote {
+    name: string;
+    address: string;
+    protocol: string;
+    /** True for the local unix socket, which is not an image source. */
+    isLocal: boolean;
+}
+
+/** One image offered by a remote, as its catalogue lists it. */
+export interface RemoteImage {
+    /** The alias to create from, without the remote prefix. */
+    alias: string;
+    description: string;
+    architecture: string;
+    size: number;
+    type: string;
+}
+
+/** A log file Incus keeps for an instance. */
+export interface LogFile {
+    name: string;
+    /** Bytes, or null when Incus does not report a size for it. */
+    size: number | null;
+}
+
+/** The editable half of a profile, network or storage pool. */
+export interface ResourceUpdate {
+    description: string;
+    config: Record<string, string>;
+    devices?: Record<string, Record<string, string>>;
+}
+
 export interface Metrics {
     cpuSecondsTotal: number;
     memoryUsedBytes: number;

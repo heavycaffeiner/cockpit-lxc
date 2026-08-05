@@ -6,11 +6,7 @@ import {
 import { MinusCircleIcon, PlusCircleIcon } from "@patternfly/react-icons";
 import { useMemo, useState } from "react";
 
-import {
-    K,
-    _,
-    format,
-} from "../backend";
+import { T, format } from "../backend";
 
 interface RawRow {
     id: number;
@@ -108,9 +104,9 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
             <table className="lxc-raw__table">
                 <thead>
                     <tr>
-                        <th scope="col">{_(K.configuration_tab.key)}</th>
-                        <th scope="col">{_(K.environment_editor.value)}</th>
-                        <th scope="col"><span className="pf-v6-screen-reader">{_(K.environment_editor.remove)}</span></th>
+                        <th scope="col">{T.config.key}</th>
+                        <th scope="col">{T.environment.value}</th>
+                        <th scope="col"><span className="pf-v6-screen-reader">{T.environment.remove}</span></th>
                     </tr>
                 </thead>
                 <tbody>
@@ -122,7 +118,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                                 <td>
                                     <TextInput
                                         value={row.key}
-                                        aria-label={format(_(K.raw_config_editor.configuration_key), index + 1)}
+                                        aria-label={format(T.raw_config.configuration_key, index + 1)}
                                         validated={duplicate ? "error" : "default"}
                                         onChange={(_event, value) =>
                                             update(rows.map((r) =>
@@ -132,18 +128,18 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                                 <td>
                                     <TextInput
                                         value={row.value}
-                                        aria-label={format(_(K.environment_editor.value_for), trimmed || format(_(K.raw_config_editor.key), index + 1))}
+                                        aria-label={format(T.environment.value_for, trimmed || format(T.raw_config.key, index + 1))}
                                         onChange={(_event, value) =>
                                             update(rows.map((r) =>
                                                 r.id === row.id ? { ...r, value } : r))}
                                     />
                                 </td>
                                 <td>
-                                    <Tooltip content={format(_(K.devices_tab.remove), trimmed || _(K.raw_config_editor.this_key))}>
+                                    <Tooltip content={format(T.devices.remove, trimmed || T.raw_config.this_key)}>
                                         <Button
                                             variant="plain"
                                             icon={<MinusCircleIcon />}
-                                            aria-label={format(_(K.devices_tab.remove), trimmed || format(_(K.raw_config_editor.key), index + 1))}
+                                            aria-label={format(T.devices.remove, trimmed || format(T.raw_config.key, index + 1))}
                                             onClick={() =>
                                                 update(rows.filter((r) => r.id !== row.id))}
                                         />
@@ -156,7 +152,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                         <tr>
                             <td colSpan={3}>
                                 <span className="lxc-muted">
-                                    {_(K.raw_config_editor.no_other_keys_are_set_on)}
+                                    {T.raw_config.no_other_keys_are_set_on}
                                 </span>
                             </td>
                         </tr>
@@ -166,7 +162,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
 
             {duplicateKeys.size > 0 && (
                 <p className="lxc-raw__problem">
-                    {format(_(K.raw_config_editor.duplicate_keys_only_the_last_would), [...duplicateKeys].join(", "))}
+                    {format(T.raw_config.duplicate_keys_only_the_last_would, [...duplicateKeys].join(", "))}
                 </p>
             )}
 
@@ -179,7 +175,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
                     update(next);
                 }}
             >
-                {_(K.raw_config_editor.add_key)}
+                {T.raw_config.add_key}
             </Button>
         </div>
     );

@@ -45,20 +45,40 @@ const parseKeys = (text) => {
 };
 
 /*
- * Call sites read keys off the generated K object, so what is scanned for is
- * `K.area.slug` rather than a string. src/generated is skipped because K is
- * defined there: counting its own definition would make every key look used.
+ * Call sites read text off the generated T accessor, so what is scanned for is
+ * `T.area.slug` rather than a string. src/generated and the i18n module are
+ * skipped because the tree is defined there: counting its own definition would
+ * make every key look used.
  */
+const english = parseKeys(await readFile(path.join(PO, "en.po"), "utf8"));
+
 const used = new Set();
 for (const file of await walk(SRC)) {
     if (file.includes(path.join("backend", "i18n")) || file.includes(path.join(SRC, "generated")))
         continue;
     const text = await readFile(file, "utf8");
-    for (const m of text.matchAll(/\bK((?:\.[A-Za-z0-9_]+)+)/g))
-        used.add(m[1].slice(1));
-}
+    for (const m of text.matchAll(/\bT((?:\.[A-Za-z0-9_]+)+)/g)) {
+        const full = m[1].slice(1);
 
-const english = parseKeys(await readFile(path.join(PO, "en.po"), "utf8"));
+        /*
+         * A namespace on its own is a computed lookup, `T.actions[action]`,
+         * which cannot be resolved by reading the source. Those keys are
+         * reached by name somewhere else too, so skipping here loses nothing.
+         */
+        if (!full.includes("."))
+            continue;
+
+        /*
+         * A match can also run past the key, as in `T.logs.body.split("\n")`.
+         * The longest prefix naming a real key is the key; when no prefix does,
+         * the whole path is reported so a typo still fails the build.
+         */
+        const segments = full.split(".");
+        while (segments.length > 1 && !english.has(segments.join(".")))
+            segments.pop();
+        used.add(english.has(segments.join(".")) ? segments.join(".") : full);
+    }
+}
 
 const missing = [...used].filter((k) => !english.has(k)).sort();
 const unused = [...english.keys()].filter((k) => !used.has(k)).sort();

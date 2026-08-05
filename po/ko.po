@@ -10,6 +10,42 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
 
+# Actions for $0
+msgid "actions.actions_for"
+msgstr "$0 작업"
+
+# Copy
+msgid "actions.copy"
+msgstr "복사"
+
+# Force stop
+msgid "actions.force_stop"
+msgstr "강제 정지"
+
+# Freeze
+msgid "actions.freeze"
+msgstr "동결"
+
+# $0 is changing state
+msgid "actions.is_changing_state"
+msgstr "$0 상태 변경 중"
+
+# Restart
+msgid "actions.restart"
+msgstr "재시작"
+
+# Start
+msgid "actions.start"
+msgstr "시작"
+
+# Stop
+msgid "actions.stop"
+msgstr "정지"
+
+# Unfreeze
+msgid "actions.unfreeze"
+msgstr "동결 해제"
+
 # Contacting Incus
 msgid "app.contacting_incus"
 msgstr "Incus에 연결하는 중"
@@ -17,10 +53,6 @@ msgstr "Incus에 연결하는 중"
 # Containers
 msgid "app.containers"
 msgstr "컨테이너"
-
-# Images and resources
-msgid "app.images_and_resources"
-msgstr "이미지 및 자원"
 
 # Live updates unavailable. The list refreshes only when you ask it to.
 msgid "app.live_updates_unavailable_the_list_refreshes"
@@ -34,437 +66,381 @@ msgstr "LXC 컨테이너"
 msgid "app.lxc_views"
 msgstr "LXC 화면"
 
-# Another session saved a change after this form was opened, so the save was refused rather than overwriting it. Nothing has been lost on either side.
-msgid "configuration_tab.another_session_saved_a_change_after"
-msgstr "이 폼을 연 뒤 다른 세션이 변경을 저장했습니다. 덮어쓰지 않고 저장을 거부했으므로 양쪽 모두 아무것도 잃지 않았습니다."
-
-# Configuration conflict
-msgid "configuration_tab.configuration_conflict"
-msgstr "설정 충돌"
-
-# Discard changes
-msgid "configuration_tab.discard_changes"
-msgstr "변경 사항 버리기"
-
-# Discard my changes and reload
-msgid "configuration_tab.discard_my_changes_and_reload"
-msgstr "내 변경을 버리고 다시 불러오기"
-
-# Environment
-msgid "configuration_tab.environment"
-msgstr "환경변수"
-
-# Everything the forms above do not cover, including raw.lxc. This is what keeps every Incus setting reachable as new keys are added.
-msgid "configuration_tab.everything_the_forms_above_do_not"
-msgstr "위 폼이 다루지 않는 모든 항목이며 raw.lxc도 포함됩니다. Incus에 새 키가 추가돼도 모든 설정에 접근할 수 있게 해주는 부분입니다."
-
-# In this form
-msgid "configuration_tab.in_this_form"
-msgstr "이 폼의 값"
-
-# Inherited from a profile. Editing copies it onto this container.
-msgid "configuration_tab.inherited_from_a_profile_editing_copies"
-msgstr "프로파일에서 상속된 값입니다. 편집하면 이 컨테이너에 복사됩니다."
-
-# Keep editing
-msgid "configuration_tab.keep_editing"
-msgstr "계속 편집"
-
-# Key
-msgid "configuration_tab.key"
-msgstr "키"
-
-# No individual key differs; the container was changed in some other way.
-msgid "configuration_tab.no_individual_key_differs_the_container"
-msgstr "개별 키의 차이는 없습니다. 컨테이너가 다른 방식으로 변경되었습니다."
-
-# On the server
-msgid "configuration_tab.on_the_server"
-msgstr "서버의 값"
-
-# Other keys
-msgid "configuration_tab.other_keys"
-msgstr "기타 키"
-
-# Save
-msgid "configuration_tab.save"
-msgstr "저장"
-
-# This container changed elsewhere while you were editing. Your changes are still here, and saving will show you what differs before anything is overwritten.
-msgid "configuration_tab.this_container_changed_elsewhere_while_you"
-msgstr "편집하는 동안 이 컨테이너가 다른 곳에서 변경되었습니다. 입력한 내용은 그대로 있으며, 저장하면 무엇이 다른지 먼저 보여준 뒤 결정하게 됩니다."
-
-# This container changed while you were editing
-msgid "configuration_tab.this_container_changed_while_you_were"
-msgstr "편집하는 동안 이 컨테이너가 변경되었습니다"
-
-# This container could not be locked for editing, so saving is disabled.
-msgid "configuration_tab.this_container_could_not_be_locked"
-msgstr "이 컨테이너를 편집용으로 잠그지 못해 저장이 비활성화되었습니다."
-
-# unset
-msgid "configuration_tab.unset"
-msgstr "설정 없음"
-
-# Variables put into the environment of processes started with incus exec. A container's own init does not see them, so this is not a substitute for the image's configuration.
-msgid "configuration_tab.variables_put_into_the_environment_of"
-msgstr "incus exec로 시작한 프로세스의 환경에 들어가는 변수입니다. 컨테이너 자체의 init은 이 값을 보지 못하므로 이미지 설정을 대체하지 않습니다."
-
-# Actions for $0
-msgid "container_actions.actions_for"
-msgstr "$0 작업"
-
-# Copy
-msgid "container_actions.copy"
-msgstr "복사"
-
-# Delete
-msgid "container_actions.delete"
-msgstr "삭제"
-
-# Force stop
-msgid "container_actions.force_stop"
-msgstr "강제 정지"
-
-# Freeze
-msgid "container_actions.freeze"
-msgstr "동결"
-
-# $0 is changing state
-msgid "container_actions.is_changing_state"
-msgstr "$0 상태 변경 중"
-
-# Rename
-msgid "container_actions.rename"
-msgstr "이름 바꾸기"
-
-# Restart
-msgid "container_actions.restart"
-msgstr "재시작"
-
-# Start
-msgid "container_actions.start"
-msgstr "시작"
-
-# Stop
-msgid "container_actions.stop"
-msgstr "정지"
-
-# Unfreeze
-msgid "container_actions.unfreeze"
-msgstr "동결 해제"
-
-# A shell needs a running container. Start it to open a session.
-msgid "container_detail.a_shell_needs_a_running_container"
-msgstr "셸을 열려면 컨테이너가 실행 중이어야 합니다. 시작하면 세션을 열 수 있습니다."
-
-# Configuration
-msgid "container_detail.configuration"
-msgstr "설정"
-
-# Console
-msgid "container_detail.console"
-msgstr "콘솔"
-
-# $0 is not running
-msgid "container_detail.is_not_running"
-msgstr "$0이(가) 실행 중이 아닙니다"
-
-# Loading
-msgid "container_detail.loading"
-msgstr "불러오는 중"
-
-# Loading container
-msgid "container_detail.loading_container"
-msgstr "컨테이너를 불러오는 중"
-
-# Network
-msgid "container_detail.network"
-msgstr "네트워크"
-
-# Overview
-msgid "container_detail.overview"
-msgstr "개요"
-
-# Snapshots
-msgid "container_detail.snapshots"
-msgstr "스냅샷"
-
-# Start $0
-msgid "container_detail.start"
-msgstr "$0 시작"
-
-# Storage
-msgid "container_detail.storage"
-msgstr "스토리지"
-
-# Terminal
-msgid "container_detail.terminal"
-msgstr "터미널"
-
-# This container could not be loaded for editing.
-msgid "container_detail.this_container_could_not_be_loaded"
-msgstr "이 컨테이너를 편집용으로 불러오지 못했습니다."
-
-# Views for $0
-msgid "container_detail.views_for"
-msgstr "$0 화면"
-
 # Actions
-msgid "container_list.actions"
+msgid "common.actions"
 msgstr "작업"
 
 # Addresses
-msgid "container_list.addresses"
+msgid "common.addresses"
 msgstr "주소"
 
-# All states
-msgid "container_list.all_states"
-msgstr "모든 상태"
+# Apply
+msgid "common.apply"
+msgstr "적용"
 
 # Architecture
-msgid "container_list.architecture"
+msgid "common.architecture"
 msgstr "아키텍처"
 
-# Create container
-msgid "container_list.create_container"
-msgstr "컨테이너 만들기"
+# Cancel
+msgid "common.cancel"
+msgstr "취소"
+
+# Create
+msgid "common.create"
+msgstr "만들기"
 
 # Created
-msgid "container_list.created"
+msgid "common.created"
 msgstr "생성 시각"
 
-# Dismiss error
-msgid "container_list.dismiss_error"
-msgstr "오류 닫기"
+# Delete
+msgid "common.delete"
+msgstr "삭제"
+
+# Description
+msgid "common.description"
+msgstr "설명"
+
+# Devices
+msgid "common.devices"
+msgstr "장치"
+
+# Edit
+msgid "common.edit"
+msgstr "편집"
+
+# Image
+msgid "common.image"
+msgstr "이미지"
+
+# Images
+msgid "common.images"
+msgstr "이미지"
 
 # Name
-msgid "container_list.name"
+msgid "common.name"
 msgstr "이름"
 
-# No container matches the current filter.
-msgid "container_list.no_container_matches_the_current_filter"
-msgstr "현재 필터에 해당하는 컨테이너가 없습니다."
+# Network
+msgid "common.network"
+msgstr "네트워크"
+
+# Networks
+msgid "common.networks"
+msgstr "네트워크"
 
 # None
-msgid "container_list.none"
+msgid "common.none"
 msgstr "없음"
 
-# $0 of $1
-msgid "container_list.of"
-msgstr "$1개 중 $0개"
-
 # Profiles
-msgid "container_list.profiles"
+msgid "common.profiles"
 msgstr "프로파일"
 
 # Refresh
-msgid "container_list.refresh"
+msgid "common.refresh"
 msgstr "새로 고침"
 
-# Search containers
-msgid "container_list.search_containers"
-msgstr "컨테이너 검색"
+# Rename
+msgid "common.rename"
+msgstr "이름 바꾸기"
 
-# Search containers by name, description or address
-msgid "container_list.search_containers_by_name_description_or"
-msgstr "이름, 설명, 주소로 컨테이너 검색"
-
-# State
-msgid "container_list.state"
-msgstr "상태"
-
-# System containers
-msgid "container_list.system_containers"
-msgstr "시스템 컨테이너"
-
-# Error
-msgid "container_state_label.error"
-msgstr "오류"
-
-# Freezing
-msgid "container_state_label.freezing"
-msgstr "동결하는 중"
-
-# Frozen
-msgid "container_state_label.frozen"
-msgstr "동결됨"
-
-# Running
-msgid "container_state_label.running"
-msgstr "실행 중"
-
-# Starting
-msgid "container_state_label.starting"
-msgstr "시작하는 중"
-
-# Stopped
-msgid "container_state_label.stopped"
-msgstr "정지됨"
-
-# Stopping
-msgid "container_state_label.stopping"
-msgstr "정지하는 중"
-
-# Unknown
-msgid "container_state_label.unknown"
-msgstr "알 수 없음"
-
-# A fixed address on the network's subnet.
-msgid "devices_tab.a_fixed_address_on_the_networks"
-msgstr "네트워크 서브넷 안의 고정 주소입니다."
-
-# A fixed IPv6 address.
-msgid "devices_tab.a_fixed_ipv6_address"
-msgstr "고정 IPv6 주소입니다."
-
-# A host path, or a storage volume name.
-msgid "devices_tab.a_host_path_or_a_storage"
-msgstr "호스트 경로이거나 스토리지 볼륨 이름입니다."
-
-# A managed Incus network, such as incusbr0.
-msgid "devices_tab.a_managed_incus_network_such_as"
-msgstr "incusbr0 처럼 Incus가 관리하는 네트워크입니다."
-
-# Add interface
-msgid "devices_tab.add_interface"
-msgstr "인터페이스 추가"
-
-# Add mount
-msgid "devices_tab.add_mount"
-msgstr "마운트 추가"
-
-# Another session changed this container while you were editing. Reload to see the current devices; nothing here has been saved.
-msgid "devices_tab.another_session_changed_this_container_while"
-msgstr "편집하는 동안 다른 세션이 이 컨테이너를 변경했습니다. 다시 불러와 현재 장치를 확인하십시오. 여기의 내용은 저장되지 않았습니다."
-
-# Disks and mounts
-msgid "devices_tab.disks_and_mounts"
-msgstr "디스크 및 마운트"
-
-# $0 for $1
-msgid "devices_tab.for"
-msgstr "의 $0"
-
-# inherited
-msgid "devices_tab.inherited"
-msgstr "상속됨"
-
-# Inherited from profiles
-msgid "devices_tab.inherited_from_profiles"
-msgstr "프로파일에서 상속됨"
-
-# Interfaces attached to this container. An interface supplied by a profile is shown as inherited; adding one here with the same name overrides it.
-msgid "devices_tab.interfaces_attached_to_this_container_an"
-msgstr "이 컨테이너에 연결된 인터페이스입니다. 프로파일이 제공한 인터페이스는 상속됨으로 표시되며, 같은 이름으로 여기에 추가하면 그것을 덮어씁니다."
-
-# IPv4 address
-msgid "devices_tab.ipv4_address"
-msgstr "IPv4 주소"
-
-# IPv6 address
-msgid "devices_tab.ipv6_address"
-msgstr "IPv6 주소"
-
-# Leave empty to inherit from the network.
-msgid "devices_tab.leave_empty_to_inherit_from_the"
-msgstr "비워두면 네트워크 값을 상속합니다."
-
-# Leave empty to let Incus generate one.
-msgid "devices_tab.leave_empty_to_let_incus_generate"
-msgstr "비워두면 Incus가 만들어 줍니다."
-
-# MAC address
-msgid "devices_tab.mac_address"
-msgstr "MAC 주소"
-
-# MTU
-msgid "devices_tab.mtu"
-msgstr "MTU"
-
-# Name in container
-msgid "devices_tab.name_in_container"
-msgstr "컨테이너 안 이름"
-
-# Network
-msgid "devices_tab.network"
-msgstr "네트워크"
-
-# Network interfaces
-msgid "devices_tab.network_interfaces"
-msgstr "네트워크 인터페이스"
-
-# No root disk remains. Incus refuses to start a container without one.
-msgid "devices_tab.no_root_disk_remains_incus_refuses"
-msgstr "루트 디스크가 남아 있지 않습니다. Incus는 루트 디스크 없는 컨테이너를 시작하지 않습니다."
-
-# no settings
-msgid "devices_tab.no_settings"
-msgstr "설정 없음"
-
-# Nothing of this kind is set on the container itself.
-msgid "devices_tab.nothing_of_this_kind_is_set"
-msgstr "이 종류의 항목이 컨테이너 자체에는 설정되어 있지 않습니다."
-
-# Only for volumes, not for host paths.
-msgid "devices_tab.only_for_volumes_not_for_host"
-msgstr "볼륨에만 해당하며 호스트 경로에는 쓰이지 않습니다."
-
-# Only meaningful on the root disk.
-msgid "devices_tab.only_meaningful_on_the_root_disk"
-msgstr "루트 디스크에서만 의미가 있습니다."
-
-# Path in container
-msgid "devices_tab.path_in_container"
-msgstr "컨테이너 안 경로"
-
-# Read only
-msgid "devices_tab.read_only"
-msgstr "읽기 전용"
-
-# Remove $0
-msgid "devices_tab.remove"
-msgstr "$0 제거"
-
-# Set to true to mount without write access.
-msgid "devices_tab.set_to_true_to_mount_without"
-msgstr "쓰기 없이 마운트하려면 true로 설정하십시오."
+# Save
+msgid "common.save"
+msgstr "저장"
 
 # Size
-msgid "devices_tab.size"
+msgid "common.size"
 msgstr "크기"
 
 # Source
-msgid "devices_tab.source"
+msgid "common.source"
 msgstr "원본"
 
+# State
+msgid "common.state"
+msgstr "상태"
+
+# Storage pools
+msgid "common.storage_pools"
+msgstr "저장소 풀"
+
+# Type
+msgid "common.type"
+msgstr "종류"
+
+# Used by
+msgid "common.used_by"
+msgstr "사용 중"
+
+# Another session saved a change after this form was opened, so the save was refused rather than overwriting it. Nothing has been lost on either side.
+msgid "config.another_session_saved_a_change_after"
+msgstr "이 폼을 연 뒤 다른 세션이 변경을 저장했습니다. 덮어쓰지 않고 저장을 거부했으므로 양쪽 모두 아무것도 잃지 않았습니다."
+
+# Configuration conflict
+msgid "config.configuration_conflict"
+msgstr "설정 충돌"
+
+# Discard changes
+msgid "config.discard_changes"
+msgstr "변경 사항 버리기"
+
+# Discard my changes and reload
+msgid "config.discard_my_changes_and_reload"
+msgstr "내 변경을 버리고 다시 불러오기"
+
+# Environment
+msgid "config.environment"
+msgstr "환경변수"
+
+# Everything the forms above do not cover, including raw.lxc. This is what keeps every Incus setting reachable as new keys are added.
+msgid "config.everything_the_forms_above_do_not"
+msgstr "위 폼이 다루지 않는 모든 항목이며 raw.lxc도 포함됩니다. Incus에 새 키가 추가돼도 모든 설정에 접근할 수 있게 해주는 부분입니다."
+
+# In this form
+msgid "config.in_this_form"
+msgstr "이 폼의 값"
+
+# Inherited from a profile. Editing copies it onto this container.
+msgid "config.inherited_from_a_profile_editing_copies"
+msgstr "프로파일에서 상속된 값입니다. 편집하면 이 컨테이너에 복사됩니다."
+
+# Keep editing
+msgid "config.keep_editing"
+msgstr "계속 편집"
+
+# Key
+msgid "config.key"
+msgstr "키"
+
+# No individual key differs; the container was changed in some other way.
+msgid "config.no_individual_key_differs_the_container"
+msgstr "개별 키의 차이는 없습니다. 컨테이너가 다른 방식으로 변경되었습니다."
+
+# On the server
+msgid "config.on_the_server"
+msgstr "서버의 값"
+
+# Other keys
+msgid "config.other_keys"
+msgstr "기타 키"
+
+# This container changed elsewhere while you were editing. Your changes are still here, and saving will show you what differs before anything is overwritten.
+msgid "config.this_container_changed_elsewhere_while_you"
+msgstr "편집하는 동안 이 컨테이너가 다른 곳에서 변경되었습니다. 입력한 내용은 그대로 있으며, 저장하면 무엇이 다른지 먼저 보여준 뒤 결정하게 됩니다."
+
+# This container changed while you were editing
+msgid "config.this_container_changed_while_you_were"
+msgstr "편집하는 동안 이 컨테이너가 변경되었습니다"
+
+# This container could not be locked for editing, so saving is disabled.
+msgid "config.this_container_could_not_be_locked"
+msgstr "이 컨테이너를 편집용으로 잠그지 못해 저장이 비활성화되었습니다."
+
+# unset
+msgid "config.unset"
+msgstr "설정 없음"
+
+# Variables put into the environment of processes started with incus exec. A container's own init does not see them, so this is not a substitute for the image's configuration.
+msgid "config.variables_put_into_the_environment_of"
+msgstr "incus exec로 시작한 프로세스의 환경에 들어가는 변수입니다. 컨테이너 자체의 init은 이 값을 보지 못하므로 이미지 설정을 대체하지 않습니다."
+
+# A shell needs a running container. Start it to open a session.
+msgid "detail.a_shell_needs_a_running_container"
+msgstr "셸을 열려면 컨테이너가 실행 중이어야 합니다. 시작하면 세션을 열 수 있습니다."
+
+# Configuration
+msgid "detail.configuration"
+msgstr "설정"
+
+# Console
+msgid "detail.console"
+msgstr "콘솔"
+
+# $0 is not running
+msgid "detail.is_not_running"
+msgstr "$0이(가) 실행 중이 아닙니다"
+
+# Loading
+msgid "detail.loading"
+msgstr "불러오는 중"
+
+# Loading container
+msgid "detail.loading_container"
+msgstr "컨테이너를 불러오는 중"
+
+# Logs
+msgid "detail.logs"
+msgstr "로그"
+
+# Overview
+msgid "detail.overview"
+msgstr "개요"
+
+# Snapshots
+msgid "detail.snapshots"
+msgstr "스냅샷"
+
+# Start $0
+msgid "detail.start"
+msgstr "$0 시작"
+
+# Storage
+msgid "detail.storage"
+msgstr "스토리지"
+
+# Terminal
+msgid "detail.terminal"
+msgstr "터미널"
+
+# This container could not be loaded for editing.
+msgid "detail.this_container_could_not_be_loaded"
+msgstr "이 컨테이너를 편집용으로 불러오지 못했습니다."
+
+# Views for $0
+msgid "detail.views_for"
+msgstr "$0 화면"
+
+# A fixed address on the network's subnet.
+msgid "devices.a_fixed_address_on_the_networks"
+msgstr "네트워크 서브넷 안의 고정 주소입니다."
+
+# A fixed IPv6 address.
+msgid "devices.a_fixed_ipv6_address"
+msgstr "고정 IPv6 주소입니다."
+
+# A host path, or a storage volume name.
+msgid "devices.a_host_path_or_a_storage"
+msgstr "호스트 경로이거나 스토리지 볼륨 이름입니다."
+
+# A managed Incus network, such as incusbr0.
+msgid "devices.a_managed_incus_network_such_as"
+msgstr "incusbr0 처럼 Incus가 관리하는 네트워크입니다."
+
+# Add interface
+msgid "devices.add_interface"
+msgstr "인터페이스 추가"
+
+# Add mount
+msgid "devices.add_mount"
+msgstr "마운트 추가"
+
+# Another session changed this container while you were editing. Reload to see the current devices; nothing here has been saved.
+msgid "devices.another_session_changed_this_container_while"
+msgstr "편집하는 동안 다른 세션이 이 컨테이너를 변경했습니다. 다시 불러와 현재 장치를 확인하십시오. 여기의 내용은 저장되지 않았습니다."
+
+# Disks and mounts
+msgid "devices.disks_and_mounts"
+msgstr "디스크 및 마운트"
+
+# $0 for $1
+msgid "devices.for"
+msgstr "의 $0"
+
+# inherited
+msgid "devices.inherited"
+msgstr "상속됨"
+
+# Inherited from profiles
+msgid "devices.inherited_from_profiles"
+msgstr "프로파일에서 상속됨"
+
+# Interfaces attached to this container. An interface supplied by a profile is shown as inherited; adding one here with the same name overrides it.
+msgid "devices.interfaces_attached_to_this_container_an"
+msgstr "이 컨테이너에 연결된 인터페이스입니다. 프로파일이 제공한 인터페이스는 상속됨으로 표시되며, 같은 이름으로 여기에 추가하면 그것을 덮어씁니다."
+
+# IPv4 address
+msgid "devices.ipv4_address"
+msgstr "IPv4 주소"
+
+# IPv6 address
+msgid "devices.ipv6_address"
+msgstr "IPv6 주소"
+
+# Leave empty to inherit from the network.
+msgid "devices.leave_empty_to_inherit_from_the"
+msgstr "비워두면 네트워크 값을 상속합니다."
+
+# Leave empty to let Incus generate one.
+msgid "devices.leave_empty_to_let_incus_generate"
+msgstr "비워두면 Incus가 만들어 줍니다."
+
+# MAC address
+msgid "devices.mac_address"
+msgstr "MAC 주소"
+
+# MTU
+msgid "devices.mtu"
+msgstr "MTU"
+
+# Name in container
+msgid "devices.name_in_container"
+msgstr "컨테이너 안 이름"
+
+# Network interfaces
+msgid "devices.network_interfaces"
+msgstr "네트워크 인터페이스"
+
+# No root disk remains. Incus refuses to start a container without one.
+msgid "devices.no_root_disk_remains_incus_refuses"
+msgstr "루트 디스크가 남아 있지 않습니다. Incus는 루트 디스크 없는 컨테이너를 시작하지 않습니다."
+
+# no settings
+msgid "devices.no_settings"
+msgstr "설정 없음"
+
+# Nothing of this kind is set on the container itself.
+msgid "devices.nothing_of_this_kind_is_set"
+msgstr "이 종류의 항목이 컨테이너 자체에는 설정되어 있지 않습니다."
+
+# Only for volumes, not for host paths.
+msgid "devices.only_for_volumes_not_for_host"
+msgstr "볼륨에만 해당하며 호스트 경로에는 쓰이지 않습니다."
+
+# Only meaningful on the root disk.
+msgid "devices.only_meaningful_on_the_root_disk"
+msgstr "루트 디스크에서만 의미가 있습니다."
+
+# Path in container
+msgid "devices.path_in_container"
+msgstr "컨테이너 안 경로"
+
+# Read only
+msgid "devices.read_only"
+msgstr "읽기 전용"
+
+# Remove $0
+msgid "devices.remove"
+msgstr "$0 제거"
+
+# Set to true to mount without write access.
+msgid "devices.set_to_true_to_mount_without"
+msgstr "쓰기 없이 마운트하려면 true로 설정하십시오."
+
 # Storage pool
-msgid "devices_tab.storage_pool"
+msgid "devices.storage_pool"
 msgstr "저장소 풀"
 
 # The interface name the container sees.
-msgid "devices_tab.the_interface_name_the_container_sees"
+msgid "devices.the_interface_name_the_container_sees"
 msgstr "컨테이너가 보게 될 인터페이스 이름입니다."
 
 # The root disk and any host paths bound into the container. Removing the root disk leaves the container unable to start.
-msgid "devices_tab.the_root_disk_and_any_host"
+msgid "devices.the_root_disk_and_any_host"
 msgstr "루트 디스크와 컨테이너에 연결된 호스트 경로입니다. 루트 디스크를 제거하면 컨테이너를 시작할 수 없습니다."
 
 # This container changed elsewhere while you were editing. Saving will be refused rather than overwrite it.
-msgid "devices_tab.this_container_changed_elsewhere_while_you"
+msgid "devices.this_container_changed_elsewhere_while_you"
 msgstr "편집하는 동안 이 컨테이너가 다른 곳에서 변경되었습니다. 덮어쓰지 않고 저장을 거부합니다."
 
 # Where it appears inside the container.
-msgid "devices_tab.where_it_appears_inside_the_container"
+msgid "devices.where_it_appears_inside_the_container"
 msgstr "컨테이너 안에서 나타날 위치입니다."
 
 # A container with that name already exists
 msgid "dialogs.a_container_with_that_name_already"
 msgstr "같은 이름의 컨테이너가 이미 있습니다"
-
-# Cancel
-msgid "dialogs.cancel"
-msgstr "취소"
 
 # Container name
 msgid "dialogs.container_name"
@@ -482,10 +458,6 @@ msgstr "$0 복사"
 msgid "dialogs.copy_container"
 msgstr "컨테이너 복사"
 
-# Create
-msgid "dialogs.create"
-msgstr "만들기"
-
 # Delete $0?
 msgid "dialogs.delete"
 msgstr "$0을(를) 삭제할까요?"
@@ -493,10 +465,6 @@ msgstr "$0을(를) 삭제할까요?"
 # Delete container
 msgid "dialogs.delete_container"
 msgstr "컨테이너 삭제"
-
-# Image
-msgid "dialogs.image"
-msgstr "이미지"
 
 # Image alias
 msgid "dialogs.image_alias"
@@ -559,43 +527,43 @@ msgid "dialogs.type_to_confirm"
 msgstr "확인하려면 $0을(를) 입력하십시오"
 
 # A variable name must start with a letter or underscore and contain only letters, digits and underscores.
-msgid "environment_editor.a_variable_name_must_start_with"
+msgid "environment.a_variable_name_must_start_with"
 msgstr "변수 이름은 영문자나 밑줄로 시작해야 하며 영문자, 숫자, 밑줄만 쓸 수 있습니다."
 
 # Add variable
-msgid "environment_editor.add_variable"
+msgid "environment.add_variable"
 msgstr "변수 추가"
 
 # Environment variable $0
-msgid "environment_editor.environment_variable"
+msgid "environment.environment_variable"
 msgstr "환경변수 $0"
 
 # No environment variables are set on this container.
-msgid "environment_editor.no_environment_variables_are_set_on"
+msgid "environment.no_environment_variables_are_set_on"
 msgstr "이 컨테이너에 설정된 환경변수가 없습니다."
 
 # Remove
-msgid "environment_editor.remove"
+msgid "environment.remove"
 msgstr "제거"
 
 # this variable
-msgid "environment_editor.this_variable"
+msgid "environment.this_variable"
 msgstr "이 변수"
 
 # Value
-msgid "environment_editor.value"
+msgid "environment.value"
 msgstr "값"
 
 # Value for $0
-msgid "environment_editor.value_for"
+msgid "environment.value_for"
 msgstr "$0의 값"
 
 # Variable
-msgid "environment_editor.variable"
+msgid "environment.variable"
 msgstr "변수"
 
 # variable $0
-msgid "environment_editor.variable_2"
+msgid "environment.variable_2"
 msgstr "변수 $0"
 
 # A cloud-config document, starting with #cloud-config.
@@ -906,456 +874,676 @@ msgstr "컨테이너가 실행 중이 아닐 때도 일정을 적용할지 여�
 msgid "fields.whether_this_container_s_pages_may"
 msgstr "이 컨테이너의 페이지를 swap으로 내보낼 수 있는지 여부입니다."
 
-# Another session changed this container. Reload and try again.
-msgid "overview_tab.another_session_changed_this_container_reload"
-msgstr "다른 세션이 이 컨테이너를 변경했습니다. 다시 불러온 뒤 시도하십시오."
-
-# Change profiles
-msgid "overview_tab.change_profiles"
-msgstr "프로파일 변경"
-
-# CPU time
-msgid "overview_tab.cpu_time"
-msgstr "CPU 시간"
-
-# Description
-msgid "overview_tab.description"
-msgstr "설명"
-
-# Ephemeral
-msgid "overview_tab.ephemeral"
-msgstr "임시"
-
-# Identity
-msgid "overview_tab.identity"
-msgstr "기본 정보"
-
-# $0 in, $1 out
-msgid "overview_tab.in_out"
-msgstr "수신 $0, 송신 "
-
-# Incus
-msgid "overview_tab.incus"
-msgstr "Incus"
-
-# Memory usage
-msgid "overview_tab.memory_usage"
-msgstr "메모리 사용량"
-
-# No
-msgid "overview_tab.no"
-msgstr "아니요"
-
-# No interfaces are up.
-msgid "overview_tab.no_interfaces_are_up"
-msgstr "활성화된 인터페이스가 없습니다."
-
-# Profiles supply configuration and devices to every container that applies them. Order matters: a later profile wins.
-msgid "overview_tab.profiles_supply_configuration_and_devices_to"
-msgstr "프로파일은 이를 적용한 모든 컨테이너에 설정과 장치를 제공합니다. 순서가 중요하며 뒤에 오는 프로파일이 우선합니다."
-
-# Resource usage
-msgid "overview_tab.resource_usage"
-msgstr "자원 사용량"
-
-# Usage is reported only while the container runs.
-msgid "overview_tab.usage_is_reported_only_while_the"
-msgstr "사용량은 컨테이너가 실행 중일 때만 보고됩니다."
-
-# Yes, deleted when stopped
-msgid "overview_tab.yes_deleted_when_stopped"
-msgstr "예, 정지하면 삭제됩니다"
-
-# Add key
-msgid "raw_config_editor.add_key"
-msgstr "키 추가"
-
-# Configuration key $0
-msgid "raw_config_editor.configuration_key"
-msgstr "설정 키 $0"
-
-# Duplicate keys: $0. Only the last would be saved.
-msgid "raw_config_editor.duplicate_keys_only_the_last_would"
-msgstr "중복된 키: $0. 마지막 값만 저장됩니다."
-
-# key $0
-msgid "raw_config_editor.key"
-msgstr "키 $0"
-
-# No other keys are set on this container.
-msgid "raw_config_editor.no_other_keys_are_set_on"
-msgstr "이 컨테이너에 설정된 다른 키가 없습니다."
-
-# this key
-msgid "raw_config_editor.this_key"
-msgstr "이 키"
-
-# A short name to use instead of the fingerprint.
-msgid "resources_view.a_short_name_to_use_instead"
-msgstr "지문 대신 쓸 짧은 이름입니다."
-
-# Actions
-msgid "resources_view.actions"
-msgstr "작업"
-
 # Add alias
-msgid "resources_view.add_alias"
+msgid "images.add_alias"
 msgstr "별칭 추가"
 
 # Add image alias
-msgid "resources_view.add_image_alias"
+msgid "images.add_image_alias"
 msgstr "이미지 별칭 추가"
 
 # Added
-msgid "resources_view.added"
+msgid "images.added"
 msgstr "추가 시각"
 
-# Addresses
-msgid "resources_view.addresses"
-msgstr "주소"
-
 # Alias
-msgid "resources_view.alias"
+msgid "images.alias"
 msgstr "별칭"
 
-# An alias on a configured remote, such as $0. Large images take a while and the download runs in the background.
-msgid "resources_view.an_alias_on_a_configured_remote"
-msgstr "등록된 원격 저장소의 별칭입니다. 예를 들면 $0 입니다. 큰 이미지는 내려받는 데 시간이 걸리며, 내려받기는 배경에서 진행됩니다."
-
-# Architecture
-msgid "resources_view.architecture"
-msgstr "아키텍처"
-
-# Cancel
-msgid "resources_view.cancel"
-msgstr "취소"
-
-# Delete
-msgid "resources_view.delete"
-msgstr "삭제"
-
-# Delete image
-msgid "resources_view.delete_image"
-msgstr "이미지 삭제"
-
 # Delete this image?
-msgid "resources_view.delete_this_image"
+msgid "images.delete_this_image"
 msgstr "이 이미지를 삭제할까요?"
 
-# Description
-msgid "resources_view.description"
-msgstr "설명"
-
-# Devices
-msgid "resources_view.devices"
-msgstr "장치"
+# Download progress
+msgid "images.download_progress"
+msgstr "내려받기 진행률"
 
 # Downloading: $0
-msgid "resources_view.downloading"
+msgid "images.downloading"
 msgstr "내려받는 중: $0"
 
-# Driver
-msgid "resources_view.driver"
-msgstr "드라이버"
+# Filter
+msgid "images.filter"
+msgstr "거르기"
+
+# Filter the catalogue
+msgid "images.filter_the_catalogue"
+msgstr "카탈로그 거르기"
 
 # Fingerprint
-msgid "resources_view.fingerprint"
+msgid "images.fingerprint"
 msgstr "지문"
 
-# Image
-msgid "resources_view.image"
-msgstr "이미지"
-
-# Image to pull
-msgid "resources_view.image_to_pull"
-msgstr "내려받을 이미지"
-
-# Images
-msgid "resources_view.images"
-msgstr "이미지"
-
-#  in $0
-msgid "resources_view.in_pool"
-msgstr " ($0 풀)"
-
-# Incus resources
-msgid "resources_view.incus_resources"
-msgstr "Incus 자원"
-
 # $0 is removed from this host. Containers already created from it keep working; creating new ones will download it again.
-msgid "resources_view.is_removed_from_this_host_containers"
+msgid "images.is_removed_from_this_host_containers"
 msgstr "$0 이(가) 이 호스트에서 제거됩니다. 이미 이 이미지로 만든 컨테이너는 그대로 동작하며, 새로 만들 때는 다시 내려받습니다."
 
 # Loading images
-msgid "resources_view.loading_images"
+msgid "images.loading_images"
 msgstr "이미지 불러오는 중"
 
-# Loading networks
-msgid "resources_view.loading_networks"
-msgstr "네트워크 불러오는 중"
-
-# Loading storage pools
-msgid "resources_view.loading_storage_pools"
-msgstr "저장소 풀 불러오는 중"
+# Loading the catalogue
+msgid "images.loading_the_catalogue"
+msgstr "카탈로그 불러오는 중"
 
 # Local images
-msgid "resources_view.local_images"
+msgid "images.local_images"
 msgstr "로컬 이미지"
 
-# Managed
-msgid "resources_view.managed"
-msgstr "관리됨"
-
-# Managed networks are created and maintained by Incus. Unmanaged ones are host interfaces Incus can attach to but does not own.
-msgid "resources_view.managed_networks_are_created_and_maintained"
-msgstr "관리되는 네트워크는 Incus가 만들고 유지합니다. 관리되지 않는 것은 Incus가 연결할 수는 있지만 소유하지는 않는 호스트 인터페이스입니다."
-
-# Name
-msgid "resources_view.name"
-msgstr "이름"
-
 # Name this image
-msgid "resources_view.name_this_image"
+msgid "images.name_this_image"
 msgstr "이미지에 이름 붙이기"
 
-# Networks
-msgid "resources_view.networks"
-msgstr "네트워크"
-
 # No alias
-msgid "resources_view.no_alias"
+msgid "images.no_alias"
 msgstr "별칭 없음"
 
+# No image matches the filter.
+msgid "images.no_image_matches_the_filter"
+msgstr "거른 조건에 맞는 이미지가 없습니다."
+
+# No image remote is configured on this host.
+msgid "images.no_image_remote_is_configured_on"
+msgstr "이 호스트에 등록된 이미지 원격 저장소가 없습니다."
+
 # No images are cached on this host.
-msgid "resources_view.no_images_are_cached_on_this"
+msgid "images.no_images_are_cached_on_this"
 msgstr "이 호스트에 저장된 이미지가 없습니다."
 
-# None
-msgid "resources_view.none"
-msgstr "없음"
-
-#  on $0
-msgid "resources_view.on_network"
-msgstr " ($0 네트워크)"
-
-# Profiles
-msgid "resources_view.profiles"
-msgstr "프로파일"
-
-# Profiles supply configuration and devices to every container that applies them. Editing a profile changes every container using it, which is why it is read-only here for now.
-msgid "resources_view.profiles_supply_configuration_and_devices_to"
-msgstr "프로파일은 이를 적용한 모든 컨테이너에 설정과 장치를 제공합니다. 프로파일을 고치면 그것을 쓰는 컨테이너가 전부 바뀌기 때문에, 여기서는 아직 읽기 전용입니다."
-
 # Pull
-msgid "resources_view.pull"
+msgid "images.pull"
 msgstr "내려받기"
 
 # Pull an image
-msgid "resources_view.pull_an_image"
+msgid "images.pull_an_image"
 msgstr "이미지 내려받기"
 
 # Pull image
-msgid "resources_view.pull_image"
+msgid "images.pull_image"
 msgstr "이미지 내려받기"
 
-# Refresh
-msgid "resources_view.refresh"
-msgstr "새로 고침"
+# Remote
+msgid "images.remote"
+msgstr "원격 저장소"
 
-# Size
-msgid "resources_view.size"
-msgstr "크기"
+# Images on the remote
+msgid "images.remote_images"
+msgstr "원격 저장소의 이미지"
 
-# Source
-msgid "resources_view.source"
-msgstr "원본"
+# Remove the alias $0
+msgid "images.remove_alias"
+msgstr "$0 별칭 제거"
 
-# Storage pools
-msgid "resources_view.storage_pools"
-msgstr "저장소 풀"
+# All states
+msgid "list.all_states"
+msgstr "모든 상태"
 
-# Type
-msgid "resources_view.type"
-msgstr "종류"
+# $0: $1 containers
+msgid "list.apply_to_containers"
+msgstr "$0: 컨테이너 $1개"
+
+# Autostart
+msgid "list.autostart"
+msgstr "자동 시작"
+
+# Autostart turned off for $0
+msgid "list.autostart_off_for"
+msgstr "$0의 자동 시작을 껐습니다"
+
+# Autostart turned on for $0
+msgid "list.autostart_on_for"
+msgstr "$0의 자동 시작을 켰습니다"
+
+# Clear selection
+msgid "list.clear_selection"
+msgstr "선택 해제"
+
+# Columns
+msgid "list.columns"
+msgstr "열"
+
+# Container list pages
+msgid "list.container_pages"
+msgstr "컨테이너 목록 쪽 이동"
+
+# Create container
+msgid "list.create_container"
+msgstr "컨테이너 만들기"
+
+# Created $0
+msgid "list.created"
+msgstr "$0 을(를) 만들었습니다"
+
+# Deleted $0
+msgid "list.deleted"
+msgstr "$0 을(를) 삭제했습니다"
+
+# Dismiss error
+msgid "list.dismiss_error"
+msgstr "오류 닫기"
+
+# $0 failed on $1
+msgid "list.failed_on"
+msgstr "$1 에 대한 $0 이(가) 실패했습니다"
+
+# $0 finished on $1
+msgid "list.finished_on"
+msgstr "$1 에 대한 $0 이(가) 끝났습니다"
+
+# $0 finished on $1 containers
+msgid "list.finished_on_containers"
+msgstr "컨테이너 $1개에 대한 $0 이(가) 끝났습니다"
+
+# No container matches the current filter.
+msgid "list.no_container_matches_the_current_filter"
+msgstr "현재 필터에 해당하는 컨테이너가 없습니다."
+
+# None of the selected containers can take this action.
+msgid "list.none_of_the_selected_containers_can"
+msgstr "선택한 컨테이너 중 이 작업을 받을 수 있는 것이 없습니다."
+
+# $0 of $1
+msgid "list.of"
+msgstr "$1개 중 $0개"
+
+# $0 - $1 of $2
+msgid "list.of_containers"
+msgstr "$2개 중 $0 - $1"
+
+# Search containers
+msgid "list.search_containers"
+msgstr "컨테이너 검색"
+
+# Search containers by name, description or address
+msgid "list.search_containers_by_name_description_or"
+msgstr "이름, 설명, 주소로 컨테이너 검색"
+
+# Select $0
+msgid "list.select"
+msgstr "$0 선택"
+
+# Select every container on this page
+msgid "list.select_every_container_on_this_page"
+msgstr "이 쪽의 컨테이너 모두 선택"
+
+# $0 selected
+msgid "list.selected"
+msgstr "$0개 선택됨"
+
+# Skipped, already in that state: $0
+msgid "list.skipped_already_in_that_state"
+msgstr "이미 그 상태여서 건너뜁니다: $0"
+
+# Start $0 on boot
+msgid "list.start_on_boot_for"
+msgstr "부팅할 때 $0 시작"
+
+# System containers
+msgid "list.system_containers"
+msgstr "시스템 컨테이너"
+
+# Contents of $0
+msgid "logs.contents_of"
+msgstr "$0 의 내용"
+
+# Loading log files
+msgid "logs.loading_logs"
+msgstr "로그 파일 불러오는 중"
+
+# Loading the log
+msgid "logs.loading_the_log"
+msgstr "로그 불러오는 중"
+
+# Log file
+msgid "logs.log_file"
+msgstr "로그 파일"
+
+# Showing the last $0 lines.
+msgid "logs.showing_the_last_lines"
+msgstr "마지막 $0줄을 보여줍니다."
+
+# This container has no log files. Incus writes them once it has run.
+msgid "logs.this_container_has_no_log_files"
+msgstr "이 컨테이너에는 로그 파일이 없습니다. 한 번 실행되고 나면 Incus가 만듭니다."
+
+# This file is empty.
+msgid "logs.this_file_is_empty"
+msgstr "이 파일은 비어 있습니다."
+
+# A bridge is the usual choice: Incus creates it and manages its addresses. macvlan and SR-IOV attach to a physical interface instead.
+msgid "networks.a_bridge_is_the_usual_choice"
+msgstr "보통은 브리지를 고릅니다. Incus가 만들고 주소까지 관리합니다. macvlan과 SR-IOV는 대신 물리 인터페이스에 붙습니다."
+
+# Bridge
+msgid "networks.bridge"
+msgstr "브리지"
+
+# Create network
+msgid "networks.create_network"
+msgstr "네트워크 만들기"
+
+# Delete $0?
+msgid "networks.delete_network"
+msgstr "$0 을(를) 삭제할까요?"
+
+# Edit $0
+msgid "networks.edit_network"
+msgstr "$0 편집"
+
+# Loading networks
+msgid "networks.loading_networks"
+msgstr "네트워크 불러오는 중"
+
+# macvlan
+msgid "networks.macvlan"
+msgstr "macvlan"
+
+# Managed
+msgid "networks.managed"
+msgstr "관리됨"
+
+# Managed networks are created and maintained by Incus. Unmanaged ones are host interfaces Incus can attach to but does not own.
+msgid "networks.managed_networks_are_created_and_maintained"
+msgstr "관리되는 네트워크는 Incus가 만들고 유지합니다. 관리되지 않는 것은 Incus가 연결할 수는 있지만 소유하지는 않는 호스트 인터페이스입니다."
+
+# SR-IOV
+msgid "networks.sriov"
+msgstr "SR-IOV"
+
+# The network and its bridge are removed from this host. Containers attached to it lose that interface.
+msgid "networks.the_network_and_its_bridge_are"
+msgstr "네트워크와 그 브리지가 이 호스트에서 제거됩니다. 여기에 붙어 있던 컨테이너는 해당 인터페이스를 잃습니다."
 
 # Unmanaged
-msgid "resources_view.unmanaged"
+msgid "networks.unmanaged"
 msgstr "관리되지 않음"
 
-# Used by
-msgid "resources_view.used_by"
-msgstr "사용 중"
+# Another session changed this container. Reload and try again.
+msgid "overview.another_session_changed_this_container_reload"
+msgstr "다른 세션이 이 컨테이너를 변경했습니다. 다시 불러온 뒤 시도하십시오."
+
+# Change profiles
+msgid "overview.change_profiles"
+msgstr "프로파일 변경"
+
+# CPU time
+msgid "overview.cpu_time"
+msgstr "CPU 시간"
+
+# Ephemeral
+msgid "overview.ephemeral"
+msgstr "임시"
+
+# Identity
+msgid "overview.identity"
+msgstr "기본 정보"
+
+# $0 in, $1 out
+msgid "overview.in_out"
+msgstr "수신 $0, 송신 "
+
+# Incus
+msgid "overview.incus"
+msgstr "Incus"
+
+# Memory usage
+msgid "overview.memory_usage"
+msgstr "메모리 사용량"
+
+# No
+msgid "overview.no"
+msgstr "아니요"
+
+# No interfaces are up.
+msgid "overview.no_interfaces_are_up"
+msgstr "활성화된 인터페이스가 없습니다."
+
+# Profiles supply configuration and devices to every container that applies them. Order matters: a later profile wins.
+msgid "overview.profiles_supply_configuration_and_devices_to"
+msgstr "프로파일은 이를 적용한 모든 컨테이너에 설정과 장치를 제공합니다. 순서가 중요하며 뒤에 오는 프로파일이 우선합니다."
+
+# Resource usage
+msgid "overview.resource_usage"
+msgstr "자원 사용량"
+
+# Usage is reported only while the container runs.
+msgid "overview.usage_is_reported_only_while_the"
+msgstr "사용량은 컨테이너가 실행 중일 때만 보고됩니다."
+
+# Yes, deleted when stopped
+msgid "overview.yes_deleted_when_stopped"
+msgstr "예, 정지하면 삭제됩니다"
+
+# Create profile
+msgid "profiles.create_profile"
+msgstr "프로파일 만들기"
+
+# Delete $0?
+msgid "profiles.delete_profile"
+msgstr "$0 을(를) 삭제할까요?"
+
+# Edit $0
+msgid "profiles.edit_profile"
+msgstr "$0 편집"
+
+#  in $0
+msgid "profiles.in_pool"
+msgstr " ($0 풀)"
+
+# Loading profiles
+msgid "profiles.loading_profiles"
+msgstr "프로파일 불러오는 중"
+
+#  on $0
+msgid "profiles.on_network"
+msgstr " ($0 네트워크)"
+
+# Profiles supply configuration and devices to every container that applies them. Editing a profile changes every container using it, which is why it is read-only here for now.
+msgid "profiles.profiles_supply_configuration_and_devices_to"
+msgstr "프로파일은 이를 적용한 모든 컨테이너에 설정과 장치를 제공합니다. 하나를 고치면 그것을 쓰는 컨테이너가 전부 바뀌므로, 여기서의 변경은 보이는 것보다 멀리 퍼집니다."
+
+# The profile is removed. Containers keep running with what they already have, but lose whatever this profile was supplying at their next start.
+msgid "profiles.the_profile_is_removed_containers_keep"
+msgstr "프로파일이 제거됩니다. 컨테이너는 지금 설정 그대로 계속 돌아가지만, 다음 시작 때 이 프로파일이 주던 것을 잃습니다."
+
+# Add key
+msgid "raw_config.add_key"
+msgstr "키 추가"
+
+# Configuration key $0
+msgid "raw_config.configuration_key"
+msgstr "설정 키 $0"
+
+# Duplicate keys: $0. Only the last would be saved.
+msgid "raw_config.duplicate_keys_only_the_last_would"
+msgstr "중복된 키: $0. 마지막 값만 저장됩니다."
+
+# key $0
+msgid "raw_config.key"
+msgstr "키 $0"
+
+# No other keys are set on this container.
+msgid "raw_config.no_other_keys_are_set_on"
+msgstr "이 컨테이너에 설정된 다른 키가 없습니다."
+
+# this key
+msgid "raw_config.this_key"
+msgstr "이 키"
+
+# Configuration
+msgid "resources.configuration"
+msgstr "설정"
+
+# Key $0 of $1
+msgid "resources.key_of"
+msgstr "$1 의 $0번째 키"
+
+# Letters, digits, dots, hyphens and underscores.
+msgid "resources.letters_digits_dots_hyphens_and_underscores"
+msgstr "영문자, 숫자, 점, 하이픈, 밑줄을 쓸 수 있습니다."
+
+# Nothing is set here yet.
+msgid "resources.nothing_is_set_here_yet"
+msgstr "아직 설정된 것이 없습니다."
+
+# Still used by $0: $1
+msgid "resources.still_used_by"
+msgstr "아직 $0곳에서 쓰고 있습니다: $1"
+
+# That name is already taken.
+msgid "resources.that_name_is_already_taken"
+msgstr "이미 쓰이고 있는 이름입니다."
+
+# The name is fixed after creation.
+msgid "resources.the_name_is_fixed_after_creation"
+msgstr "이름은 만든 뒤에는 바꿀 수 없습니다."
 
 # A snapshot with that name already exists
-msgid "snapshots_tab.a_snapshot_with_that_name_already"
+msgid "snapshots.a_snapshot_with_that_name_already"
 msgstr "같은 이름의 스냅샷이 이미 있습니다"
 
 # Contents
-msgid "snapshots_tab.contents"
+msgid "snapshots.contents"
 msgstr "내용"
 
 # Create snapshot
-msgid "snapshots_tab.create_snapshot"
+msgid "snapshots.create_snapshot"
 msgstr "스냅샷 만들기"
 
 # $0 day ago
-msgid "snapshots_tab.day_ago"
+msgid "snapshots.day_ago"
 msgid_plural "snapshots_tab.day_ago"
 msgstr[0] "$0일 전"
 
 # Delete snapshot
-msgid "snapshots_tab.delete_snapshot"
+msgid "snapshots.delete_snapshot"
 msgstr "스냅샷 삭제"
 
 # Delete snapshot $0?
-msgid "snapshots_tab.delete_snapshot_2"
+msgid "snapshots.delete_snapshot_2"
 msgstr "스냅샷 $0을(를) 삭제할까요?"
 
 # Disk and memory
-msgid "snapshots_tab.disk_and_memory"
+msgid "snapshots.disk_and_memory"
 msgstr "디스크 및 메모리"
 
 # Disk only
-msgid "snapshots_tab.disk_only"
+msgid "snapshots.disk_only"
 msgstr "디스크만"
 
 # Expires
-msgid "snapshots_tab.expires"
+msgid "snapshots.expires"
 msgstr "만료"
 
 # $0 hour ago
-msgid "snapshots_tab.hour_ago"
+msgid "snapshots.hour_ago"
 msgid_plural "snapshots_tab.hour_ago"
 msgstr[0] "$0시간 전"
 
 # Include running process state
-msgid "snapshots_tab.include_running_process_state"
+msgid "snapshots.include_running_process_state"
 msgstr "실행 중인 프로세스 상태 포함"
 
 # Incus stops the container to restore it.
-msgid "snapshots_tab.incus_stops_the_container_to_restore"
+msgid "snapshots.incus_stops_the_container_to_restore"
 msgstr "Incus는 복원을 위해 컨테이너를 정지합니다."
 
 # Letters, digits, dots, hyphens and underscores.
-msgid "snapshots_tab.letters_digits_dots_hyphens_and_underscores"
+msgid "snapshots.letters_digits_dots_hyphens_and_underscores"
 msgstr "영문자, 숫자, 점, 하이픈, 밑줄만 사용할 수 있습니다."
 
 # Loading snapshots
-msgid "snapshots_tab.loading_snapshots"
+msgid "snapshots.loading_snapshots"
 msgstr "스냅샷을 불러오는 중"
 
 # $0 minute ago
-msgid "snapshots_tab.minute_ago"
+msgid "snapshots.minute_ago"
 msgid_plural "snapshots_tab.minute_ago"
 msgstr[0] "$0분 전"
 
 # moments ago
-msgid "snapshots_tab.moments_ago"
+msgid "snapshots.moments_ago"
 msgstr "방금 전"
 
 # Never
-msgid "snapshots_tab.never"
+msgid "snapshots.never"
 msgstr "없음"
 
 # Only available while the container runs.
-msgid "snapshots_tab.only_available_while_the_container_runs"
+msgid "snapshots.only_available_while_the_container_runs"
 msgstr "컨테이너가 실행 중일 때만 사용할 수 있습니다."
 
+# Rename $0
+msgid "snapshots.rename"
+msgstr "$0 이름 바꾸기"
+
+# Rename snapshot
+msgid "snapshots.rename_snapshot"
+msgstr "스냅샷 이름 바꾸기"
+
 # Requires CRIU on the host. Without it the snapshot fails rather than falling back.
-msgid "snapshots_tab.requires_criu_on_the_host_without"
+msgid "snapshots.requires_criu_on_the_host_without"
 msgstr "호스트에 CRIU가 필요합니다. 없으면 대체 동작 없이 스냅샷이 실패합니다."
 
 # Restore
-msgid "snapshots_tab.restore"
+msgid "snapshots.restore"
 msgstr "복원"
 
 # Restore $0?
-msgid "snapshots_tab.restore_2"
+msgid "snapshots.restore_2"
 msgstr "$0을(를) 복원할까요?"
 
 # Restore snapshot
-msgid "snapshots_tab.restore_snapshot"
+msgid "snapshots.restore_snapshot"
 msgstr "스냅샷 복원"
 
 # Snapshot $0
-msgid "snapshots_tab.snapshot"
+msgid "snapshots.snapshot"
 msgstr "$0 스냅샷"
 
 # Snapshot name
-msgid "snapshots_tab.snapshot_name"
+msgid "snapshots.snapshot_name"
 msgstr "스냅샷 이름"
 
 # Snapshots of $0
-msgid "snapshots_tab.snapshots_of"
+msgid "snapshots.snapshots_of"
 msgstr "$0의 스냅샷"
 
 # Taken
-msgid "snapshots_tab.taken"
+msgid "snapshots.taken"
 msgstr "생성 시각"
 
 # The snapshot is destroyed. The container itself is untouched, but this rollback point is gone for good.
-msgid "snapshots_tab.the_snapshot_is_destroyed_the_container"
+msgid "snapshots.the_snapshot_is_destroyed_the_container"
 msgstr "스냅샷이 파괴됩니다. 컨테이너 자체는 그대로지만 이 롤백 지점은 영구히 사라집니다."
 
 # This container has no snapshots.
-msgid "snapshots_tab.this_container_has_no_snapshots"
+msgid "snapshots.this_container_has_no_snapshots"
 msgstr "이 컨테이너에는 스냅샷이 없습니다."
 
 # This rolls $0 back to $1, taken $2. Everything written to the container since then is discarded and cannot be recovered.
-msgid "snapshots_tab.this_rolls_back_to_taken_everything"
+msgid "snapshots.this_rolls_back_to_taken_everything"
 msgstr "$0을(를)  시점으로 되돌립니다($2에 생성). 그 이후 컨테이너에 기록된 모든 내용은 폐기되며 복구할 수 없습니다."
 
 # Administrative access is required
-msgid "startup_states.administrative_access_is_required"
+msgid "startup.administrative_access_is_required"
 msgstr "관리자 권한이 필요합니다"
 
 # Cannot reach Incus
-msgid "startup_states.cannot_reach_incus"
+msgid "startup.cannot_reach_incus"
 msgstr "Incus에 연결할 수 없습니다"
 
 # Check again
-msgid "startup_states.check_again"
+msgid "startup.check_again"
 msgstr "다시 확인"
 
 # Copied
-msgid "startup_states.copied"
+msgid "startup.copied"
 msgstr "복사됨"
 
 # Incus answered but reported the connection as untrusted, so it will not return any data. This is an Incus authorization setting rather than a Cockpit one, and granting administrative access here will not change it.
-msgid "startup_states.incus_answered_but_reported_the_connection"
+msgid "startup.incus_answered_but_reported_the_connection"
 msgstr "Incus가 응답했지만 이 연결을 신뢰하지 않는다고 알려 데이터를 반환하지 않습니다. 이는 Cockpit이 아니라 Incus의 권한 설정이므로 여기서 관리자 권한을 켜도 바뀌지 않습니다."
 
 # Incus does not trust this connection
-msgid "startup_states.incus_does_not_trust_this_connection"
+msgid "startup.incus_does_not_trust_this_connection"
 msgstr "Incus가 이 연결을 신뢰하지 않습니다"
 
 # Incus is not installed
-msgid "startup_states.incus_is_not_installed"
+msgid "startup.incus_is_not_installed"
 msgstr "Incus가 설치되어 있지 않습니다"
 
 # Incus returned something unexpected
-msgid "startup_states.incus_returned_something_unexpected"
+msgid "startup.incus_returned_something_unexpected"
 msgstr "Incus가 예상치 못한 응답을 반환했습니다"
 
 # No containers yet
-msgid "startup_states.no_containers_yet"
+msgid "startup.no_containers_yet"
 msgstr "아직 컨테이너가 없습니다"
 
 # No Incus socket was found at $0. Install Incus and start its socket unit, then reload this page.
-msgid "startup_states.no_incus_socket_was_found_at"
+msgid "startup.no_incus_socket_was_found_at"
 msgstr "$0에서 Incus 소켓을 찾지 못했습니다. Incus를 설치하고 소켓 유닛을 시작한 뒤 이 페이지를 새로 고치십시오."
 
 # The Incus socket is owned by root:incus-admin, so reading it needs administrative access. Turn it on from the access button in Cockpit's top bar. This page loads the containers by itself once you do.
-msgid "startup_states.the_incus_socket_is_owned_by"
+msgid "startup.the_incus_socket_is_owned_by"
 msgstr "Incus 소켓의 소유자가 root:incus-admin이라 읽으려면 관리자 권한이 필요합니다. Cockpit 상단 표시줄의 접근 버튼에서 권한을 켜십시오. 켜면 이 페이지가 알아서 컨테이너를 불러옵니다."
 
 # This host runs Incus but has no system containers.
-msgid "startup_states.this_host_runs_incus_but_has"
+msgid "startup.this_host_runs_incus_but_has"
 msgstr "이 호스트에서 Incus가 실행 중이지만 시스템 컨테이너가 없습니다."
 
 # Try again
-msgid "startup_states.try_again"
+msgid "startup.try_again"
 msgstr "다시 시도"
+
+# Error
+msgid "state.error"
+msgstr "오류"
+
+# Freezing
+msgid "state.freezing"
+msgstr "동결하는 중"
+
+# Frozen
+msgid "state.frozen"
+msgstr "동결됨"
+
+# Running
+msgid "state.running"
+msgstr "실행 중"
+
+# Starting
+msgid "state.starting"
+msgstr "시작하는 중"
+
+# Stopped
+msgid "state.stopped"
+msgstr "정지됨"
+
+# Stopping
+msgid "state.stopping"
+msgstr "정지하는 중"
+
+# Unknown
+msgid "state.unknown"
+msgstr "알 수 없음"
+
+# A pool is where container filesystems live. Every container's root disk sits on one.
+msgid "storage.a_pool_is_where_container_filesystems"
+msgstr "풀은 컨테이너 파일 시스템이 놓이는 곳입니다. 모든 컨테이너의 루트 디스크가 풀 위에 있습니다."
+
+# Create pool
+msgid "storage.create_pool"
+msgstr "풀 만들기"
+
+# Delete $0?
+msgid "storage.delete_pool"
+msgstr "$0 을(를) 삭제할까요?"
+
+# dir needs nothing and works everywhere. The others need their tools installed and a device or file to back them.
+msgid "storage.dir_needs_nothing_the_others_need"
+msgstr "dir는 아무것도 필요 없고 어디서나 됩니다. 나머지는 해당 도구가 설치돼 있어야 하고, 뒷받침할 장치나 파일이 있어야 합니다."
+
+# Directory
+msgid "storage.directory"
+msgstr "디렉터리"
+
+# Driver
+msgid "storage.driver"
+msgstr "드라이버"
+
+# Edit $0
+msgid "storage.edit_pool"
+msgstr "$0 편집"
+
+# Loading storage pools
+msgid "storage.loading_storage_pools"
+msgstr "저장소 풀 불러오는 중"
+
+# The pool and everything stored on it are destroyed.
+msgid "storage.the_pool_and_everything_stored_on"
+msgstr "풀과 그 위에 저장된 모든 것이 파괴됩니다."
 
 # Console for $0
 msgid "terminal.console_for"
@@ -1369,6 +1557,10 @@ msgstr "Incus는 한 번에 하나의 콘솔 연결만 허용하므로, 여기�
 msgid "terminal.keystrokes_go_to_the_container_press"
 msgstr "입력은 컨테이너로 전달됩니다. 터미널 밖으로 초점을 옮기려면 Ctrl + Shift + Tab을 누르십시오."
 
+# $0 px
+msgid "terminal.px"
+msgstr "$0 px"
+
 # Reconnect
 msgid "terminal.reconnect"
 msgstr "다시 연결"
@@ -1380,3 +1572,7 @@ msgstr "세션 종료: $0"
 # Shell for $0
 msgid "terminal.shell_for"
 msgstr "$0 셸"
+
+# Terminal font size
+msgid "terminal.terminal_font_size"
+msgstr "터미널 글꼴 크기"

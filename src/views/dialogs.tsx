@@ -16,8 +16,7 @@ import {
 import { useState } from "react";
 
 import {
-    K,
-    _,
+    T,
     format,
     type Container,
 } from "../backend";
@@ -61,23 +60,23 @@ export const DeleteDialog = ({ container, onClose, onConfirm }: DeleteDialogProp
     };
 
     return (
-        <Modal isOpen variant="small" onClose={onClose} aria-label={_(K.dialogs.delete_container)}>
-            <ModalHeader title={format(_(K.dialogs.delete), container.name)} titleIconVariant="danger" />
+        <Modal isOpen variant="small" onClose={onClose} aria-label={T.dialogs.delete_container}>
+            <ModalHeader title={format(T.dialogs.delete, container.name)} titleIconVariant="danger" />
             <ModalBody>
                 <Form onSubmit={(event) => { event.preventDefault(); if (matches) void run(); }}>
                     <p>
-                        {_(K.dialogs.this_permanently_destroys_the_container_s)}
+                        {T.dialogs.this_permanently_destroys_the_container_s}
                     </p>
                     {container.state !== "Stopped" && (
                         <Alert
                             variant="warning"
                             isInline
-                            title={format(_(K.dialogs.is_stop_it_first), container.name, stateName(container.state).toLowerCase())}
+                            title={format(T.dialogs.is_stop_it_first, container.name, stateName(container.state).toLowerCase())}
                         />
                     )}
                     {error !== null && <Alert variant="danger" isInline title={error} />}
                     <FormGroup
-                        label={format(_(K.dialogs.type_to_confirm), container.name)}
+                        label={format(T.dialogs.type_to_confirm, container.name)}
                         fieldId="lxc-delete-confirm"
                         isRequired
                     >
@@ -85,13 +84,13 @@ export const DeleteDialog = ({ container, onClose, onConfirm }: DeleteDialogProp
                             id="lxc-delete-confirm"
                             value={typed}
                             onChange={(_event, value) => setTyped(value)}
-                            aria-label={_(K.dialogs.container_name_confirmation)}
+                            aria-label={T.dialogs.container_name_confirmation}
                             autoComplete="off"
                         />
                         <FormHelperText>
                             <HelperText>
                                 <HelperTextItem variant={matches ? "success" : "default"}>
-                                    {matches ? _(K.dialogs.names_match) : _(K.dialogs.the_names_must_match_exactly)}
+                                    {matches ? T.dialogs.names_match : T.dialogs.the_names_must_match_exactly}
                                 </HelperTextItem>
                             </HelperText>
                         </FormHelperText>
@@ -105,10 +104,10 @@ export const DeleteDialog = ({ container, onClose, onConfirm }: DeleteDialogProp
                     isLoading={busy}
                     onClick={() => void run()}
                 >
-                    {_(K.container_actions.delete)}
+                    {T.common.delete}
                 </Button>
                 <Button variant="link" onClick={onClose} isDisabled={busy}>
-                    {_(K.dialogs.cancel)}
+                    {T.common.cancel}
                 </Button>
             </ModalFooter>
         </Modal>
@@ -142,30 +141,30 @@ export const RenameDialog = ({ container, onClose, onConfirm }: RenameDialogProp
     };
 
     return (
-        <Modal isOpen variant="small" onClose={onClose} aria-label={_(K.dialogs.rename_container)}>
-            <ModalHeader title={format(_(K.dialogs.rename), container.name)} />
+        <Modal isOpen variant="small" onClose={onClose} aria-label={T.dialogs.rename_container}>
+            <ModalHeader title={format(T.dialogs.rename, container.name)} />
             <ModalBody>
                 <Form onSubmit={(event) => { event.preventDefault(); if (valid) void run(); }}>
                     {container.state !== "Stopped" && (
                         <Alert
                             variant="warning"
                             isInline
-                            title={_(K.dialogs.incus_only_renames_a_stopped_container)}
+                            title={T.dialogs.incus_only_renames_a_stopped_container}
                         />
                     )}
                     {error !== null && <Alert variant="danger" isInline title={error} />}
-                    <FormGroup label={_(K.dialogs.new_name)} fieldId="lxc-rename" isRequired>
+                    <FormGroup label={T.dialogs.new_name} fieldId="lxc-rename" isRequired>
                         <TextInput
                             id="lxc-rename"
                             value={name}
                             onChange={(_event, value) => setName(value)}
-                            aria-label={_(K.dialogs.new_container_name)}
+                            aria-label={T.dialogs.new_container_name}
                             autoComplete="off"
                         />
                         <FormHelperText>
                             <HelperText>
                                 <HelperTextItem>
-                                    {_(K.dialogs.letters_digits_and_hyphens_only)}
+                                    {T.dialogs.letters_digits_and_hyphens_only}
                                 </HelperTextItem>
                             </HelperText>
                         </FormHelperText>
@@ -175,9 +174,9 @@ export const RenameDialog = ({ container, onClose, onConfirm }: RenameDialogProp
             <ModalFooter>
                 <Button variant="primary" isDisabled={!valid || busy} isLoading={busy}
                     onClick={() => void run()}>
-                    {_(K.container_actions.rename)}
+                    {T.common.rename}
                 </Button>
-                <Button variant="link" onClick={onClose} isDisabled={busy}>{_(K.dialogs.cancel)}</Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>{T.common.cancel}</Button>
             </ModalFooter>
         </Modal>
     );
@@ -212,29 +211,29 @@ export const CopyDialog = ({ container, existing, onClose, onConfirm }: CopyDial
     };
 
     return (
-        <Modal isOpen variant="small" onClose={onClose} aria-label={_(K.dialogs.copy_container)}>
-            <ModalHeader title={format(_(K.dialogs.copy), container.name)} />
+        <Modal isOpen variant="small" onClose={onClose} aria-label={T.dialogs.copy_container}>
+            <ModalHeader title={format(T.dialogs.copy, container.name)} />
             <ModalBody>
                 <Form onSubmit={(event) => { event.preventDefault(); if (valid) void run(); }}>
                     <p>
-                        {_(K.dialogs.the_copy_takes_this_container_s)}
+                        {T.dialogs.the_copy_takes_this_container_s}
                     </p>
                     {error !== null && <Alert variant="danger" isInline title={error} />}
-                    <FormGroup label={_(K.dialogs.name_for_the_copy)} fieldId="lxc-copy-name" isRequired>
+                    <FormGroup label={T.dialogs.name_for_the_copy} fieldId="lxc-copy-name" isRequired>
                         <TextInput
                             id="lxc-copy-name"
                             value={name}
                             onChange={(_event, value) => setName(value)}
                             validated={name === "" ? "default" : valid ? "success" : "error"}
-                            aria-label={_(K.dialogs.name_for_the_copy)}
+                            aria-label={T.dialogs.name_for_the_copy}
                             autoComplete="off"
                         />
                         <FormHelperText>
                             <HelperText>
                                 <HelperTextItem variant={duplicate ? "error" : "default"}>
                                     {duplicate
-                                        ? _(K.dialogs.a_container_with_that_name_already)
-                                        : _(K.dialogs.letters_digits_and_hyphens_only)}
+                                        ? T.dialogs.a_container_with_that_name_already
+                                        : T.dialogs.letters_digits_and_hyphens_only}
                                 </HelperTextItem>
                             </HelperText>
                         </FormHelperText>
@@ -244,9 +243,9 @@ export const CopyDialog = ({ container, existing, onClose, onConfirm }: CopyDial
             <ModalFooter>
                 <Button variant="primary" isDisabled={!valid || busy} isLoading={busy}
                     onClick={() => void run()}>
-                    {_(K.container_actions.copy)}
+                    {T.actions.copy}
                 </Button>
-                <Button variant="link" onClick={onClose} isDisabled={busy}>{_(K.dialogs.cancel)}</Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>{T.common.cancel}</Button>
             </ModalFooter>
         </Modal>
     );
@@ -295,36 +294,36 @@ export const CreateDialog = ({ existing, onClose, onConfirm }: CreateDialogProps
     };
 
     return (
-        <Modal isOpen variant="medium" onClose={onClose} aria-label={_(K.container_list.create_container)}>
-            <ModalHeader title={_(K.container_list.create_container)} />
+        <Modal isOpen variant="medium" onClose={onClose} aria-label={T.list.create_container}>
+            <ModalHeader title={T.list.create_container} />
             <ModalBody>
                 <Form onSubmit={(event) => { event.preventDefault(); if (valid) void run(); }}>
                     {error !== null && <Alert variant="danger" isInline title={error} />}
-                    <FormGroup label={_(K.container_list.name)} fieldId="lxc-create-name" isRequired>
+                    <FormGroup label={T.common.name} fieldId="lxc-create-name" isRequired>
                         <TextInput
                             id="lxc-create-name"
                             value={name}
                             onChange={(_event, value) => setName(value)}
                             validated={name === "" ? "default" : nameValid ? "success" : "error"}
-                            aria-label={_(K.dialogs.container_name)}
+                            aria-label={T.dialogs.container_name}
                             autoComplete="off"
                         />
                         <FormHelperText>
                             <HelperText>
                                 <HelperTextItem variant={duplicate ? "error" : "default"}>
                                     {duplicate
-                                        ? _(K.dialogs.a_container_with_that_name_already)
-                                        : _(K.dialogs.letters_digits_and_hyphens_only)}
+                                        ? T.dialogs.a_container_with_that_name_already
+                                        : T.dialogs.letters_digits_and_hyphens_only}
                                 </HelperTextItem>
                             </HelperText>
                         </FormHelperText>
                     </FormGroup>
-                    <FormGroup label={_(K.dialogs.image)} fieldId="lxc-create-image" isRequired>
+                    <FormGroup label={T.common.image} fieldId="lxc-create-image" isRequired>
                         <TextInput
                             id="lxc-create-image"
                             value={image}
                             onChange={(_event, value) => setImage(value)}
-                            aria-label={_(K.dialogs.image_alias)}
+                            aria-label={T.dialogs.image_alias}
                             autoComplete="off"
                         />
                         <FormHelperText>
@@ -339,7 +338,7 @@ export const CreateDialog = ({ existing, onClose, onConfirm }: CreateDialogProps
                     <FormGroup fieldId="lxc-create-start">
                         <Checkbox
                             id="lxc-create-start"
-                            label={_(K.dialogs.start_the_container_once_it_is)}
+                            label={T.dialogs.start_the_container_once_it_is}
                             isChecked={start}
                             onChange={(_event, checked) => setStart(checked)}
                         />
@@ -349,9 +348,9 @@ export const CreateDialog = ({ existing, onClose, onConfirm }: CreateDialogProps
             <ModalFooter>
                 <Button variant="primary" isDisabled={!valid || busy} isLoading={busy}
                     onClick={() => void run()}>
-                    {_(K.dialogs.create)}
+                    {T.common.create}
                 </Button>
-                <Button variant="link" onClick={onClose} isDisabled={busy}>{_(K.dialogs.cancel)}</Button>
+                <Button variant="link" onClick={onClose} isDisabled={busy}>{T.common.cancel}</Button>
             </ModalFooter>
         </Modal>
     );

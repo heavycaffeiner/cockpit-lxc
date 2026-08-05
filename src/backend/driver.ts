@@ -5,9 +5,13 @@ import type {
     CreateContainerSpec,
     Image,
     LifecycleEvent,
+    LogFile,
     Metrics,
     Network,
     Profile,
+    Remote,
+    RemoteImage,
+    ResourceUpdate,
     ServerInfo,
     Snapshot,
     StoragePool,
@@ -109,12 +113,40 @@ export interface ContainerDriver {
     listSnapshots(name: string): Promise<Snapshot[]>;
     createSnapshot(name: string, snapshot: string, stateful: boolean): Promise<void>;
     restoreSnapshot(name: string, snapshot: string): Promise<void>;
+    renameSnapshot(name: string, snapshot: string, newName: string): Promise<void>;
     deleteSnapshot(name: string, snapshot: string): Promise<void>;
 
+    /** Log files Incus keeps for an instance, such as lxc.log and console.log. */
+    listLogs(name: string): Promise<LogFile[]>;
+
+    /**
+     * Read one log file. Returns the tail rather than the whole file, because a
+     * console log grows without bound and the end is the part being asked about.
+     */
+    readLog(name: string, file: string, tailLines: number): Promise<string>;
+
     listProfiles(): Promise<Profile[]>;
+    createProfile(name: string, update: ResourceUpdate): Promise<void>;
+    updateProfile(name: string, update: ResourceUpdate): Promise<void>;
+    deleteProfile(name: string): Promise<void>;
+
     listNetworks(): Promise<Network[]>;
+    createNetwork(name: string, type: string, update: ResourceUpdate): Promise<void>;
+    updateNetwork(name: string, update: ResourceUpdate): Promise<void>;
+    deleteNetwork(name: string): Promise<void>;
+
     listStoragePools(): Promise<StoragePool[]>;
+    createStoragePool(name: string, driver: string, update: ResourceUpdate): Promise<void>;
+    updateStoragePool(name: string, update: ResourceUpdate): Promise<void>;
+    deleteStoragePool(name: string): Promise<void>;
+
     listImages(): Promise<Image[]>;
+
+    /** Image servers the CLI has configured, so the operator can browse them. */
+    listRemotes(): Promise<Remote[]>;
+
+    /** What a remote offers, so an image can be chosen rather than typed. */
+    listRemoteImages(remote: string): Promise<RemoteImage[]>;
 
     /** Pull an image from a configured remote onto this host. */
     pullImage(

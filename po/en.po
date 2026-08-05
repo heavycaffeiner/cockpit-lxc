@@ -10,14 +10,38 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
+msgid "actions.actions_for"
+msgstr "Actions for $0"
+
+msgid "actions.copy"
+msgstr "Copy"
+
+msgid "actions.force_stop"
+msgstr "Force stop"
+
+msgid "actions.freeze"
+msgstr "Freeze"
+
+msgid "actions.is_changing_state"
+msgstr "$0 is changing state"
+
+msgid "actions.restart"
+msgstr "Restart"
+
+msgid "actions.start"
+msgstr "Start"
+
+msgid "actions.stop"
+msgstr "Stop"
+
+msgid "actions.unfreeze"
+msgstr "Unfreeze"
+
 msgid "app.contacting_incus"
 msgstr "Contacting Incus"
 
 msgid "app.containers"
 msgstr "Containers"
-
-msgid "app.images_and_resources"
-msgstr "Images and resources"
 
 msgid "app.live_updates_unavailable_the_list_refreshes"
 msgstr "Live updates unavailable. The list refreshes only when you ask it to."
@@ -28,329 +52,287 @@ msgstr "LXC containers"
 msgid "app.lxc_views"
 msgstr "LXC views"
 
-msgid "configuration_tab.another_session_saved_a_change_after"
-msgstr "Another session saved a change after this form was opened, so the save was refused rather than overwriting it. Nothing has been lost on either side."
-
-msgid "configuration_tab.configuration_conflict"
-msgstr "Configuration conflict"
-
-msgid "configuration_tab.discard_changes"
-msgstr "Discard changes"
-
-msgid "configuration_tab.discard_my_changes_and_reload"
-msgstr "Discard my changes and reload"
-
-msgid "configuration_tab.environment"
-msgstr "Environment"
-
-msgid "configuration_tab.everything_the_forms_above_do_not"
-msgstr "Everything the forms above do not cover, including raw.lxc. This is what keeps every Incus setting reachable as new keys are added."
-
-msgid "configuration_tab.in_this_form"
-msgstr "In this form"
-
-msgid "configuration_tab.inherited_from_a_profile_editing_copies"
-msgstr "Inherited from a profile. Editing copies it onto this container."
-
-msgid "configuration_tab.keep_editing"
-msgstr "Keep editing"
-
-msgid "configuration_tab.key"
-msgstr "Key"
-
-msgid "configuration_tab.no_individual_key_differs_the_container"
-msgstr "No individual key differs; the container was changed in some other way."
-
-msgid "configuration_tab.on_the_server"
-msgstr "On the server"
-
-msgid "configuration_tab.other_keys"
-msgstr "Other keys"
-
-msgid "configuration_tab.save"
-msgstr "Save"
-
-msgid "configuration_tab.this_container_changed_elsewhere_while_you"
-msgstr "This container changed elsewhere while you were editing. Your changes are still here, and saving will show you what differs before anything is overwritten."
-
-msgid "configuration_tab.this_container_changed_while_you_were"
-msgstr "This container changed while you were editing"
-
-msgid "configuration_tab.this_container_could_not_be_locked"
-msgstr "This container could not be locked for editing, so saving is disabled."
-
-msgid "configuration_tab.unset"
-msgstr "unset"
-
-msgid "configuration_tab.variables_put_into_the_environment_of"
-msgstr "Variables put into the environment of processes started with incus exec. A container's own init does not see them, so this is not a substitute for the image's configuration."
-
-msgid "container_actions.actions_for"
-msgstr "Actions for $0"
-
-msgid "container_actions.copy"
-msgstr "Copy"
-
-msgid "container_actions.delete"
-msgstr "Delete"
-
-msgid "container_actions.force_stop"
-msgstr "Force stop"
-
-msgid "container_actions.freeze"
-msgstr "Freeze"
-
-msgid "container_actions.is_changing_state"
-msgstr "$0 is changing state"
-
-msgid "container_actions.rename"
-msgstr "Rename"
-
-msgid "container_actions.restart"
-msgstr "Restart"
-
-msgid "container_actions.start"
-msgstr "Start"
-
-msgid "container_actions.stop"
-msgstr "Stop"
-
-msgid "container_actions.unfreeze"
-msgstr "Unfreeze"
-
-msgid "container_detail.a_shell_needs_a_running_container"
-msgstr "A shell needs a running container. Start it to open a session."
-
-msgid "container_detail.configuration"
-msgstr "Configuration"
-
-msgid "container_detail.console"
-msgstr "Console"
-
-msgid "container_detail.is_not_running"
-msgstr "$0 is not running"
-
-msgid "container_detail.loading"
-msgstr "Loading"
-
-msgid "container_detail.loading_container"
-msgstr "Loading container"
-
-msgid "container_detail.network"
-msgstr "Network"
-
-msgid "container_detail.overview"
-msgstr "Overview"
-
-msgid "container_detail.snapshots"
-msgstr "Snapshots"
-
-msgid "container_detail.start"
-msgstr "Start $0"
-
-msgid "container_detail.storage"
-msgstr "Storage"
-
-msgid "container_detail.terminal"
-msgstr "Terminal"
-
-msgid "container_detail.this_container_could_not_be_loaded"
-msgstr "This container could not be loaded for editing."
-
-msgid "container_detail.views_for"
-msgstr "Views for $0"
-
-msgid "container_list.actions"
+msgid "common.actions"
 msgstr "Actions"
 
-msgid "container_list.addresses"
+msgid "common.addresses"
 msgstr "Addresses"
 
-msgid "container_list.all_states"
-msgstr "All states"
+msgid "common.apply"
+msgstr "Apply"
 
-msgid "container_list.architecture"
+msgid "common.architecture"
 msgstr "Architecture"
 
-msgid "container_list.create_container"
-msgstr "Create container"
+msgid "common.cancel"
+msgstr "Cancel"
 
-msgid "container_list.created"
+msgid "common.create"
+msgstr "Create"
+
+msgid "common.created"
 msgstr "Created"
 
-msgid "container_list.dismiss_error"
-msgstr "Dismiss error"
+msgid "common.delete"
+msgstr "Delete"
 
-msgid "container_list.name"
+msgid "common.description"
+msgstr "Description"
+
+msgid "common.devices"
+msgstr "Devices"
+
+msgid "common.edit"
+msgstr "Edit"
+
+msgid "common.image"
+msgstr "Image"
+
+msgid "common.images"
+msgstr "Images"
+
+msgid "common.name"
 msgstr "Name"
 
-msgid "container_list.no_container_matches_the_current_filter"
-msgstr "No container matches the current filter."
-
-msgid "container_list.none"
-msgstr "None"
-
-msgid "container_list.of"
-msgstr "$0 of $1"
-
-msgid "container_list.profiles"
-msgstr "Profiles"
-
-msgid "container_list.refresh"
-msgstr "Refresh"
-
-msgid "container_list.search_containers"
-msgstr "Search containers"
-
-msgid "container_list.search_containers_by_name_description_or"
-msgstr "Search containers by name, description or address"
-
-msgid "container_list.state"
-msgstr "State"
-
-msgid "container_list.system_containers"
-msgstr "System containers"
-
-msgid "container_state_label.error"
-msgstr "Error"
-
-msgid "container_state_label.freezing"
-msgstr "Freezing"
-
-msgid "container_state_label.frozen"
-msgstr "Frozen"
-
-msgid "container_state_label.running"
-msgstr "Running"
-
-msgid "container_state_label.starting"
-msgstr "Starting"
-
-msgid "container_state_label.stopped"
-msgstr "Stopped"
-
-msgid "container_state_label.stopping"
-msgstr "Stopping"
-
-msgid "container_state_label.unknown"
-msgstr "Unknown"
-
-msgid "devices_tab.a_fixed_address_on_the_networks"
-msgstr "A fixed address on the network's subnet."
-
-msgid "devices_tab.a_fixed_ipv6_address"
-msgstr "A fixed IPv6 address."
-
-msgid "devices_tab.a_host_path_or_a_storage"
-msgstr "A host path, or a storage volume name."
-
-msgid "devices_tab.a_managed_incus_network_such_as"
-msgstr "A managed Incus network, such as incusbr0."
-
-msgid "devices_tab.add_interface"
-msgstr "Add interface"
-
-msgid "devices_tab.add_mount"
-msgstr "Add mount"
-
-msgid "devices_tab.another_session_changed_this_container_while"
-msgstr "Another session changed this container while you were editing. Reload to see the current devices; nothing here has been saved."
-
-msgid "devices_tab.disks_and_mounts"
-msgstr "Disks and mounts"
-
-msgid "devices_tab.for"
-msgstr "$0 for $1"
-
-msgid "devices_tab.inherited"
-msgstr "inherited"
-
-msgid "devices_tab.inherited_from_profiles"
-msgstr "Inherited from profiles"
-
-msgid "devices_tab.interfaces_attached_to_this_container_an"
-msgstr "Interfaces attached to this container. An interface supplied by a profile is shown as inherited; adding one here with the same name overrides it."
-
-msgid "devices_tab.ipv4_address"
-msgstr "IPv4 address"
-
-msgid "devices_tab.ipv6_address"
-msgstr "IPv6 address"
-
-msgid "devices_tab.leave_empty_to_inherit_from_the"
-msgstr "Leave empty to inherit from the network."
-
-msgid "devices_tab.leave_empty_to_let_incus_generate"
-msgstr "Leave empty to let Incus generate one."
-
-msgid "devices_tab.mac_address"
-msgstr "MAC address"
-
-msgid "devices_tab.mtu"
-msgstr "MTU"
-
-msgid "devices_tab.name_in_container"
-msgstr "Name in container"
-
-msgid "devices_tab.network"
+msgid "common.network"
 msgstr "Network"
 
-msgid "devices_tab.network_interfaces"
-msgstr "Network interfaces"
+msgid "common.networks"
+msgstr "Networks"
 
-msgid "devices_tab.no_root_disk_remains_incus_refuses"
-msgstr "No root disk remains. Incus refuses to start a container without one."
+msgid "common.none"
+msgstr "None"
 
-msgid "devices_tab.no_settings"
-msgstr "no settings"
+msgid "common.profiles"
+msgstr "Profiles"
 
-msgid "devices_tab.nothing_of_this_kind_is_set"
-msgstr "Nothing of this kind is set on the container itself."
+msgid "common.refresh"
+msgstr "Refresh"
 
-msgid "devices_tab.only_for_volumes_not_for_host"
-msgstr "Only for volumes, not for host paths."
+msgid "common.rename"
+msgstr "Rename"
 
-msgid "devices_tab.only_meaningful_on_the_root_disk"
-msgstr "Only meaningful on the root disk."
+msgid "common.save"
+msgstr "Save"
 
-msgid "devices_tab.path_in_container"
-msgstr "Path in container"
-
-msgid "devices_tab.read_only"
-msgstr "Read only"
-
-msgid "devices_tab.remove"
-msgstr "Remove $0"
-
-msgid "devices_tab.set_to_true_to_mount_without"
-msgstr "Set to true to mount without write access."
-
-msgid "devices_tab.size"
+msgid "common.size"
 msgstr "Size"
 
-msgid "devices_tab.source"
+msgid "common.source"
 msgstr "Source"
 
-msgid "devices_tab.storage_pool"
+msgid "common.state"
+msgstr "State"
+
+msgid "common.storage_pools"
+msgstr "Storage pools"
+
+msgid "common.type"
+msgstr "Type"
+
+msgid "common.used_by"
+msgstr "Used by"
+
+msgid "config.another_session_saved_a_change_after"
+msgstr "Another session saved a change after this form was opened, so the save was refused rather than overwriting it. Nothing has been lost on either side."
+
+msgid "config.configuration_conflict"
+msgstr "Configuration conflict"
+
+msgid "config.discard_changes"
+msgstr "Discard changes"
+
+msgid "config.discard_my_changes_and_reload"
+msgstr "Discard my changes and reload"
+
+msgid "config.environment"
+msgstr "Environment"
+
+msgid "config.everything_the_forms_above_do_not"
+msgstr "Everything the forms above do not cover, including raw.lxc. This is what keeps every Incus setting reachable as new keys are added."
+
+msgid "config.in_this_form"
+msgstr "In this form"
+
+msgid "config.inherited_from_a_profile_editing_copies"
+msgstr "Inherited from a profile. Editing copies it onto this container."
+
+msgid "config.keep_editing"
+msgstr "Keep editing"
+
+msgid "config.key"
+msgstr "Key"
+
+msgid "config.no_individual_key_differs_the_container"
+msgstr "No individual key differs; the container was changed in some other way."
+
+msgid "config.on_the_server"
+msgstr "On the server"
+
+msgid "config.other_keys"
+msgstr "Other keys"
+
+msgid "config.this_container_changed_elsewhere_while_you"
+msgstr "This container changed elsewhere while you were editing. Your changes are still here, and saving will show you what differs before anything is overwritten."
+
+msgid "config.this_container_changed_while_you_were"
+msgstr "This container changed while you were editing"
+
+msgid "config.this_container_could_not_be_locked"
+msgstr "This container could not be locked for editing, so saving is disabled."
+
+msgid "config.unset"
+msgstr "unset"
+
+msgid "config.variables_put_into_the_environment_of"
+msgstr "Variables put into the environment of processes started with incus exec. A container's own init does not see them, so this is not a substitute for the image's configuration."
+
+msgid "detail.a_shell_needs_a_running_container"
+msgstr "A shell needs a running container. Start it to open a session."
+
+msgid "detail.configuration"
+msgstr "Configuration"
+
+msgid "detail.console"
+msgstr "Console"
+
+msgid "detail.is_not_running"
+msgstr "$0 is not running"
+
+msgid "detail.loading"
+msgstr "Loading"
+
+msgid "detail.loading_container"
+msgstr "Loading container"
+
+msgid "detail.logs"
+msgstr "Logs"
+
+msgid "detail.overview"
+msgstr "Overview"
+
+msgid "detail.snapshots"
+msgstr "Snapshots"
+
+msgid "detail.start"
+msgstr "Start $0"
+
+msgid "detail.storage"
+msgstr "Storage"
+
+msgid "detail.terminal"
+msgstr "Terminal"
+
+msgid "detail.this_container_could_not_be_loaded"
+msgstr "This container could not be loaded for editing."
+
+msgid "detail.views_for"
+msgstr "Views for $0"
+
+msgid "devices.a_fixed_address_on_the_networks"
+msgstr "A fixed address on the network's subnet."
+
+msgid "devices.a_fixed_ipv6_address"
+msgstr "A fixed IPv6 address."
+
+msgid "devices.a_host_path_or_a_storage"
+msgstr "A host path, or a storage volume name."
+
+msgid "devices.a_managed_incus_network_such_as"
+msgstr "A managed Incus network, such as incusbr0."
+
+msgid "devices.add_interface"
+msgstr "Add interface"
+
+msgid "devices.add_mount"
+msgstr "Add mount"
+
+msgid "devices.another_session_changed_this_container_while"
+msgstr "Another session changed this container while you were editing. Reload to see the current devices; nothing here has been saved."
+
+msgid "devices.disks_and_mounts"
+msgstr "Disks and mounts"
+
+msgid "devices.for"
+msgstr "$0 for $1"
+
+msgid "devices.inherited"
+msgstr "inherited"
+
+msgid "devices.inherited_from_profiles"
+msgstr "Inherited from profiles"
+
+msgid "devices.interfaces_attached_to_this_container_an"
+msgstr "Interfaces attached to this container. An interface supplied by a profile is shown as inherited; adding one here with the same name overrides it."
+
+msgid "devices.ipv4_address"
+msgstr "IPv4 address"
+
+msgid "devices.ipv6_address"
+msgstr "IPv6 address"
+
+msgid "devices.leave_empty_to_inherit_from_the"
+msgstr "Leave empty to inherit from the network."
+
+msgid "devices.leave_empty_to_let_incus_generate"
+msgstr "Leave empty to let Incus generate one."
+
+msgid "devices.mac_address"
+msgstr "MAC address"
+
+msgid "devices.mtu"
+msgstr "MTU"
+
+msgid "devices.name_in_container"
+msgstr "Name in container"
+
+msgid "devices.network_interfaces"
+msgstr "Network interfaces"
+
+msgid "devices.no_root_disk_remains_incus_refuses"
+msgstr "No root disk remains. Incus refuses to start a container without one."
+
+msgid "devices.no_settings"
+msgstr "no settings"
+
+msgid "devices.nothing_of_this_kind_is_set"
+msgstr "Nothing of this kind is set on the container itself."
+
+msgid "devices.only_for_volumes_not_for_host"
+msgstr "Only for volumes, not for host paths."
+
+msgid "devices.only_meaningful_on_the_root_disk"
+msgstr "Only meaningful on the root disk."
+
+msgid "devices.path_in_container"
+msgstr "Path in container"
+
+msgid "devices.read_only"
+msgstr "Read only"
+
+msgid "devices.remove"
+msgstr "Remove $0"
+
+msgid "devices.set_to_true_to_mount_without"
+msgstr "Set to true to mount without write access."
+
+msgid "devices.storage_pool"
 msgstr "Storage pool"
 
-msgid "devices_tab.the_interface_name_the_container_sees"
+msgid "devices.the_interface_name_the_container_sees"
 msgstr "The interface name the container sees."
 
-msgid "devices_tab.the_root_disk_and_any_host"
+msgid "devices.the_root_disk_and_any_host"
 msgstr "The root disk and any host paths bound into the container. Removing the root disk leaves the container unable to start."
 
-msgid "devices_tab.this_container_changed_elsewhere_while_you"
+msgid "devices.this_container_changed_elsewhere_while_you"
 msgstr "This container changed elsewhere while you were editing. Saving will be refused rather than overwrite it."
 
-msgid "devices_tab.where_it_appears_inside_the_container"
+msgid "devices.where_it_appears_inside_the_container"
 msgstr "Where it appears inside the container."
 
 msgid "dialogs.a_container_with_that_name_already"
 msgstr "A container with that name already exists"
-
-msgid "dialogs.cancel"
-msgstr "Cancel"
 
 msgid "dialogs.container_name"
 msgstr "Container name"
@@ -364,17 +346,11 @@ msgstr "Copy $0"
 msgid "dialogs.copy_container"
 msgstr "Copy container"
 
-msgid "dialogs.create"
-msgstr "Create"
-
 msgid "dialogs.delete"
 msgstr "Delete $0?"
 
 msgid "dialogs.delete_container"
 msgstr "Delete container"
-
-msgid "dialogs.image"
-msgstr "Image"
 
 msgid "dialogs.image_alias"
 msgstr "Image alias"
@@ -421,34 +397,34 @@ msgstr "This permanently destroys the container's root filesystem and every snap
 msgid "dialogs.type_to_confirm"
 msgstr "Type $0 to confirm"
 
-msgid "environment_editor.a_variable_name_must_start_with"
+msgid "environment.a_variable_name_must_start_with"
 msgstr "A variable name must start with a letter or underscore and contain only letters, digits and underscores."
 
-msgid "environment_editor.add_variable"
+msgid "environment.add_variable"
 msgstr "Add variable"
 
-msgid "environment_editor.environment_variable"
+msgid "environment.environment_variable"
 msgstr "Environment variable $0"
 
-msgid "environment_editor.no_environment_variables_are_set_on"
+msgid "environment.no_environment_variables_are_set_on"
 msgstr "No environment variables are set on this container."
 
-msgid "environment_editor.remove"
+msgid "environment.remove"
 msgstr "Remove"
 
-msgid "environment_editor.this_variable"
+msgid "environment.this_variable"
 msgstr "this variable"
 
-msgid "environment_editor.value"
+msgid "environment.value"
 msgstr "Value"
 
-msgid "environment_editor.value_for"
+msgid "environment.value_for"
 msgstr "Value for $0"
 
-msgid "environment_editor.variable"
+msgid "environment.variable"
 msgstr "Variable"
 
-msgid "environment_editor.variable_2"
+msgid "environment.variable_2"
 msgstr "variable $0"
 
 msgid "fields.a_cloud_config_document_starting_with"
@@ -682,347 +658,512 @@ msgstr "Whether the schedule also applies when the container is not running."
 msgid "fields.whether_this_container_s_pages_may"
 msgstr "Whether this container's pages may be swapped out."
 
-msgid "overview_tab.another_session_changed_this_container_reload"
-msgstr "Another session changed this container. Reload and try again."
-
-msgid "overview_tab.change_profiles"
-msgstr "Change profiles"
-
-msgid "overview_tab.cpu_time"
-msgstr "CPU time"
-
-msgid "overview_tab.description"
-msgstr "Description"
-
-msgid "overview_tab.ephemeral"
-msgstr "Ephemeral"
-
-msgid "overview_tab.identity"
-msgstr "Identity"
-
-msgid "overview_tab.in_out"
-msgstr "$0 in, $1 out"
-
-msgid "overview_tab.incus"
-msgstr "Incus"
-
-msgid "overview_tab.memory_usage"
-msgstr "Memory usage"
-
-msgid "overview_tab.no"
-msgstr "No"
-
-msgid "overview_tab.no_interfaces_are_up"
-msgstr "No interfaces are up."
-
-msgid "overview_tab.profiles_supply_configuration_and_devices_to"
-msgstr "Profiles supply configuration and devices to every container that applies them. Order matters: a later profile wins."
-
-msgid "overview_tab.resource_usage"
-msgstr "Resource usage"
-
-msgid "overview_tab.usage_is_reported_only_while_the"
-msgstr "Usage is reported only while the container runs."
-
-msgid "overview_tab.yes_deleted_when_stopped"
-msgstr "Yes, deleted when stopped"
-
-msgid "raw_config_editor.add_key"
-msgstr "Add key"
-
-msgid "raw_config_editor.configuration_key"
-msgstr "Configuration key $0"
-
-msgid "raw_config_editor.duplicate_keys_only_the_last_would"
-msgstr "Duplicate keys: $0. Only the last would be saved."
-
-msgid "raw_config_editor.key"
-msgstr "key $0"
-
-msgid "raw_config_editor.no_other_keys_are_set_on"
-msgstr "No other keys are set on this container."
-
-msgid "raw_config_editor.this_key"
-msgstr "this key"
-
-msgid "resources_view.a_short_name_to_use_instead"
-msgstr "A short name to use instead of the fingerprint."
-
-msgid "resources_view.actions"
-msgstr "Actions"
-
-msgid "resources_view.add_alias"
+msgid "images.add_alias"
 msgstr "Add alias"
 
-msgid "resources_view.add_image_alias"
+msgid "images.add_image_alias"
 msgstr "Add image alias"
 
-msgid "resources_view.added"
+msgid "images.added"
 msgstr "Added"
 
-msgid "resources_view.addresses"
-msgstr "Addresses"
-
-msgid "resources_view.alias"
+msgid "images.alias"
 msgstr "Alias"
 
-msgid "resources_view.an_alias_on_a_configured_remote"
-msgstr "An alias on a configured remote, such as $0. Large images take a while and the download runs in the background."
-
-msgid "resources_view.architecture"
-msgstr "Architecture"
-
-msgid "resources_view.cancel"
-msgstr "Cancel"
-
-msgid "resources_view.delete"
-msgstr "Delete"
-
-msgid "resources_view.delete_image"
-msgstr "Delete image"
-
-msgid "resources_view.delete_this_image"
+msgid "images.delete_this_image"
 msgstr "Delete this image?"
 
-msgid "resources_view.description"
-msgstr "Description"
+msgid "images.download_progress"
+msgstr "Download progress"
 
-msgid "resources_view.devices"
-msgstr "Devices"
-
-msgid "resources_view.downloading"
+msgid "images.downloading"
 msgstr "Downloading: $0"
 
-msgid "resources_view.driver"
-msgstr "Driver"
+msgid "images.filter"
+msgstr "Filter"
 
-msgid "resources_view.fingerprint"
+msgid "images.filter_the_catalogue"
+msgstr "Filter the catalogue"
+
+msgid "images.fingerprint"
 msgstr "Fingerprint"
 
-msgid "resources_view.image"
-msgstr "Image"
-
-msgid "resources_view.image_to_pull"
-msgstr "Image to pull"
-
-msgid "resources_view.images"
-msgstr "Images"
-
-msgid "resources_view.in_pool"
-msgstr " in $0"
-
-msgid "resources_view.incus_resources"
-msgstr "Incus resources"
-
-msgid "resources_view.is_removed_from_this_host_containers"
+msgid "images.is_removed_from_this_host_containers"
 msgstr "$0 is removed from this host. Containers already created from it keep working; creating new ones will download it again."
 
-msgid "resources_view.loading_images"
+msgid "images.loading_images"
 msgstr "Loading images"
 
-msgid "resources_view.loading_networks"
-msgstr "Loading networks"
+msgid "images.loading_the_catalogue"
+msgstr "Loading the catalogue"
 
-msgid "resources_view.loading_storage_pools"
-msgstr "Loading storage pools"
-
-msgid "resources_view.local_images"
+msgid "images.local_images"
 msgstr "Local images"
 
-msgid "resources_view.managed"
-msgstr "Managed"
-
-msgid "resources_view.managed_networks_are_created_and_maintained"
-msgstr "Managed networks are created and maintained by Incus. Unmanaged ones are host interfaces Incus can attach to but does not own."
-
-msgid "resources_view.name"
-msgstr "Name"
-
-msgid "resources_view.name_this_image"
+msgid "images.name_this_image"
 msgstr "Name this image"
 
-msgid "resources_view.networks"
-msgstr "Networks"
-
-msgid "resources_view.no_alias"
+msgid "images.no_alias"
 msgstr "No alias"
 
-msgid "resources_view.no_images_are_cached_on_this"
+msgid "images.no_image_matches_the_filter"
+msgstr "No image matches the filter."
+
+msgid "images.no_image_remote_is_configured_on"
+msgstr "No image remote is configured on this host."
+
+msgid "images.no_images_are_cached_on_this"
 msgstr "No images are cached on this host."
 
-msgid "resources_view.none"
-msgstr "None"
-
-msgid "resources_view.on_network"
-msgstr " on $0"
-
-msgid "resources_view.profiles"
-msgstr "Profiles"
-
-msgid "resources_view.profiles_supply_configuration_and_devices_to"
-msgstr "Profiles supply configuration and devices to every container that applies them. Editing a profile changes every container using it, which is why it is read-only here for now."
-
-msgid "resources_view.pull"
+msgid "images.pull"
 msgstr "Pull"
 
-msgid "resources_view.pull_an_image"
+msgid "images.pull_an_image"
 msgstr "Pull an image"
 
-msgid "resources_view.pull_image"
+msgid "images.pull_image"
 msgstr "Pull image"
 
-msgid "resources_view.refresh"
-msgstr "Refresh"
+msgid "images.remote"
+msgstr "Remote"
 
-msgid "resources_view.size"
-msgstr "Size"
+msgid "images.remote_images"
+msgstr "Images on the remote"
 
-msgid "resources_view.source"
-msgstr "Source"
+msgid "images.remove_alias"
+msgstr "Remove the alias $0"
 
-msgid "resources_view.storage_pools"
-msgstr "Storage pools"
+msgid "list.all_states"
+msgstr "All states"
 
-msgid "resources_view.type"
-msgstr "Type"
+msgid "list.apply_to_containers"
+msgstr "$0: $1 containers"
 
-msgid "resources_view.unmanaged"
+msgid "list.autostart"
+msgstr "Autostart"
+
+msgid "list.autostart_off_for"
+msgstr "Autostart turned off for $0"
+
+msgid "list.autostart_on_for"
+msgstr "Autostart turned on for $0"
+
+msgid "list.clear_selection"
+msgstr "Clear selection"
+
+msgid "list.columns"
+msgstr "Columns"
+
+msgid "list.container_pages"
+msgstr "Container list pages"
+
+msgid "list.create_container"
+msgstr "Create container"
+
+msgid "list.created"
+msgstr "Created $0"
+
+msgid "list.deleted"
+msgstr "Deleted $0"
+
+msgid "list.dismiss_error"
+msgstr "Dismiss error"
+
+msgid "list.failed_on"
+msgstr "$0 failed on $1"
+
+msgid "list.finished_on"
+msgstr "$0 finished on $1"
+
+msgid "list.finished_on_containers"
+msgstr "$0 finished on $1 containers"
+
+msgid "list.no_container_matches_the_current_filter"
+msgstr "No container matches the current filter."
+
+msgid "list.none_of_the_selected_containers_can"
+msgstr "None of the selected containers can take this action."
+
+msgid "list.of"
+msgstr "$0 of $1"
+
+msgid "list.of_containers"
+msgstr "$0 - $1 of $2"
+
+msgid "list.search_containers"
+msgstr "Search containers"
+
+msgid "list.search_containers_by_name_description_or"
+msgstr "Search containers by name, description or address"
+
+msgid "list.select"
+msgstr "Select $0"
+
+msgid "list.select_every_container_on_this_page"
+msgstr "Select every container on this page"
+
+msgid "list.selected"
+msgstr "$0 selected"
+
+msgid "list.skipped_already_in_that_state"
+msgstr "Skipped, already in that state: $0"
+
+msgid "list.start_on_boot_for"
+msgstr "Start $0 on boot"
+
+msgid "list.system_containers"
+msgstr "System containers"
+
+msgid "logs.contents_of"
+msgstr "Contents of $0"
+
+msgid "logs.loading_logs"
+msgstr "Loading log files"
+
+msgid "logs.loading_the_log"
+msgstr "Loading the log"
+
+msgid "logs.log_file"
+msgstr "Log file"
+
+msgid "logs.showing_the_last_lines"
+msgstr "Showing the last $0 lines."
+
+msgid "logs.this_container_has_no_log_files"
+msgstr "This container has no log files. Incus writes them once it has run."
+
+msgid "logs.this_file_is_empty"
+msgstr "This file is empty."
+
+msgid "networks.a_bridge_is_the_usual_choice"
+msgstr "A bridge is the usual choice: Incus creates it and manages its addresses. macvlan and SR-IOV attach to a physical interface instead."
+
+msgid "networks.bridge"
+msgstr "Bridge"
+
+msgid "networks.create_network"
+msgstr "Create network"
+
+msgid "networks.delete_network"
+msgstr "Delete $0?"
+
+msgid "networks.edit_network"
+msgstr "Edit $0"
+
+msgid "networks.loading_networks"
+msgstr "Loading networks"
+
+msgid "networks.macvlan"
+msgstr "macvlan"
+
+msgid "networks.managed"
+msgstr "Managed"
+
+msgid "networks.managed_networks_are_created_and_maintained"
+msgstr "Managed networks are created and maintained by Incus. Unmanaged ones are host interfaces Incus can attach to but does not own."
+
+msgid "networks.sriov"
+msgstr "SR-IOV"
+
+msgid "networks.the_network_and_its_bridge_are"
+msgstr "The network and its bridge are removed from this host. Containers attached to it lose that interface."
+
+msgid "networks.unmanaged"
 msgstr "Unmanaged"
 
-msgid "resources_view.used_by"
-msgstr "Used by"
+msgid "overview.another_session_changed_this_container_reload"
+msgstr "Another session changed this container. Reload and try again."
 
-msgid "snapshots_tab.a_snapshot_with_that_name_already"
+msgid "overview.change_profiles"
+msgstr "Change profiles"
+
+msgid "overview.cpu_time"
+msgstr "CPU time"
+
+msgid "overview.ephemeral"
+msgstr "Ephemeral"
+
+msgid "overview.identity"
+msgstr "Identity"
+
+msgid "overview.in_out"
+msgstr "$0 in, $1 out"
+
+msgid "overview.incus"
+msgstr "Incus"
+
+msgid "overview.memory_usage"
+msgstr "Memory usage"
+
+msgid "overview.no"
+msgstr "No"
+
+msgid "overview.no_interfaces_are_up"
+msgstr "No interfaces are up."
+
+msgid "overview.profiles_supply_configuration_and_devices_to"
+msgstr "Profiles supply configuration and devices to every container that applies them. Order matters: a later profile wins."
+
+msgid "overview.resource_usage"
+msgstr "Resource usage"
+
+msgid "overview.usage_is_reported_only_while_the"
+msgstr "Usage is reported only while the container runs."
+
+msgid "overview.yes_deleted_when_stopped"
+msgstr "Yes, deleted when stopped"
+
+msgid "profiles.create_profile"
+msgstr "Create profile"
+
+msgid "profiles.delete_profile"
+msgstr "Delete $0?"
+
+msgid "profiles.edit_profile"
+msgstr "Edit $0"
+
+msgid "profiles.in_pool"
+msgstr " in $0"
+
+msgid "profiles.loading_profiles"
+msgstr "Loading profiles"
+
+msgid "profiles.on_network"
+msgstr " on $0"
+
+msgid "profiles.profiles_supply_configuration_and_devices_to"
+msgstr "Profiles supply configuration and devices to every container that applies them. Editing one changes every container using it, so a change here reaches further than it looks."
+
+msgid "profiles.the_profile_is_removed_containers_keep"
+msgstr "The profile is removed. Containers keep running with what they already have, but lose whatever this profile was supplying at their next start."
+
+msgid "raw_config.add_key"
+msgstr "Add key"
+
+msgid "raw_config.configuration_key"
+msgstr "Configuration key $0"
+
+msgid "raw_config.duplicate_keys_only_the_last_would"
+msgstr "Duplicate keys: $0. Only the last would be saved."
+
+msgid "raw_config.key"
+msgstr "key $0"
+
+msgid "raw_config.no_other_keys_are_set_on"
+msgstr "No other keys are set on this container."
+
+msgid "raw_config.this_key"
+msgstr "this key"
+
+msgid "resources.configuration"
+msgstr "Configuration"
+
+msgid "resources.key_of"
+msgstr "Key $0 of $1"
+
+msgid "resources.letters_digits_dots_hyphens_and_underscores"
+msgstr "Letters, digits, dots, hyphens and underscores."
+
+msgid "resources.nothing_is_set_here_yet"
+msgstr "Nothing is set here yet."
+
+msgid "resources.still_used_by"
+msgstr "Still used by $0: $1"
+
+msgid "resources.that_name_is_already_taken"
+msgstr "That name is already taken."
+
+msgid "resources.the_name_is_fixed_after_creation"
+msgstr "The name is fixed after creation."
+
+msgid "snapshots.a_snapshot_with_that_name_already"
 msgstr "A snapshot with that name already exists"
 
-msgid "snapshots_tab.contents"
+msgid "snapshots.contents"
 msgstr "Contents"
 
-msgid "snapshots_tab.create_snapshot"
+msgid "snapshots.create_snapshot"
 msgstr "Create snapshot"
 
-msgid "snapshots_tab.day_ago"
+msgid "snapshots.day_ago"
 msgid_plural "snapshots_tab.day_ago"
 msgstr[0] "$0 day ago"
 msgstr[1] "$0 days ago"
 
-msgid "snapshots_tab.delete_snapshot"
+msgid "snapshots.delete_snapshot"
 msgstr "Delete snapshot"
 
-msgid "snapshots_tab.delete_snapshot_2"
+msgid "snapshots.delete_snapshot_2"
 msgstr "Delete snapshot $0?"
 
-msgid "snapshots_tab.disk_and_memory"
+msgid "snapshots.disk_and_memory"
 msgstr "Disk and memory"
 
-msgid "snapshots_tab.disk_only"
+msgid "snapshots.disk_only"
 msgstr "Disk only"
 
-msgid "snapshots_tab.expires"
+msgid "snapshots.expires"
 msgstr "Expires"
 
-msgid "snapshots_tab.hour_ago"
+msgid "snapshots.hour_ago"
 msgid_plural "snapshots_tab.hour_ago"
 msgstr[0] "$0 hour ago"
 msgstr[1] "$0 hours ago"
 
-msgid "snapshots_tab.include_running_process_state"
+msgid "snapshots.include_running_process_state"
 msgstr "Include running process state"
 
-msgid "snapshots_tab.incus_stops_the_container_to_restore"
+msgid "snapshots.incus_stops_the_container_to_restore"
 msgstr "Incus stops the container to restore it."
 
-msgid "snapshots_tab.letters_digits_dots_hyphens_and_underscores"
+msgid "snapshots.letters_digits_dots_hyphens_and_underscores"
 msgstr "Letters, digits, dots, hyphens and underscores."
 
-msgid "snapshots_tab.loading_snapshots"
+msgid "snapshots.loading_snapshots"
 msgstr "Loading snapshots"
 
-msgid "snapshots_tab.minute_ago"
+msgid "snapshots.minute_ago"
 msgid_plural "snapshots_tab.minute_ago"
 msgstr[0] "$0 minute ago"
 msgstr[1] "$0 minutes ago"
 
-msgid "snapshots_tab.moments_ago"
+msgid "snapshots.moments_ago"
 msgstr "moments ago"
 
-msgid "snapshots_tab.never"
+msgid "snapshots.never"
 msgstr "Never"
 
-msgid "snapshots_tab.only_available_while_the_container_runs"
+msgid "snapshots.only_available_while_the_container_runs"
 msgstr "Only available while the container runs."
 
-msgid "snapshots_tab.requires_criu_on_the_host_without"
+msgid "snapshots.rename"
+msgstr "Rename $0"
+
+msgid "snapshots.rename_snapshot"
+msgstr "Rename snapshot"
+
+msgid "snapshots.requires_criu_on_the_host_without"
 msgstr "Requires CRIU on the host. Without it the snapshot fails rather than falling back."
 
-msgid "snapshots_tab.restore"
+msgid "snapshots.restore"
 msgstr "Restore"
 
-msgid "snapshots_tab.restore_2"
+msgid "snapshots.restore_2"
 msgstr "Restore $0?"
 
-msgid "snapshots_tab.restore_snapshot"
+msgid "snapshots.restore_snapshot"
 msgstr "Restore snapshot"
 
-msgid "snapshots_tab.snapshot"
+msgid "snapshots.snapshot"
 msgstr "Snapshot $0"
 
-msgid "snapshots_tab.snapshot_name"
+msgid "snapshots.snapshot_name"
 msgstr "Snapshot name"
 
-msgid "snapshots_tab.snapshots_of"
+msgid "snapshots.snapshots_of"
 msgstr "Snapshots of $0"
 
-msgid "snapshots_tab.taken"
+msgid "snapshots.taken"
 msgstr "Taken"
 
-msgid "snapshots_tab.the_snapshot_is_destroyed_the_container"
+msgid "snapshots.the_snapshot_is_destroyed_the_container"
 msgstr "The snapshot is destroyed. The container itself is untouched, but this rollback point is gone for good."
 
-msgid "snapshots_tab.this_container_has_no_snapshots"
+msgid "snapshots.this_container_has_no_snapshots"
 msgstr "This container has no snapshots."
 
-msgid "snapshots_tab.this_rolls_back_to_taken_everything"
+msgid "snapshots.this_rolls_back_to_taken_everything"
 msgstr "This rolls $0 back to $1, taken $2. Everything written to the container since then is discarded and cannot be recovered."
 
-msgid "startup_states.administrative_access_is_required"
+msgid "startup.administrative_access_is_required"
 msgstr "Administrative access is required"
 
-msgid "startup_states.cannot_reach_incus"
+msgid "startup.cannot_reach_incus"
 msgstr "Cannot reach Incus"
 
-msgid "startup_states.check_again"
+msgid "startup.check_again"
 msgstr "Check again"
 
-msgid "startup_states.copied"
+msgid "startup.copied"
 msgstr "Copied"
 
-msgid "startup_states.incus_answered_but_reported_the_connection"
+msgid "startup.incus_answered_but_reported_the_connection"
 msgstr "Incus answered but reported the connection as untrusted, so it will not return any data. This is an Incus authorization setting rather than a Cockpit one, and granting administrative access here will not change it."
 
-msgid "startup_states.incus_does_not_trust_this_connection"
+msgid "startup.incus_does_not_trust_this_connection"
 msgstr "Incus does not trust this connection"
 
-msgid "startup_states.incus_is_not_installed"
+msgid "startup.incus_is_not_installed"
 msgstr "Incus is not installed"
 
-msgid "startup_states.incus_returned_something_unexpected"
+msgid "startup.incus_returned_something_unexpected"
 msgstr "Incus returned something unexpected"
 
-msgid "startup_states.no_containers_yet"
+msgid "startup.no_containers_yet"
 msgstr "No containers yet"
 
-msgid "startup_states.no_incus_socket_was_found_at"
+msgid "startup.no_incus_socket_was_found_at"
 msgstr "No Incus socket was found at $0. Install Incus and start its socket unit, then reload this page."
 
-msgid "startup_states.the_incus_socket_is_owned_by"
+msgid "startup.the_incus_socket_is_owned_by"
 msgstr "The Incus socket is owned by root:incus-admin, so reading it needs administrative access. Turn it on from the access button in Cockpit's top bar. This page loads the containers by itself once you do."
 
-msgid "startup_states.this_host_runs_incus_but_has"
+msgid "startup.this_host_runs_incus_but_has"
 msgstr "This host runs Incus but has no system containers."
 
-msgid "startup_states.try_again"
+msgid "startup.try_again"
 msgstr "Try again"
+
+msgid "state.error"
+msgstr "Error"
+
+msgid "state.freezing"
+msgstr "Freezing"
+
+msgid "state.frozen"
+msgstr "Frozen"
+
+msgid "state.running"
+msgstr "Running"
+
+msgid "state.starting"
+msgstr "Starting"
+
+msgid "state.stopped"
+msgstr "Stopped"
+
+msgid "state.stopping"
+msgstr "Stopping"
+
+msgid "state.unknown"
+msgstr "Unknown"
+
+msgid "storage.a_pool_is_where_container_filesystems"
+msgstr "A pool is where container filesystems live. Every container's root disk sits on one."
+
+msgid "storage.create_pool"
+msgstr "Create pool"
+
+msgid "storage.delete_pool"
+msgstr "Delete $0?"
+
+msgid "storage.dir_needs_nothing_the_others_need"
+msgstr "dir needs nothing and works everywhere. The others need their tools installed and a device or file to back them."
+
+msgid "storage.directory"
+msgstr "Directory"
+
+msgid "storage.driver"
+msgstr "Driver"
+
+msgid "storage.edit_pool"
+msgstr "Edit $0"
+
+msgid "storage.loading_storage_pools"
+msgstr "Loading storage pools"
+
+msgid "storage.the_pool_and_everything_stored_on"
+msgstr "The pool and everything stored on it are destroyed."
 
 msgid "terminal.console_for"
 msgstr "Console for $0"
@@ -1033,6 +1174,9 @@ msgstr "Incus allows one console attachment at a time, so opening this may take 
 msgid "terminal.keystrokes_go_to_the_container_press"
 msgstr "Keystrokes go to the container. Press Ctrl + Shift + Tab to move focus out of the terminal."
 
+msgid "terminal.px"
+msgstr "$0 px"
+
 msgid "terminal.reconnect"
 msgstr "Reconnect"
 
@@ -1041,3 +1185,6 @@ msgstr "Session ended: $0"
 
 msgid "terminal.shell_for"
 msgstr "Shell for $0"
+
+msgid "terminal.terminal_font_size"
+msgstr "Terminal font size"
