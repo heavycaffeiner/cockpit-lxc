@@ -122,13 +122,15 @@ body {
  * The viewport is sized in whole 4px steps. xterm reports a fractional cell
  * height, and letting it drive the container height directly would put every
  * element below the terminal off the baseline.
+ *
+ * No padding, background or border. xterm paints its own background onto the
+ * canvas, so a surface colour behind it shows only as a frame around the edge:
+ * in the light theme that frame was white around black and read as a rendering
+ * fault. Cockpit's own terminal lets the canvas be the surface, and this is the
+ * page that has to look like it.
  */
 .lxc-terminal__viewport {
     block-size: 480px;
-    padding: var(--pf-t--global--spacer--sm);
-    background-color: var(--pf-t--global--background--color--primary--default);
-    border: 1px solid var(--pf-t--global--border--color--default);
-    border-radius: var(--pf-t--global--border--radius--small);
 }
 
 /*
@@ -254,12 +256,15 @@ body {
     }
 }
 
+/*
+ * No divider rule here. The toolbar wraps once the selection appears, which
+ * puts a leading border at the start of its own row where it reads as a stray
+ * mark rather than as a separator between two groups.
+ */
 .lxc-bulk {
     display: flex;
     gap: var(--pf-t--global--spacer--sm);
     align-items: center;
-    padding-inline-start: var(--pf-t--global--spacer--sm);
-    border-inline-start: 1px solid var(--pf-t--global--border--color--default);
 }
 
 .lxc-bulk__list {
