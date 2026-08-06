@@ -6,6 +6,13 @@
 override_dh_auto_build:
 	make build
 
+# debhelper finds a `check` target and runs it, which turns every rebuild of
+# this package into a run of the lint and typecheck gates. Those belong in CI,
+# where they gate the change; a downstream rebuild has no business failing
+# because a linter is a version newer than the one the release was cut with,
+# and a build host is not obliged to carry the dev toolchain at all.
+override_dh_auto_test:
+
 override_dh_auto_install:
 	make install DESTDIR=debian/cockpit-lxc PREFIX=/usr
 

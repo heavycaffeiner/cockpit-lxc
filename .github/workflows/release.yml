@@ -91,7 +91,11 @@ jobs:
   deb:
     needs: tarball
     runs-on: ubuntu-latest
-    container: debian:bookworm
+    # trixie rather than bookworm: bookworm ships Node 18 and the build
+    # toolchain needs 20. The package itself does not care, because it is
+    # `Architecture: all` and contains only static assets with no runtime
+    # dependency on Node, so a deb built here installs on bookworm too.
+    container: debian:trixie
 
     steps:
       - uses: actions/download-artifact@v4
