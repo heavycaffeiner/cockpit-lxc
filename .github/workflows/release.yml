@@ -115,8 +115,11 @@ jobs:
           cp -r packaging/debian debian
           # No signing: the release is verified by its checksums and by the
           # provenance GitHub records, and a key in CI would be a key to steal.
+          #
+          # dpkg writes the .deb to the parent of the source directory, which is
+          # already the workspace, so there is nothing to move afterwards.
           dpkg-buildpackage -us -uc -b
-          cp ../*.deb "$GITHUB_WORKSPACE/"
+          ls -la "$GITHUB_WORKSPACE"/*.deb
 
       - uses: actions/upload-artifact@v4
         with:
