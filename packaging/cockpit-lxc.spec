@@ -1,5 +1,5 @@
 Name:           cockpit-lxc
-Version:        0.1.2
+Version:        0.1.3
 Release:        1%{?dist}
 Summary:        Cockpit user interface for LXC system containers managed by Incus
 
@@ -47,6 +47,12 @@ make build
 %{_datadir}/cockpit/lxc
 
 %changelog
+* Thu Aug 06 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.3-1
+- Documentation only. The plugin itself is unchanged from 0.1.2
+- Rewrite the README for a first-time reader and move the development
+  material to CONTRIBUTING.md
+- Add a Korean README, and ship both READMEs in the package
+
 * Thu Aug 06 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.2-1
 - Find the Incus socket where the distribution put it. Arch uses
   /var/lib/incus/unix.socket and has no /run/incus, so the Arch package in
