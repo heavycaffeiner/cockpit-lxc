@@ -19,8 +19,38 @@ body {
     margin-block-end: 0;
 }
 
+/*
+ * Nothing starts on the tab underline.
+ *
+ * PatternFly gives a tab panel no padding of its own, so the first thing inside
+ * one, a toolbar, a section heading, a form, sits directly on the line that
+ * separates it from the tabs. One rule here rather than a margin on each first
+ * child, because the offender is whatever happens to be first and that differs
+ * per tab.
+ */
+.lxc-page .pf-v6-c-tab-content {
+    padding-block-start: var(--pf-t--global--spacer--md);
+}
+
 .lxc-page__toolbar-wrap {
-    padding-block-end: var(--pf-t--global--spacer--sm);
+    padding-block-end: var(--pf-t--global--spacer--md);
+}
+
+/*
+ * Stacked inline alerts. Several can be live at once on the configuration tab
+ * (a cross-field warning, a lock warning, a concurrent-edit notice) and without
+ * this they read as one block of colour.
+ */
+.lxc-config,
+.lxc-devices,
+.lxc-resource {
+    > .pf-v6-c-alert + .pf-v6-c-alert {
+        margin-block-start: var(--pf-t--global--spacer--sm);
+    }
+
+    > .pf-v6-c-alert:last-of-type {
+        margin-block-end: var(--pf-t--global--spacer--md);
+    }
 }
 
 .lxc-loading {
@@ -57,32 +87,35 @@ body {
 }
 
 .lxc-detail__crumbs {
-    margin-block-end: var(--pf-t--global--spacer--md);
+    margin-block-end: var(--pf-t--global--spacer--sm);
 }
 
 .lxc-detail__header {
-    margin-block-end: var(--pf-t--global--spacer--sm);
+    margin-block-end: var(--pf-t--global--spacer--md);
+}
+
+/*
+ * The terminal stacks a hint, sometimes an alert, and the viewport. A flex
+ * column with one gap keeps them evenly spaced whether or not the alert is
+ * there, which a margin on each part cannot do.
+ */
+.lxc-terminal {
+    display: flex;
+    flex-direction: column;
+    gap: var(--pf-t--global--spacer--sm);
 }
 
 .lxc-terminal__bar {
     display: flex;
-    gap: var(--pf-t--global--spacer--sm);
-    align-items: baseline;
+    gap: var(--pf-t--global--spacer--md);
+    align-items: center;
     justify-content: space-between;
 }
 
-.lxc-terminal__font {
-    inline-size: 96px;
-}
-
 .lxc-terminal__hint {
-    margin-block-end: var(--pf-t--global--spacer--sm);
+    margin: 0;
     color: var(--pf-t--global--text--color--subtle);
     font-size: var(--pf-t--global--font--size--sm);
-}
-
-.lxc-terminal__closed {
-    margin-block-end: var(--pf-t--global--spacer--sm);
 }
 
 /*
@@ -98,8 +131,20 @@ body {
     border-radius: var(--pf-t--global--border--radius--small);
 }
 
+/*
+ * A control no wider than the value it holds.
+ *
+ * A form group fills its container, which puts a two-character CPU count in a
+ * thousand-pixel box and leaves the label stranded at one end of it. The cap is
+ * on the control rather than on the form, so the raw and environment editors,
+ * which are tables and do want the width, keep it.
+ */
+.lxc-config .pf-v6-c-form__group-control {
+    max-inline-size: 640px;
+}
+
 .lxc-config__description {
-    margin-block-end: var(--pf-t--global--spacer--sm);
+    margin-block-end: var(--pf-t--global--spacer--md);
     color: var(--pf-t--global--text--color--subtle);
 }
 
@@ -116,6 +161,10 @@ body {
     margin-block-end: var(--pf-t--global--spacer--sm);
 }
 
+/*
+ * Rows of text inputs, so the cells are padded like form rows rather than like
+ * a dense data table: at 4px the controls touch each other vertically.
+ */
 .lxc-raw__table,
 .lxc-conflict {
     inline-size: 100%;
@@ -123,20 +172,31 @@ body {
 
     th,
     td {
-        padding-block: var(--pf-t--global--spacer--xs);
+        padding-block: var(--pf-t--global--spacer--sm);
         padding-inline: 0 var(--pf-t--global--spacer--sm);
         text-align: start;
         vertical-align: top;
     }
 
     thead th {
+        padding-block-start: 0;
         color: var(--pf-t--global--text--color--subtle);
+
+        /*
+         * A rule under the header, so a column of bare inputs still reads as a
+         * table rather than as a stack of controls that happen to line up.
+         */
+        border-block-end: 1px solid var(--pf-t--global--border--color--default);
         font-size: var(--pf-t--global--font--size--sm);
+    }
+
+    tbody tr:first-child td {
+        padding-block-start: var(--pf-t--global--spacer--md);
     }
 }
 
 .lxc-raw__problem {
-    margin-block: var(--pf-t--global--spacer--xs);
+    margin-block: var(--pf-t--global--spacer--sm);
     color: var(--pf-t--global--color--status--danger--default);
 }
 
@@ -148,9 +208,13 @@ body {
     margin-block-end: var(--pf-t--global--spacer--md);
 }
 
+.lxc-devices__add {
+    justify-self: start;
+}
+
 .lxc-devices__cardhead {
     display: flex;
-    gap: var(--pf-t--global--spacer--sm);
+    gap: var(--pf-t--global--spacer--md);
     align-items: center;
     justify-content: space-between;
 }
@@ -166,11 +230,18 @@ body {
     white-space: nowrap;
 }
 
-.lxc-resource .lxc-page__toolbar {
+/*
+ * One rhythm for every page: the tab panel supplies the space above, each block
+ * supplies the space below it. Adding a top margin here as well would double it
+ * on the pages that open straight onto a toolbar.
+ */
+.lxc-resource .lxc-page__toolbar,
+.lxc-logs .lxc-page__toolbar {
     display: flex;
+    flex-wrap: wrap;
     gap: var(--pf-t--global--spacer--sm);
     align-items: center;
-    margin-block: var(--pf-t--global--spacer--md);
+    margin-block-end: var(--pf-t--global--spacer--md);
 }
 
 .lxc-address-list {
@@ -187,15 +258,21 @@ body {
     display: flex;
     gap: var(--pf-t--global--spacer--sm);
     align-items: center;
+    padding-inline-start: var(--pf-t--global--spacer--sm);
+    border-inline-start: 1px solid var(--pf-t--global--border--color--default);
 }
 
 .lxc-bulk__list {
-    margin-block: var(--pf-t--global--spacer--sm);
+    margin-block: var(--pf-t--global--spacer--md);
     padding-inline-start: var(--pf-t--global--spacer--lg);
+
+    li + li {
+        margin-block-start: var(--pf-t--global--spacer--xs);
+    }
 }
 
 .lxc-blocker {
-    margin-block-start: var(--pf-t--global--spacer--sm);
+    margin-block-start: var(--pf-t--global--spacer--md);
 }
 
 .lxc-pull-progress {
@@ -212,19 +289,35 @@ body {
     overflow-y: auto;
 }
 
+/*
+ * Fixed widths go on a wrapper, not on the control.
+ *
+ * A PatternFly form control is `width: 100%` by design, so a width set on the
+ * control itself is a coin toss decided by stylesheet order. Sizing the box it
+ * fills is the same result and does not depend on which file loaded first.
+ */
 .lxc-remote-picker {
+    flex: 0 0 auto;
     inline-size: 360px;
 }
 
-.lxc-logs .lxc-page__toolbar {
-    display: flex;
-    gap: var(--pf-t--global--spacer--sm);
-    align-items: center;
-    margin-block-end: var(--pf-t--global--spacer--sm);
+.lxc-search {
+    flex: 0 0 auto;
+    inline-size: 320px;
 }
 
 .lxc-logs__picker {
+    flex: 0 0 auto;
     inline-size: 320px;
+}
+
+.lxc-terminal__font {
+    flex: 0 0 auto;
+    inline-size: 112px;
+}
+
+.lxc-logs__note {
+    margin-block: 0 var(--pf-t--global--spacer--sm);
 }
 
 /*

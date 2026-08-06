@@ -135,21 +135,22 @@ export const TerminalPane = ({
                 <p className="lxc-terminal__hint" id={`lxc-term-hint-${mode}`}>
                     {T.terminal.keystrokes_go_to_the_container_press}
                 </p>
-                <FormSelect
-                    id={`lxc-term-font-${mode}`}
-                    value={String(font.size)}
-                    onChange={(_event, value) => onFontSizeChange(Number(value))}
-                    aria-label={T.terminal.terminal_font_size}
-                    className="lxc-terminal__font"
-                >
-                    {FONT_SIZES.map((entry) => (
-                        <FormSelectOption
-                            key={entry.size}
-                            value={String(entry.size)}
-                            label={format(T.terminal.px, entry.size)}
-                        />
-                    ))}
-                </FormSelect>
+                <div className="lxc-terminal__font">
+                    <FormSelect
+                        id={`lxc-term-font-${mode}`}
+                        value={String(font.size)}
+                        onChange={(_event, value) => onFontSizeChange(Number(value))}
+                        aria-label={T.terminal.terminal_font_size}
+                    >
+                        {FONT_SIZES.map((entry) => (
+                            <FormSelectOption
+                                key={entry.size}
+                                value={String(entry.size)}
+                                label={format(T.terminal.px, entry.size)}
+                            />
+                        ))}
+                    </FormSelect>
+                </div>
             </div>
 
             {mode === "console" && (

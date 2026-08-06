@@ -4,9 +4,9 @@
     "rules": {
         "cockpit-lxc/four-px-grid": true,
         "selector-class-pattern": [
-            "^lxc(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?$",
+            "^(lxc(-[a-z0-9]+)*(__[a-z0-9]+(-[a-z0-9]+)*)?(--[a-z0-9]+(-[a-z0-9]+)*)?|pf-v[0-9]+-[a-z0-9_-]+)$",
             {
-                "message": "Expected class selector to follow the lxc-block__element--modifier convention"
+                "message": "Expected either an lxc-block__element--modifier class or a pf-v6-* class being adjusted"
             }
         ],
         "custom-property-pattern": "^(lxc|pf)-.+$"

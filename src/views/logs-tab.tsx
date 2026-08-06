@@ -99,25 +99,28 @@ export const LogsTab = ({ driver, container }: LogsTabProps) => {
                 : (
                     <>
                         <div className="lxc-page__toolbar">
-                            <FormSelect
-                                id="lxc-log-file"
-                                value={selected ?? ""}
-                                onChange={(_event, value) => setSelected(value)}
-                                aria-label={T.logs.log_file}
-                                className="lxc-logs__picker"
-                            >
-                                {files.map((file) => (
-                                    <FormSelectOption key={file.name} value={file.name}
-                                        label={file.name} />
-                                ))}
-                            </FormSelect>
+                            <div className="lxc-logs__picker">
+                                <FormSelect
+                                    id="lxc-log-file"
+                                    value={selected ?? ""}
+                                    onChange={(_event, value) => setSelected(value)}
+                                    aria-label={T.logs.log_file}
+                                >
+                                    {files.map((file) => (
+                                        <FormSelectOption key={file.name} value={file.name}
+                                            label={file.name} />
+                                    ))}
+                                </FormSelect>
+                            </div>
                             <Button variant="secondary" icon={<SyncAltIcon />}
                                 onClick={() => setGeneration((n) => n + 1)}>
                                 {T.common.refresh}
                             </Button>
                         </div>
 
-                        <p className="lxc-muted">{format(T.logs.showing_the_last_lines, TAIL_LINES)}</p>
+                        <p className="lxc-muted lxc-logs__note">
+                            {format(T.logs.showing_the_last_lines, TAIL_LINES)}
+                        </p>
 
                         {contents === null
                             ? <Spinner aria-label={T.logs.loading_the_log} />

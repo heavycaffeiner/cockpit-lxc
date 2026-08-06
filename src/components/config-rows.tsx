@@ -62,7 +62,7 @@ export const ConfigRows = ({ config, onChange, label }: ConfigRowsProps) => {
 
     return (
         <div className="lxc-raw">
-            <table className="lxc-raw__table">
+            <table className="lxc-raw__table" aria-label={label}>
                 <thead>
                     <tr>
                         <th scope="col">{T.config.key}</th>

@@ -383,7 +383,7 @@ const ConflictDialog = ({
             {keys.length === 0
                 ? <p>{T.config.no_individual_key_differs_the_container}</p>
                 : (
-                    <table className="lxc-conflict">
+                    <table className="lxc-conflict" aria-label={T.config.configuration_conflict}>
                         <thead>
                             <tr>
                                 <th scope="col">{T.config.key}</th>

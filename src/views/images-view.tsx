@@ -350,27 +350,30 @@ const DownloadImages = ({
             {error !== null && <Alert variant="danger" isInline title={error} />}
 
             <div className="lxc-page__toolbar">
-                <FormSelect
-                    id="lxc-pull-remote"
-                    value={remote}
-                    onChange={(_event, value) => setRemote(value)}
-                    aria-label={T.images.remote}
-                    isDisabled={remotes === null || remotes.length === 0}
-                    className="lxc-remote-picker"
-                >
-                    {(remotes ?? []).map((entry) => (
-                        <FormSelectOption key={entry.name} value={entry.name}
-                            label={`${entry.name} (${entry.address})`} />
-                    ))}
-                </FormSelect>
-                <SearchInput
-                    id="lxc-pull-search"
-                    aria-label={T.images.filter_the_catalogue}
-                    placeholder={T.images.filter}
-                    value={search}
-                    onChange={(_event, value) => setSearch(value)}
-                    onClear={() => setSearch("")}
-                />
+                <div className="lxc-remote-picker">
+                    <FormSelect
+                        id="lxc-pull-remote"
+                        value={remote}
+                        onChange={(_event, value) => setRemote(value)}
+                        aria-label={T.images.remote}
+                        isDisabled={remotes === null || remotes.length === 0}
+                    >
+                        {(remotes ?? []).map((entry) => (
+                            <FormSelectOption key={entry.name} value={entry.name}
+                                label={`${entry.name} (${entry.address})`} />
+                        ))}
+                    </FormSelect>
+                </div>
+                <div className="lxc-search">
+                    <SearchInput
+                        id="lxc-pull-search"
+                        aria-label={T.images.filter_the_catalogue}
+                        placeholder={T.images.filter}
+                        value={search}
+                        onChange={(_event, value) => setSearch(value)}
+                        onClear={() => setSearch("")}
+                    />
+                </div>
                 {images !== null && (
                     <span className="lxc-count">
                         {format(T.images.of_images, visible.length, images.length)}

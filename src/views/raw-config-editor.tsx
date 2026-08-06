@@ -101,7 +101,7 @@ export const RawConfigEditor = ({ localConfig, excluded, onChange }: RawConfigEd
 
     return (
         <div className="lxc-raw">
-            <table className="lxc-raw__table">
+            <table className="lxc-raw__table" aria-label={T.config.other_keys}>
                 <thead>
                     <tr>
                         <th scope="col">{T.config.key}</th>

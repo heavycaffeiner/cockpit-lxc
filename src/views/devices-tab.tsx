@@ -340,21 +340,28 @@ export const DevicesTab = ({ spec, container, etag, driver, onSaved }: DevicesTa
                     </p>
                 )}
 
-                <Button
-                    variant="link"
-                    icon={<PlusCircleIcon />}
-                    onClick={() => {
-                        let index = 0;
-                        let name = `${spec.type}${index}`;
-                        while (local[name] !== undefined || container.devices[name] !== undefined) {
-                            index += 1;
-                            name = `${spec.type}${index}`;
-                        }
-                        mutate({ ...local, [name]: { ...spec.defaults } });
-                    }}
-                >
-                    {spec.addLabel}
-                </Button>
+                {/*
+                  * Wrapped, because a bare Button is a grid item in PatternFly's
+                  * Form and gets stretched to the centre of the column, which
+                  * leaves it floating away from everything it belongs to.
+                  */}
+                <div className="lxc-devices__add">
+                    <Button
+                        variant="link"
+                        icon={<PlusCircleIcon />}
+                        onClick={() => {
+                            let index = 0;
+                            let name = `${spec.type}${index}`;
+                            while (local[name] !== undefined || container.devices[name] !== undefined) {
+                                index += 1;
+                                name = `${spec.type}${index}`;
+                            }
+                            mutate({ ...local, [name]: { ...spec.defaults } });
+                        }}
+                    >
+                        {spec.addLabel}
+                    </Button>
+                </div>
 
                 <ActionGroup>
                     <Button
