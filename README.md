@@ -5,8 +5,6 @@ Incus is the container manager; the plugin reaches `incusd` over its local REST 
 through `cockpit-bridge`, so it inherits Cockpit's authentication rather than introducing a
 second credential.
 
-![The container list](docs/screenshot-list.png)
-
 ## What it does
 
 - **Lifecycle**: create, start, stop, force stop, restart, freeze, unfreeze, rename, copy

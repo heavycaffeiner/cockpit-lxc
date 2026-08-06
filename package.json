@@ -45,5 +45,14 @@
         "stylelint-config-standard-scss": "^17.0.0",
         "typescript": "^5.9.3",
         "typescript-eslint": "^8.65.0"
-    }
+    },
+    "author": "heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>",
+    "repository": {
+        "type": "git",
+        "url": "git+https://github.com/heavycaffeiner/cockpit-lxc.git"
+    },
+    "bugs": {
+        "url": "https://github.com/heavycaffeiner/cockpit-lxc/issues"
+    },
+    "homepage": "https://github.com/heavycaffeiner/cockpit-lxc#readme"
 }

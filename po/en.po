@@ -619,9 +619,6 @@ msgstr "Nesting"
 msgid "fields.network_config"
 msgstr "Network config"
 
-msgid "fields.network_priority"
-msgstr "Network priority"
-
 msgid "fields.only_applies_while_the_container_is"
 msgstr "Only applies while the container is unprivileged."
 
@@ -639,9 +636,6 @@ msgstr "Refuses deletion while set, including from the CLI."
 
 msgid "fields.relative_i_o_weight_against_other"
 msgstr "Relative I/O weight against other containers."
-
-msgid "fields.relative_network_weight_against_other_containers"
-msgstr "Relative network weight against other containers."
 
 msgid "fields.relative_weight_when_containers_compete_for"
 msgstr "Relative weight when containers compete for CPU."

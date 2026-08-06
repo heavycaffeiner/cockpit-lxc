@@ -1,0 +1,57 @@
+name: check
+
+# Every push and every pull request. The gates below are the same ones `make
+# check` runs locally, so a green tick here means the same thing it means on a
+# developer's machine rather than a weaker version of it.
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          # The floor the build actually needs, not the latest: a plugin whose
+          # CI passes only on the newest Node tells a packager nothing about the
+          # distributions it has to build on.
+          node-version: "20"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      # Separate steps rather than one `npm run check`, so a failure names the
+      # gate that failed in the job summary instead of in a log the reader has
+      # to open and scroll.
+      - name: Typecheck
+        run: npm run typecheck
+
+      - name: Lint JavaScript and TypeScript
+        run: npm run lint:js
+
+      - name: Lint stylesheets, including the 4px grid gate
+        run: npm run lint:css
+
+      - name: Check the message catalogues
+        run: npm run check:po
+
+      - name: Build
+        run: npm run build
+
+      # The build is what ships. Keeping it lets a reviewer inspect exactly
+      # what a change produced without reproducing the toolchain.
+      - uses: actions/upload-artifact@v4
+        with:
+          name: cockpit-lxc-dist
+          path: dist/
+          retention-days: 14

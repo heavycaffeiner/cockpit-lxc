@@ -822,10 +822,6 @@ msgstr "중첩"
 msgid "fields.network_config"
 msgstr "네트워크 설정"
 
-# Network priority
-msgid "fields.network_priority"
-msgstr "네트워크 우선순위"
-
 # Only applies while the container is unprivileged.
 msgid "fields.only_applies_while_the_container_is"
 msgstr "컨테이너가 비특권 상태일 때만 적용됩니다."
@@ -849,10 +845,6 @@ msgstr "설정된 동안 CLI를 포함해 삭제를 거부합니다."
 # Relative I/O weight against other containers.
 msgid "fields.relative_i_o_weight_against_other"
 msgstr "다른 컨테이너 대비 상대적 I/O 가중치입니다."
-
-# Relative network weight against other containers.
-msgid "fields.relative_network_weight_against_other_containers"
-msgstr "다른 컨테이너 대비 상대적 네트워크 가중치입니다."
 
 # Relative weight when containers compete for CPU.
 msgid "fields.relative_weight_when_containers_compete_for"

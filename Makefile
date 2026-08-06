@@ -17,8 +17,11 @@ TARBALL := $(PACKAGE_NAME)-$(VERSION).tar.xz
 
 all: build
 
+# `npm ci` when there is a lockfile, because a package build has to install the
+# versions that were tested rather than whatever satisfies the ranges today.
+# `npm install` is the fallback for a working tree with no lockfile yet.
 node_modules: package.json
-	npm install
+	@if [ -f package-lock.json ]; then npm ci; else npm install; fi
 	@touch node_modules
 
 build: node_modules
@@ -55,14 +58,19 @@ devinstall: build
 devuninstall:
 	rm -f $(USER_DIR)
 
-# node_modules goes into the tarball so the package build works on a builder
-# with no network, which is what most build systems provide.
+# The source tarball, which is what both packages are built from.
+#
+# node_modules is deliberately not in it. Vendoring a few hundred megabytes of
+# dependencies into a release asset to save an `npm ci` is a poor trade, and the
+# lockfile is included, so the builder installs the versions that were tested
+# rather than whatever satisfies the ranges on the day. A builder with no
+# network cannot build this; that is a known limit, not an accident.
 dist: check build
 	tar --create --xz --file $(TARBALL) \
 	    --transform 's,^,$(PACKAGE_NAME)-$(VERSION)/,' \
 	    --exclude='.git' --exclude='dist' --exclude='*.tar.xz' \
 	    Makefile package.json package-lock.json tsconfig.json build.js \
-	    eslint.config.js .stylelintrc.json build src test docs packaging \
+	    eslint.config.js .stylelintrc.json build src po test docs packaging \
 	    README.md LICENSE
 	@echo "wrote $(TARBALL)"
 

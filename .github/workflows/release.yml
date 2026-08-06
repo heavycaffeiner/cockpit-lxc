@@ -1,0 +1,145 @@
+name: release
+
+# Cut a release from a version tag. The tarball is the source of both packages,
+# so the rpm and the deb are built from the same bytes rather than from two
+# checkouts that could drift.
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag to build, for example v0.1.0"
+        required: true
+
+permissions:
+  contents: write
+
+jobs:
+  tarball:
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+
+      - name: Install
+        run: npm ci
+
+      - name: Read the version the packaging declares
+        id: version
+        run: echo "version=$(node -p "require('./package.json').version")" >> "$GITHUB_OUTPUT"
+
+      # The tag and the packaging must agree. A release tagged v0.2.0 that
+      # installs as 0.1.0 is worse than a failed build: it is a package whose
+      # name lies about what is inside it.
+      - name: Check the tag matches the version
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          tag="${GITHUB_REF#refs/tags/v}"
+          declared="${{ steps.version.outputs.version }}"
+          if [ "$tag" != "$declared" ]; then
+            echo "tag v$tag does not match package.json $declared" >&2
+            exit 1
+          fi
+
+      # `make dist` runs the full check first, so nothing is released that
+      # would not pass CI.
+      - name: Build the source tarball
+        run: make dist
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: tarball
+          path: cockpit-lxc-*.tar.xz
+
+  rpm:
+    needs: tarball
+    runs-on: ubuntu-latest
+    # Built inside Fedora rather than on the runner, because rpmbuild's macros
+    # and the resulting dependency metadata come from the distribution, not
+    # from a copy of rpm installed onto something else.
+    container: fedora:41
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+
+      - name: Install the build tooling
+        run: dnf install -y rpm-build rpmdevtools make nodejs npm tar xz
+
+      - name: Build the rpm
+        run: |
+          rpmdev-setuptree
+          rpmbuild -ta cockpit-lxc-*.tar.xz
+          find "$HOME/rpmbuild/RPMS" -name '*.rpm' -exec cp {} . \;
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: rpm
+          path: "*.rpm"
+
+  deb:
+    needs: tarball
+    runs-on: ubuntu-latest
+    container: debian:bookworm
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+
+      - name: Install the build tooling
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends \
+            build-essential debhelper devscripts nodejs npm xz-utils
+
+      - name: Build the deb
+        run: |
+          tar xf cockpit-lxc-*.tar.xz
+          cd cockpit-lxc-*/
+          cp -r packaging/debian debian
+          # No signing: the release is verified by its checksums and by the
+          # provenance GitHub records, and a key in CI would be a key to steal.
+          dpkg-buildpackage -us -uc -b
+          cp ../*.deb "$GITHUB_WORKSPACE/"
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: deb
+          path: "*.deb"
+
+  publish:
+    needs: [tarball, rpm, deb]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          path: artifacts
+          merge-multiple: true
+
+      # Checksums beside the files, so an operator who downloads an rpm from a
+      # release page has something to check it against.
+      - name: Checksum everything
+        run: |
+          cd artifacts
+          sha256sum * > SHA256SUMS
+          cat SHA256SUMS
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          files: artifacts/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true

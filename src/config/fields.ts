@@ -173,14 +173,6 @@ const curatedFieldGroups = (): readonly FieldGroup[] => [
                 help: T.fields.relative_i_o_weight_against_other,
                 validate: validatePriority,
             },
-            {
-                key: "limits.network.priority",
-                label: T.fields.network_priority,
-                kind: "number",
-                placeholder: "0-10",
-                help: T.fields.relative_network_weight_against_other_containers,
-                validate: validatePriority,
-            },
         ],
     },
     {
@@ -500,7 +492,14 @@ export const formLevelProblems = (config: Record<string, string>): string[] => {
 export const TYPED_KEYS: ReadonlySet<string> = new Set([
     "limits.cpu", "limits.cpu.allowance", "limits.cpu.priority",
     "limits.memory", "limits.memory.enforce", "limits.memory.swap",
-    "limits.processes", "limits.disk.priority", "limits.network.priority",
+    /*
+     * No limits.network.priority. Incus 6.23 does not have it and answers a
+     * write with "Unknown configuration key"; a server old enough to accept it
+     * can still be given it through the raw editor, which is where a key with
+     * no documentation belongs. Listing it here would hide it from that editor
+     * as well, leaving a container that has it set with nowhere to see it.
+     */
+    "limits.processes", "limits.disk.priority",
     "security.privileged", "security.nesting", "security.protection.delete",
     "security.idmap.isolated", "security.syscalls.intercept.mknod",
     "boot.autostart", "boot.autostart.priority", "boot.autostart.delay",
