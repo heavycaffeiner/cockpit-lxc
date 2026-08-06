@@ -18,7 +18,8 @@
         "lint:css:fix": "stylelint --fix \"src/**/*.{css,scss}\"",
         "lint": "npm run lint:js && npm run lint:css",
         "check:po": "node build/check-catalogues.mjs",
-        "check": "npm run typecheck && npm run lint && npm run check:po"
+        "check": "npm run check:version && npm run typecheck && npm run lint && npm run check:po",
+        "check:version": "node build/check-version.mjs"
     },
     "dependencies": {
         "@patternfly/patternfly": "^6.6.1",

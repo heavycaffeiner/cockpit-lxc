@@ -32,7 +32,7 @@ watch: node_modules
 
 # The 4px grid gate (proposal 4.3.7) hangs off lint-css, and check depends on it,
 # so an off-grid length fails the build rather than surviving to review.
-check: typecheck lint check-po
+check: check-version typecheck lint check-po
 
 typecheck: node_modules
 	npm run typecheck
@@ -84,9 +84,15 @@ deb: dist
 # the source: po/en.po is the English catalogue, not a by-product. This checks
 # that the keys used in src and the keys in the catalogues agree, which is what
 # catches a typo that would otherwise render as a key in the UI.
-.PHONY: check-po
+.PHONY: check-po check-version
 check-po: node_modules
 	npm run check:po
+
+# The version is declared in package.json, this Makefile, the rpm spec and the
+# debian changelog. This is what stops a release naming itself one thing and
+# installing as another.
+check-version:
+	npm run check:version
 
 clean:
 	rm -rf dist $(PACKAGE_NAME)-*.tar.xz

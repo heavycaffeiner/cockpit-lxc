@@ -1,0 +1,8 @@
+cockpit-lxc (0.1.0-1) unstable; urgency=medium
+
+  * Initial release: container lifecycle, the instance configuration surface
+    driven by Incus's own option table, network and disk devices, profiles,
+    networks, storage pools, snapshots, images, logs, and an interactive
+    terminal and console.
+
+ -- heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>  Thu, 06 Aug 2026 00:00:00 +0000
