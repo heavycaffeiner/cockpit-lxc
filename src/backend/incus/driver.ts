@@ -347,13 +347,15 @@ export class IncusDriver implements ContainerDriver {
 
     async createContainer(spec: CreateContainerSpec): Promise<void> {
         /*
-         * The remote name is a client-side concept; the API wants a concrete
-         * server and protocol. "local" means an image already pulled onto this
-         * host, anything else is treated as a simplestreams image server.
+         * A local image is named either way. Incus takes `alias` or
+         * `fingerprint` but not one under the other's name, and an image that
+         * was pulled without an alias has only its fingerprint, so which field
+         * to send is decided by the shape of the value rather than by asking
+         * the caller to track it.
          */
-        const source = spec.remote === "local"
-            ? { type: "image", alias: spec.image }
-            : { type: "image", alias: spec.image, ...await this.imageServer(spec.remote) };
+        const source = /^[0-9a-f]{64}$/.test(spec.image)
+            ? { type: "image", fingerprint: spec.image }
+            : { type: "image", alias: spec.image };
 
         await this.client.request<unknown>("/1.0/instances", {
             method: "POST",

@@ -29,6 +29,12 @@ body {
 
 .lxc-count {
     color: var(--pf-t--global--text--color--subtle);
+
+    /*
+     * A count that wraps to three lines in a flex toolbar is unreadable, and it
+     * is short enough that the space is never the thing in short supply.
+     */
+    white-space: nowrap;
 }
 
 .lxc-muted {
@@ -163,7 +169,8 @@ body {
 .lxc-resource .lxc-page__toolbar {
     display: flex;
     gap: var(--pf-t--global--spacer--sm);
-    margin-block-end: var(--pf-t--global--spacer--md);
+    align-items: center;
+    margin-block: var(--pf-t--global--spacer--md);
 }
 
 .lxc-address-list {
@@ -196,13 +203,17 @@ body {
 }
 
 /*
- * The remote catalogue can run to hundreds of images, so it scrolls inside the
- * dialog rather than pushing its footer past the bottom of the window. The
- * height is a whole number of 4px steps.
+ * The remote catalogue runs to hundreds of images, so it scrolls in place
+ * rather than making the whole page grow past what a scroll position can find
+ * its way back to. The height is a whole number of 4px steps.
  */
 .lxc-catalogue {
-    max-block-size: 400px;
+    max-block-size: 560px;
     overflow-y: auto;
+}
+
+.lxc-remote-picker {
+    inline-size: 360px;
 }
 
 .lxc-logs .lxc-page__toolbar {

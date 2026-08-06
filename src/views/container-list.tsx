@@ -108,6 +108,8 @@ interface ContainerListProps {
     onPrefsChange: (patch: Partial<Prefs>) => void;
     onRefresh: () => void;
     onOpen: (name: string) => void;
+    /** Creating needs a cached image, so the empty case has somewhere to send. */
+    onBrowseImages: () => void;
 }
 
 export const ContainerList = ({
@@ -117,6 +119,7 @@ export const ContainerList = ({
     onPrefsChange,
     onRefresh,
     onOpen,
+    onBrowseImages,
 }: ContainerListProps) => {
     const [search, setSearch] = useState("");
     const [stateFilter, setStateFilter] = useState<ContainerState | "All">("All");
@@ -350,12 +353,13 @@ export const ContainerList = ({
             {creating && (
                 <CreateDialog
                     existing={containers.map((c) => c.name)}
+                    driver={driver}
+                    onBrowseImages={() => { setCreating(false); onBrowseImages(); }}
                     onClose={() => setCreating(false)}
                     onConfirm={async (spec: CreateSpec) => {
                         await driver.createContainer({
                             name: spec.name,
                             image: spec.image,
-                            remote: spec.remote,
                             profiles: [],
                             config: {},
                             ephemeral: false,

@@ -352,8 +352,8 @@ msgstr "Delete $0?"
 msgid "dialogs.delete_container"
 msgstr "Delete container"
 
-msgid "dialogs.image_alias"
-msgstr "Image alias"
+msgid "dialogs.go_to_images"
+msgstr "Go to Images"
 
 msgid "dialogs.incus_only_renames_a_stopped_container"
 msgstr "Incus only renames a stopped container."
@@ -375,6 +375,12 @@ msgstr "New container name"
 
 msgid "dialogs.new_name"
 msgstr "New name"
+
+msgid "dialogs.no_image_is_cached_on_this"
+msgstr "No image is cached on this host yet."
+
+msgid "dialogs.pick_from_the_images_cached_on"
+msgstr "One of the images already on this host. Download more from the Images page."
 
 msgid "dialogs.rename"
 msgstr "Rename $0"
@@ -673,8 +679,14 @@ msgstr "Alias"
 msgid "images.delete_this_image"
 msgstr "Delete this image?"
 
+msgid "images.download_one"
+msgstr "Download one"
+
 msgid "images.download_progress"
 msgstr "Download progress"
+
+msgid "images.downloaded"
+msgstr "Downloaded $0"
 
 msgid "images.downloading"
 msgstr "Downloading: $0"
@@ -687,6 +699,9 @@ msgstr "Filter the catalogue"
 
 msgid "images.fingerprint"
 msgstr "Fingerprint"
+
+msgid "images.image_views"
+msgstr "Image views"
 
 msgid "images.is_removed_from_this_host_containers"
 msgstr "$0 is removed from this host. Containers already created from it keep working; creating new ones will download it again."
@@ -715,11 +730,11 @@ msgstr "No image remote is configured on this host."
 msgid "images.no_images_are_cached_on_this"
 msgstr "No images are cached on this host."
 
+msgid "images.of_images"
+msgstr "$0 of $1"
+
 msgid "images.pull"
 msgstr "Pull"
-
-msgid "images.pull_an_image"
-msgstr "Pull an image"
 
 msgid "images.pull_image"
 msgstr "Pull image"

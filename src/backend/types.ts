@@ -215,10 +215,17 @@ export interface LifecycleEvent {
 
 export interface CreateContainerSpec {
     name: string;
-    /** Image alias or fingerprint, resolved against `remote`. */
+    /**
+     * An image already on this host, named by its alias or, when it has none,
+     * by its fingerprint.
+     *
+     * Creating never pulls. A create that silently downloads several hundred
+     * megabytes takes minutes and reports nothing useful while it does, and the
+     * two failures it can produce, "no such image" and "the download failed",
+     * are indistinguishable from the container's point of view. Pulling is its
+     * own step on the Images page.
+     */
     image: string;
-    /** Configured remote to pull from, for example "images". */
-    remote: string;
     profiles: readonly string[];
     config: ContainerConfig;
     ephemeral: boolean;

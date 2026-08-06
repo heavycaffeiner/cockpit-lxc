@@ -466,9 +466,9 @@ msgstr "$0을(를) 삭제할까요?"
 msgid "dialogs.delete_container"
 msgstr "컨테이너 삭제"
 
-# Image alias
-msgid "dialogs.image_alias"
-msgstr "이미지 별칭"
+# Go to Images
+msgid "dialogs.go_to_images"
+msgstr "이미지 페이지로 이동"
 
 # Incus only renames a stopped container.
 msgid "dialogs.incus_only_renames_a_stopped_container"
@@ -497,6 +497,14 @@ msgstr "새 컨테이너 이름"
 # New name
 msgid "dialogs.new_name"
 msgstr "새 이름"
+
+# No image is cached on this host yet.
+msgid "dialogs.no_image_is_cached_on_this"
+msgstr "이 호스트에 저장된 이미지가 아직 없습니다."
+
+# One of the images already on this host. Download more from the Images page.
+msgid "dialogs.pick_from_the_images_cached_on"
+msgstr "이 호스트에 이미 있는 이미지 중 하나입니다. 더 필요하면 이미지 페이지에서 내려받으십시오."
 
 # Rename $0
 msgid "dialogs.rename"
@@ -894,9 +902,17 @@ msgstr "별칭"
 msgid "images.delete_this_image"
 msgstr "이 이미지를 삭제할까요?"
 
+# Download one
+msgid "images.download_one"
+msgstr "하나 내려받기"
+
 # Download progress
 msgid "images.download_progress"
 msgstr "내려받기 진행률"
+
+# Downloaded $0
+msgid "images.downloaded"
+msgstr "$0 을(를) 내려받았습니다"
 
 # Downloading: $0
 msgid "images.downloading"
@@ -913,6 +929,10 @@ msgstr "카탈로그 거르기"
 # Fingerprint
 msgid "images.fingerprint"
 msgstr "지문"
+
+# Image views
+msgid "images.image_views"
+msgstr "이미지 화면"
 
 # $0 is removed from this host. Containers already created from it keep working; creating new ones will download it again.
 msgid "images.is_removed_from_this_host_containers"
@@ -950,13 +970,13 @@ msgstr "이 호스트에 등록된 이미지 원격 저장소가 없습니다."
 msgid "images.no_images_are_cached_on_this"
 msgstr "이 호스트에 저장된 이미지가 없습니다."
 
+# $0 of $1
+msgid "images.of_images"
+msgstr "$1개 중 $0개"
+
 # Pull
 msgid "images.pull"
 msgstr "내려받기"
-
-# Pull an image
-msgid "images.pull_an_image"
-msgstr "이미지 내려받기"
 
 # Pull image
 msgid "images.pull_image"

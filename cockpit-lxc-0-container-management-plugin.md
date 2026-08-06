@@ -904,9 +904,19 @@ to a language with no catalogue loads none and renders the bundled English.
 **Image remotes are read from the CLI.** Section 5-1-1 lists no endpoint for them because
 there is none: remotes are client-side state that the daemon does not know, so
 `incus remote list --format=json` is not a shortcut around the API but the only source.
-The pull dialog browses the chosen remote's catalogue rather than taking a typed alias,
-and the image server a pull resolves to comes from that list rather than from a hardcoded
+The image server a pull resolves to comes from that list rather than from a hardcoded
 address, so a host with extra remotes configured can use them.
+
+**Downloading and creating are separate steps.** Section 5-1-2's `CreateContainerSpec`
+carries a remote, which would let a create pull an image it does not have. It no longer
+does: the create dialog picks from the images already cached on the host, and downloading
+has its own tab on the Images page with the remote's catalogue browsable rather than typed.
+Folding the two together looks convenient and is not. A create that silently downloads
+several hundred megabytes takes minutes while reporting nothing useful, and its two
+failures, "no such image" and "the download failed", arrive as one indistinguishable error
+about the container. Separating them also means a typed alias is never the thing that
+fails: the picker offers what exists, and an image with no alias is offered by its
+fingerprint rather than being unreachable.
 
 Two things Incus itself constrains, recorded so they do not read as gaps:
 

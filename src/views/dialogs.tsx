@@ -5,20 +5,25 @@ import {
     Form,
     FormGroup,
     FormHelperText,
+    FormSelect,
+    FormSelectOption,
     HelperText,
     HelperTextItem,
     Modal,
     ModalBody,
     ModalFooter,
     ModalHeader,
+    Spinner,
     TextInput,
 } from "@patternfly/react-core";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 import {
     T,
     format,
     type Container,
+    type ContainerDriver,
+    type Image,
 } from "../backend";
 import { stateName } from "../components/container-state-label";
 
@@ -253,38 +258,89 @@ export const CopyDialog = ({ container, existing, onClose, onConfirm }: CopyDial
 
 export interface CreateSpec {
     name: string;
+    /** A local image, named by alias where it has one, else by fingerprint. */
     image: string;
-    remote: string;
     start: boolean;
 }
 
 interface CreateDialogProps {
     existing: readonly string[];
+    driver: ContainerDriver;
+    /** Sends the operator to the Images page when nothing is cached. */
+    onBrowseImages: () => void;
     onClose: () => void;
     onConfirm: (spec: CreateSpec) => Promise<void>;
 }
 
-export const CreateDialog = ({ existing, onClose, onConfirm }: CreateDialogProps) => {
+/**
+ * How an image reads in the picker.
+ *
+ * The alias first, because that is what an operator recognises. An image pulled
+ * without one has only a 64-character fingerprint, so the description carries
+ * the recognition and the fingerprint is shortened to the part that
+ * distinguishes it.
+ */
+const imageLabel = (image: Image): string => {
+    const alias = image.aliases[0];
+    const detail = image.description === "" ? image.architecture : image.description;
+    return alias === undefined
+        ? `${detail} (${image.fingerprint.slice(0, 12)})`
+        : `${alias} (${detail})`;
+};
+
+/** What identifies the image to Incus: the alias if it has one, else the hash. */
+const imageValue = (image: Image): string => image.aliases[0] ?? image.fingerprint;
+
+/**
+ * Create a container from an image already on this host.
+ *
+ * The image is picked from what is cached rather than typed. A typed alias is
+ * checked only by Incus, minutes into a download, and its failure does not
+ * distinguish a misspelling from a remote that does not carry it. Downloading
+ * is a separate step with its own tab, so the two failures stay separate too.
+ */
+export const CreateDialog = ({
+    existing,
+    driver,
+    onBrowseImages,
+    onClose,
+    onConfirm,
+}: CreateDialogProps) => {
     const [name, setName] = useState("");
-    const [image, setImage] = useState("images:debian/12");
+    const [image, setImage] = useState("");
+    const [images, setImages] = useState<readonly Image[] | null>(null);
     const [start, setStart] = useState(true);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
 
+    useEffect(() => {
+        let cancelled = false;
+        driver.listImages().then(
+            (result) => {
+                if (cancelled)
+                    return;
+                setImages(result);
+                setImage(result[0] === undefined ? "" : imageValue(result[0]));
+            },
+            (caught: unknown) => {
+                if (!cancelled) {
+                    setImages([]);
+                    setError(errorText(caught));
+                }
+            },
+        );
+        return () => { cancelled = true; };
+    }, [driver]);
+
     const duplicate = existing.includes(name);
     const nameValid = name !== "" && /^[a-zA-Z0-9-]+$/.test(name) && !duplicate;
-    const valid = nameValid && image.trim() !== "";
+    const valid = nameValid && image !== "";
 
     const run = async () => {
         setBusy(true);
         setError(null);
-        // "images:debian/12" splits into the remote and the alias; a bare alias
-        // means an image already on this host.
-        const separator = image.indexOf(":");
-        const remote = separator === -1 ? "local" : image.slice(0, separator);
-        const alias = separator === -1 ? image : image.slice(separator + 1);
         try {
-            await onConfirm({ name, image: alias, remote, start });
+            await onConfirm({ name, image, start });
             onClose();
         } catch (caught) {
             setError(errorText(caught));
@@ -292,6 +348,8 @@ export const CreateDialog = ({ existing, onClose, onConfirm }: CreateDialogProps
             setBusy(false);
         }
     };
+
+    const empty = images !== null && images.length === 0;
 
     return (
         <Modal isOpen variant="medium" onClose={onClose} aria-label={T.list.create_container}>
@@ -319,21 +377,45 @@ export const CreateDialog = ({ existing, onClose, onConfirm }: CreateDialogProps
                         </FormHelperText>
                     </FormGroup>
                     <FormGroup label={T.common.image} fieldId="lxc-create-image" isRequired>
-                        <TextInput
-                            id="lxc-create-image"
-                            value={image}
-                            onChange={(_event, value) => setImage(value)}
-                            aria-label={T.dialogs.image_alias}
-                            autoComplete="off"
-                        />
-                        <FormHelperText>
-                            <HelperText>
-                                <HelperTextItem>
-                                    An alias such as <code>images:debian/12</code>. A name with
-                                    no remote refers to an image already on this host.
-                                </HelperTextItem>
-                            </HelperText>
-                        </FormHelperText>
+                        {images === null
+                            ? <Spinner size="md" aria-label={T.images.loading_images} />
+                            : empty
+                                ? (
+                                    <Alert
+                                        variant="info"
+                                        isInline
+                                        title={T.dialogs.no_image_is_cached_on_this}
+                                    >
+                                        <Button variant="link" isInline onClick={onBrowseImages}>
+                                            {T.dialogs.go_to_images}
+                                        </Button>
+                                    </Alert>
+                                )
+                                : (
+                                    <>
+                                        <FormSelect
+                                            id="lxc-create-image"
+                                            value={image}
+                                            onChange={(_event, value) => setImage(value)}
+                                            aria-label={T.common.image}
+                                        >
+                                            {images.map((candidate) => (
+                                                <FormSelectOption
+                                                    key={candidate.fingerprint}
+                                                    value={imageValue(candidate)}
+                                                    label={imageLabel(candidate)}
+                                                />
+                                            ))}
+                                        </FormSelect>
+                                        <FormHelperText>
+                                            <HelperText>
+                                                <HelperTextItem>
+                                                    {T.dialogs.pick_from_the_images_cached_on}
+                                                </HelperTextItem>
+                                            </HelperText>
+                                        </FormHelperText>
+                                    </>
+                                )}
                     </FormGroup>
                     <FormGroup fieldId="lxc-create-start">
                         <Checkbox

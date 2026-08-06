@@ -152,6 +152,7 @@ export const Application = () => {
                                         onPrefsChange={setPrefs}
                                         onRefresh={reload}
                                         onOpen={setSelected}
+                                        onBrowseImages={() => setPrefs({ page: "images" })}
                                     />
                                 )}
                                 {page === name && name === "images" && (

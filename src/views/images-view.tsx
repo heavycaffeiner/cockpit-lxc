@@ -13,10 +13,13 @@ import {
     Progress,
     SearchInput,
     Spinner,
+    Tab,
+    TabTitleText,
+    Tabs,
     TextInput,
     Tooltip,
 } from "@patternfly/react-core";
-import { DownloadIcon, SyncAltIcon } from "@patternfly/react-icons";
+import { SyncAltIcon } from "@patternfly/react-icons";
 import { Table, Tbody, Td, Th, Thead, Tr } from "@patternfly/react-table";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
@@ -28,6 +31,7 @@ import {
     type Remote,
     type RemoteImage,
 } from "../backend";
+import { announce } from "../components/live-region";
 import { ConfirmDelete } from "../components/resource-dialog";
 import { useResourceList } from "../hooks/use-resource-list";
 
@@ -62,38 +66,51 @@ const progressPercent = (text: string): number => {
     return match === null ? 0 : Math.min(100, Number(match[1]));
 };
 
+type ImageTab = "local" | "download";
+
 interface ImagesViewProps {
     driver: ContainerDriver;
-    /** Refreshes the container list, since a create dialog offers these images. */
+    /** Refreshes the container list, whose create dialog offers these images. */
     onChanged: () => void;
 }
 
+/**
+ * Images, split by what the operator is doing.
+ *
+ * Downloading is browsing a remote catalogue over the network and can take
+ * minutes; the local list is a handful of rows that answers "what can I create
+ * from". Putting the catalogue in a modal over the local list made the slow,
+ * exploratory half interrupt the quick one, so each gets its own tab.
+ */
 export const ImagesView = ({ driver, onChanged }: ImagesViewProps) => {
     const load = useCallback(() => driver.listImages(), [driver]);
-    const { items, error, busy, reload, run } = useResourceList<Image>(load);
-
-    const [pulling, setPulling] = useState(false);
+    const local = useResourceList<Image>(load);
+    const [tab, setTab] = useState<ImageTab>("local");
     const [progress, setProgress] = useState<string | null>(null);
-    const [aliasing, setAliasing] = useState<Image | null>(null);
-    const [deleting, setDeleting] = useState<Image | null>(null);
 
     const pull = (alias: string, remote: string) =>
-        run(async () => {
+        local.run(async () => {
             try {
                 await driver.pullImage(alias, remote, setProgress);
+                announce(format(T.images.downloaded, alias));
                 onChanged();
+                // The point of downloading is to have it locally, so this ends
+                // where the operator was heading anyway.
+                setTab("local");
             } finally {
                 setProgress(null);
             }
         });
 
-    if (items === null)
-        return <Spinner aria-label={T.images.loading_images} />;
-
     return (
         <div className="lxc-resource">
-            {error !== null && <Alert variant="danger" isInline title={error} />}
+            {local.error !== null && <Alert variant="danger" isInline title={local.error} />}
 
+            {/*
+              * The bar lives above the tabs rather than inside the download
+              * one: a pull keeps running when the operator switches back to the
+              * local list, and progress that disappears reads as a stall.
+              */}
             {progress !== null && (
                 <Progress
                     value={progressPercent(progress)}
@@ -104,18 +121,63 @@ export const ImagesView = ({ driver, onChanged }: ImagesViewProps) => {
                 />
             )}
 
+            <Tabs
+                activeKey={tab}
+                onSelect={(_event, key) => setTab(key as ImageTab)}
+                aria-label={T.images.image_views}
+                // Subtab styling, so this reads as a level below the page tabs
+                // rather than as a second set of them.
+                isSubtab
+                role="region"
+            >
+                <Tab eventKey="local" title={<TabTitleText>{T.images.local_images}</TabTitleText>}>
+                    {tab === "local" && (
+                        <LocalImages driver={driver} list={local} onGetImages={() => setTab("download")} />
+                    )}
+                </Tab>
+                <Tab eventKey="download" title={<TabTitleText>{T.images.pull_image}</TabTitleText>}>
+                    {tab === "download" && (
+                        <DownloadImages driver={driver} busy={local.busy} onPull={pull} />
+                    )}
+                </Tab>
+            </Tabs>
+        </div>
+    );
+};
+
+const LocalImages = ({
+    driver,
+    list,
+    onGetImages,
+}: {
+    driver: ContainerDriver;
+    list: ReturnType<typeof useResourceList<Image>>;
+    onGetImages: () => void;
+}) => {
+    const { items, busy, reload, run } = list;
+    const [aliasing, setAliasing] = useState<Image | null>(null);
+    const [deleting, setDeleting] = useState<Image | null>(null);
+
+    if (items === null)
+        return <Spinner aria-label={T.images.loading_images} />;
+
+    return (
+        <>
             <div className="lxc-page__toolbar">
-                <Button variant="primary" icon={<DownloadIcon />} isDisabled={busy}
-                    onClick={() => setPulling(true)}>
-                    {T.images.pull_image}
-                </Button>
                 <Button variant="secondary" icon={<SyncAltIcon />} onClick={reload} isDisabled={busy}>
                     {T.common.refresh}
                 </Button>
             </div>
 
             {items.length === 0
-                ? <p className="lxc-muted">{T.images.no_images_are_cached_on_this}</p>
+                ? (
+                    <p className="lxc-muted">
+                        {T.images.no_images_are_cached_on_this}{" "}
+                        <Button variant="link" isInline onClick={onGetImages}>
+                            {T.images.download_one}
+                        </Button>
+                    </p>
+                )
                 : (
                     <Table aria-label={T.images.local_images} variant="compact">
                         <Thead>
@@ -176,14 +238,6 @@ export const ImagesView = ({ driver, onChanged }: ImagesViewProps) => {
                     </Table>
                 )}
 
-            {pulling && (
-                <PullImageDialog
-                    driver={driver}
-                    onClose={() => setPulling(false)}
-                    onConfirm={pull}
-                />
-            )}
-
             {aliasing !== null && (
                 <AliasDialog
                     image={aliasing}
@@ -205,25 +259,25 @@ export const ImagesView = ({ driver, onChanged }: ImagesViewProps) => {
                     onConfirm={() => run(() => driver.deleteImage(deleting.fingerprint))}
                 />
             )}
-        </div>
+        </>
     );
 };
 
 /**
- * Pick an image from a remote's catalogue.
+ * A remote's catalogue, browsed rather than typed.
  *
- * Browsing rather than typing an alias: an alias that does not exist fails
- * minutes later at the end of a download attempt, and there is no way to guess
- * from the failure whether the name or the remote was wrong.
+ * A typed alias is checked only by Incus, minutes into a download, and the
+ * failure does not distinguish a misspelling from a remote that does not carry
+ * that image.
  */
-const PullImageDialog = ({
+const DownloadImages = ({
     driver,
-    onClose,
-    onConfirm,
+    busy,
+    onPull,
 }: {
     driver: ContainerDriver;
-    onClose: () => void;
-    onConfirm: (alias: string, remote: string) => Promise<void>;
+    busy: boolean;
+    onPull: (alias: string, remote: string) => Promise<void>;
 }) => {
     const [remotes, setRemotes] = useState<Remote[] | null>(null);
     const [remote, setRemote] = useState("");
@@ -281,6 +335,8 @@ const PullImageDialog = ({
 
     const visible = useMemo(() => {
         const needle = search.trim().toLowerCase();
+        // Virtual machine images cannot become system containers, and offering
+        // one produces a create that fails on a mismatch nobody chose.
         const all = (images ?? []).filter((image) => image.type !== "virtual-machine");
         if (needle === "")
             return all;
@@ -290,89 +346,86 @@ const PullImageDialog = ({
     }, [images, search]);
 
     return (
-        <Modal isOpen variant="large" onClose={onClose} aria-label={T.images.pull_image}>
-            <ModalHeader title={T.images.pull_an_image} />
-            <ModalBody>
-                {error !== null && <Alert variant="danger" isInline title={error} />}
+        <>
+            {error !== null && <Alert variant="danger" isInline title={error} />}
 
-                <Form onSubmit={(event) => event.preventDefault()}>
-                    <FormGroup label={T.images.remote} fieldId="lxc-pull-remote">
-                        <FormSelect
-                            id="lxc-pull-remote"
-                            value={remote}
-                            onChange={(_event, value) => setRemote(value)}
-                            aria-label={T.images.remote}
-                            isDisabled={remotes === null || remotes.length === 0}
-                        >
-                            {(remotes ?? []).map((entry) => (
-                                <FormSelectOption key={entry.name} value={entry.name}
-                                    label={`${entry.name} (${entry.address})`} />
-                            ))}
-                        </FormSelect>
-                    </FormGroup>
+            <div className="lxc-page__toolbar">
+                <FormSelect
+                    id="lxc-pull-remote"
+                    value={remote}
+                    onChange={(_event, value) => setRemote(value)}
+                    aria-label={T.images.remote}
+                    isDisabled={remotes === null || remotes.length === 0}
+                    className="lxc-remote-picker"
+                >
+                    {(remotes ?? []).map((entry) => (
+                        <FormSelectOption key={entry.name} value={entry.name}
+                            label={`${entry.name} (${entry.address})`} />
+                    ))}
+                </FormSelect>
+                <SearchInput
+                    id="lxc-pull-search"
+                    aria-label={T.images.filter_the_catalogue}
+                    placeholder={T.images.filter}
+                    value={search}
+                    onChange={(_event, value) => setSearch(value)}
+                    onClear={() => setSearch("")}
+                />
+                {images !== null && (
+                    <span className="lxc-count">
+                        {format(T.images.of_images, visible.length, images.length)}
+                    </span>
+                )}
+            </div>
 
-                    <FormGroup label={T.images.filter} fieldId="lxc-pull-search">
-                        <SearchInput
-                            id="lxc-pull-search"
-                            aria-label={T.images.filter_the_catalogue}
-                            value={search}
-                            onChange={(_event, value) => setSearch(value)}
-                            onClear={() => setSearch("")}
-                        />
-                    </FormGroup>
-                </Form>
-
-                {remotes !== null && remotes.length === 0
-                    ? <p className="lxc-muted">{T.images.no_image_remote_is_configured_on}</p>
-                    : images === null
-                        ? <Spinner aria-label={T.images.loading_the_catalogue} />
-                        : (
-                            <div className="lxc-catalogue">
-                                <Table aria-label={T.images.remote_images} variant="compact">
-                                    <Thead>
-                                        <Tr>
-                                            <Th modifier="nowrap">{T.images.alias}</Th>
-                                            <Th>{T.common.description}</Th>
-                                            <Th modifier="nowrap">{T.common.architecture}</Th>
-                                            <Th modifier="nowrap">{T.common.size}</Th>
-                                            <Th screenReaderText={T.common.actions} />
+            {remotes !== null && remotes.length === 0
+                ? <p className="lxc-muted">{T.images.no_image_remote_is_configured_on}</p>
+                : images === null
+                    ? <Spinner aria-label={T.images.loading_the_catalogue} />
+                    : (
+                        <div className="lxc-catalogue">
+                            <Table aria-label={T.images.remote_images} variant="compact">
+                                <Thead>
+                                    <Tr>
+                                        <Th modifier="nowrap">{T.images.alias}</Th>
+                                        <Th>{T.common.description}</Th>
+                                        <Th modifier="nowrap">{T.common.architecture}</Th>
+                                        <Th modifier="nowrap">{T.common.size}</Th>
+                                        <Th screenReaderText={T.common.actions} />
+                                    </Tr>
+                                </Thead>
+                                <Tbody>
+                                    {visible.map((image) => (
+                                        <Tr key={image.alias}>
+                                            <Td dataLabel={T.images.alias}><code>{image.alias}</code></Td>
+                                            <Td dataLabel={T.common.description}>{image.description}</Td>
+                                            <Td dataLabel={T.common.architecture}>{image.architecture}</Td>
+                                            <Td dataLabel={T.common.size}>{formatBytes(image.size)}</Td>
+                                            <Td isActionCell modifier="nowrap">
+                                                <Button
+                                                    variant="secondary"
+                                                    isDisabled={busy}
+                                                    onClick={() => void onPull(image.alias, remote)}
+                                                >
+                                                    {T.images.pull}
+                                                </Button>
+                                            </Td>
                                         </Tr>
-                                    </Thead>
-                                    <Tbody>
-                                        {visible.map((image) => (
-                                            <Tr key={image.alias}>
-                                                <Td dataLabel={T.images.alias}><code>{image.alias}</code></Td>
-                                                <Td dataLabel={T.common.description}>{image.description}</Td>
-                                                <Td dataLabel={T.common.architecture}>{image.architecture}</Td>
-                                                <Td dataLabel={T.common.size}>{formatBytes(image.size)}</Td>
-                                                <Td isActionCell modifier="nowrap">
-                                                    <Button variant="secondary" onClick={() => {
-                                                        void onConfirm(image.alias, remote);
-                                                        onClose();
-                                                    }}>
-                                                        {T.images.pull}
-                                                    </Button>
-                                                </Td>
-                                            </Tr>
-                                        ))}
-                                        {visible.length === 0 && (
-                                            <Tr>
-                                                <Td colSpan={5}>
-                                                    <span className="lxc-muted">
-                                                        {T.images.no_image_matches_the_filter}
-                                                    </span>
-                                                </Td>
-                                            </Tr>
-                                        )}
-                                    </Tbody>
-                                </Table>
-                            </div>
-                        )}
-            </ModalBody>
-            <ModalFooter>
-                <Button variant="link" onClick={onClose}>{T.common.cancel}</Button>
-            </ModalFooter>
-        </Modal>
+                                    ))}
+                                    {visible.length === 0 && (
+                                        <Tr>
+                                            <Td colSpan={5}>
+                                                <span className="lxc-muted">
+                                                    {T.images.no_image_matches_the_filter}
+                                                </span>
+                                            </Td>
+                                        </Tr>
+                                    )}
+                                </Tbody>
+                            </Table>
+                        </div>
+                    )}
+        </>
     );
 };
 

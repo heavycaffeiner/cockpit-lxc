@@ -18,8 +18,9 @@ second credential.
 - **Devices**: network interfaces and disk mounts, with profile-supplied devices shown as
   inherited rather than silently copied onto the container.
 - **Snapshots**: create, restore, rename and delete, with schedule and expiry configurable.
-- **Images**: browse a remote's catalogue and pull from it, then name, list and delete what
-  is cached locally.
+- **Images**: one tab for what is cached locally, with names and deletion, and one for
+  browsing a remote's catalogue and downloading from it. Creating a container picks from
+  the cached list, so a create never turns into a silent multi-minute download.
 - **Profiles, networks and storage pools**: their own pages, each with create, edit and
   delete, because a container's configuration refers to all three.
 - **Logs**: the log files Incus keeps for an instance, tailed.
