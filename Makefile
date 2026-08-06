@@ -77,7 +77,7 @@ dist: check build
 	    --exclude='.git' --exclude='dist' --exclude='*.tar.xz' \
 	    Makefile package.json package-lock.json tsconfig.json build.js \
 	    eslint.config.js .stylelintrc.json build src po test docs packaging \
-	    README.md LICENSE
+	    README.md README.ko.md CONTRIBUTING.md LICENSE
 	@echo "wrote $(TARBALL)"
 
 rpm: dist

@@ -43,7 +43,7 @@ make build
 
 %files
 %license LICENSE
-%doc README.md
+%doc README.md README.ko.md
 %{_datadir}/cockpit/lxc
 
 %changelog
