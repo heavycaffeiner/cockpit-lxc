@@ -6,7 +6,7 @@ import {
     OperationCancelled,
     OperationError,
 } from "../errors";
-import { INCUS_SOCKET } from "../socket";
+import { INCUS_SOCKET, INCUS_SOCKETS } from "../socket";
 import { envelopeToApiError, parseEnvelope, type Envelope } from "./envelope";
 import { OperationStatus, type WireOperation } from "./wire";
 
@@ -94,7 +94,7 @@ const classifyTransportError = (reason: unknown): Error => {
         case "not-found":
             return new DriverError(
                 "not-installed",
-                `No Incus socket at ${INCUS_SOCKET}`,
+                `No Incus socket at ${INCUS_SOCKETS.join(" or ")}`,
                 problem,
             );
         case "access-denied":
@@ -116,15 +116,47 @@ const classifyTransportError = (reason: unknown): Error => {
  * whether the UI can ever report success prematurely.
  */
 export class IncusClient {
-    private readonly http: CockpitHttpClient;
+    private http: CockpitHttpClient;
+    /** Candidates still to try, in order. Empty once one has answered. */
+    private remaining: string[];
+    /** Clients for candidates that turned out to be wrong, closed at teardown. */
+    private readonly abandoned: CockpitHttpClient[] = [];
 
-    constructor(socket: string = INCUS_SOCKET) {
-        this.http = cockpit.http({ unix: socket, superuser: "require" });
+    constructor(sockets: readonly string[] = INCUS_SOCKETS) {
+        const [first = INCUS_SOCKET, ...rest] = sockets;
+        this.http = cockpit.http({ unix: first, superuser: "require" });
+        this.remaining = rest;
     }
 
     /** Release every in-flight request. Called when the driver is torn down. */
     close(): void {
+        for (const client of this.abandoned)
+            client.close("terminated");
+        this.abandoned.length = 0;
         this.http.close("terminated");
+    }
+
+    /**
+     * Move to the next candidate socket, if there is one.
+     *
+     * Distributions disagree about where the Incus socket belongs, so "no socket
+     * here" is not the same as "Incus is not installed": it may only mean this
+     * host is one of the ones that puts it elsewhere. Returns false when the
+     * candidates are exhausted, which is when the absence is real.
+     *
+     * The client for the wrong path is set aside rather than closed here.
+     * Closing it reports "terminated" against work that has not finished
+     * settling, which surfaces as a connection failure in place of the retry
+     * that was about to succeed; they are closed together at teardown instead.
+     */
+    private nextSocket(): boolean {
+        const next = this.remaining.shift();
+        if (next === undefined)
+            return false;
+
+        this.abandoned.push(this.http);
+        this.http = cockpit.http({ unix: next, superuser: "require" });
+        return true;
     }
 
     /**
@@ -162,7 +194,19 @@ export class IncusClient {
         try {
             return await request;
         } catch (reason) {
-            throw classifyTransportError(reason);
+            const error = classifyTransportError(reason);
+
+            /*
+             * A missing socket may only mean this distribution puts it
+             * somewhere else. Retry against the next candidate before reporting
+             * that Incus is not installed, and only once per candidate: the
+             * list is consumed, so a genuinely absent daemon still fails
+             * promptly rather than looping.
+             */
+            if (error instanceof DriverError && error.kind === "not-installed" && this.nextSocket())
+                return await this.text(path, options);
+
+            throw error;
         }
     }
 

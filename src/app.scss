@@ -53,6 +53,11 @@ body {
     }
 }
 
+/* One install command per distribution, stacked rather than run together. */
+.lxc-startup__command + .lxc-startup__command {
+    margin-block-start: var(--pf-t--global--spacer--sm);
+}
+
 .lxc-loading {
     min-block-size: var(--pf-t--global--spacer--4xl);
 }

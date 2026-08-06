@@ -15,10 +15,31 @@ import {
 
 import type { DriverErrorKind } from "../backend";
 import {
-    INCUS_SOCKET,
+    INCUS_SOCKETS,
     T,
     format,
 } from "../backend";
+
+/**
+ * How to install Incus, on each distribution this project ships a package for.
+ *
+ * Distribution names and shell commands, so nothing here is translated: a
+ * translated `dnf` would not run.
+ */
+const INSTALL_COMMANDS: readonly { distribution: string; command: string }[] = [
+    {
+        distribution: "RHEL",
+        command: "sudo dnf install incus incus-tools && sudo systemctl enable --now incus.socket",
+    },
+    {
+        distribution: "Debian",
+        command: "sudo apt install incus incus-client && sudo systemctl enable --now incus.socket",
+    },
+    {
+        distribution: "Arch",
+        command: "sudo pacman -S incus && sudo systemctl enable --now incus.socket",
+    },
+];
 
 interface StartupFailureProps {
     kind: DriverErrorKind | "unknown";
@@ -46,19 +67,34 @@ export const StartupFailure = ({ kind, message, onRetry }: StartupFailureProps) 
                 >
                     <EmptyStateBody>
                         <p>
+                            {/*
+                              * Both candidates are named. Distributions disagree
+                              * about where the socket belongs, and a message
+                              * naming only one invites the operator to go
+                              * looking in the wrong place.
+                              */}
                             {format(
                                 T.startup.no_incus_socket_was_found_at,
-                                INCUS_SOCKET,
+                                INCUS_SOCKETS.join(" or "),
                             )}
                         </p>
-                        <ClipboardCopy
-                            isReadOnly
-                            hoverTip={T.actions.copy}
-                            clickTip={T.startup.copied}
-                            variant="expansion"
-                        >
-                            sudo dnf install incus incus-tools &amp;&amp; sudo systemctl enable --now incus.socket
-                        </ClipboardCopy>
+                        {/*
+                          * One command per supported distribution rather than
+                          * the dnf one this used to assume, now that there are
+                          * three of them.
+                          */}
+                        {INSTALL_COMMANDS.map(({ distribution, command }) => (
+                            <ClipboardCopy
+                                key={distribution}
+                                isReadOnly
+                                hoverTip={T.actions.copy}
+                                clickTip={T.startup.copied}
+                                variant="expansion"
+                                className="lxc-startup__command"
+                            >
+                                {`# ${distribution}\n${command}`}
+                            </ClipboardCopy>
+                        ))}
                     </EmptyStateBody>
                     <EmptyStateFooter>
                         <EmptyStateActions>

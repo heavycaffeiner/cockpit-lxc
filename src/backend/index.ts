@@ -27,7 +27,7 @@ export {
 
 export type { DriverErrorKind } from "./errors";
 
-export { INCUS_SOCKET } from "./socket";
+export { INCUS_SOCKET, INCUS_SOCKETS } from "./socket";
 
 export { IncusDriver } from "./incus/driver";
 export { IncusClient } from "./incus/client";
