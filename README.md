@@ -52,6 +52,13 @@ turns into a silent multi-minute download.
 
 ![Pulling an image](docs/screenshot-images.png)
 
+### A shell in the container
+
+xterm.js over a Cockpit pty, with working resize and 256 colours. The font size is
+remembered, and the sizes offered are the ones whose line height lands on the 4px grid.
+
+![The terminal](docs/screenshot-terminal.png)
+
 ## Supported distributions
 
 Three, and each has a package built and published by CI from the same source tarball:
