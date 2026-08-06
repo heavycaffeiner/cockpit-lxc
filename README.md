@@ -228,4 +228,4 @@ how much work is being discarded.
 
 ## License
 
-LGPL-2.1-or-later, matching Cockpit.
+LGPL-2.1-or-later, matching Cockpit. `LICENSE` carries the full text.
