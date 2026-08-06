@@ -5,6 +5,8 @@ Incus is the container manager; the plugin reaches `incusd` over its local REST 
 through `cockpit-bridge`, so it inherits Cockpit's authentication rather than introducing a
 second credential.
 
+![The container list](docs/screenshot-containers.png)
+
 ## What it does
 
 - **Lifecycle**: create, start, stop, force stop, restart, freeze, unfreeze, rename, copy
@@ -26,6 +28,29 @@ second credential.
 - **Logs**: the log files Incus keeps for an instance, tailed.
 - **Terminal and console**: an interactive shell and the tty console, over xterm.js.
 - **Live updates**: the list follows `incus monitor`, and says so when it cannot.
+
+### A container, in detail
+
+Identity, the profiles it applies, and what it is using. Disk says plainly that Incus
+reports no usage for a `dir` pool rather than showing `0 B`.
+
+![The container overview](docs/screenshot-overview.png)
+
+### Every setting the server has
+
+The settings reached for daily come first, translated and validated, with the server's own
+default beside each. Everything else Incus advertises is generated from its option table
+and grouped as Incus groups it, so the count in each heading is what that server actually
+carries rather than what someone remembered to type out.
+
+![The configuration tab](docs/screenshot-configuration.png)
+
+### Images, browsed rather than typed
+
+The remote's catalogue, filtered, with sizes. Downloading is its own tab: a create never
+turns into a silent multi-minute download.
+
+![Pulling an image](docs/screenshot-images.png)
 
 ## Supported distributions
 
