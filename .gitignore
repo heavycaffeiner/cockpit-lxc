@@ -7,4 +7,7 @@ npm-debug.log*
 *.tar.xz
 *.rpm
 *.deb
+*.pkg.tar.zst
+build-arch/
+build-deb/
 src/generated/

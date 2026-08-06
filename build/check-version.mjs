@@ -1,8 +1,9 @@
 /**
- * One version, declared in four places, checked to be the same one.
+ * One version, declared in five places, checked to be the same one.
  *
- * package.json drives the build, the Makefile names the tarball, the rpm spec
- * names the rpm and debian/changelog names the deb. Nothing makes them agree,
+ * package.json drives the build, the Makefile names the tarball, and one file
+ * per supported distribution names its package: the rpm spec for RHEL, the
+ * debian changelog for Debian, the PKGBUILD for Arch. Nothing makes them agree,
  * and a package whose name says 0.1.0 while its contents are 0.2.0 is worse
  * than a build that failed: it installs, and it lies.
  *
@@ -39,6 +40,11 @@ const declared = {
         await read("packaging", "debian", "changelog"),
         /^cockpit-lxc \(([^)-]+)(?:-[^)]+)?\)/m,
         "the debian changelog",
+    ),
+    "packaging/arch/PKGBUILD": first(
+        await read("packaging", "arch", "PKGBUILD"),
+        /^pkgver=(\S+)/m,
+        "the PKGBUILD",
     ),
 };
 

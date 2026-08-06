@@ -1,0 +1,33 @@
+# Maintainer: heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>
+pkgname=cockpit-lxc
+pkgver=0.1.1
+pkgrel=1
+pkgdesc="Cockpit user interface for LXC system containers managed by Incus"
+arch=('any')
+url="https://github.com/heavycaffeiner/cockpit-lxc"
+license=('LGPL-2.1-or-later')
+
+# incus-client is a hard dependency rather than optional. Incus exposes exec and
+# events as websockets, which cockpit.http() cannot upgrade to, so the terminal
+# and the live event stream are both carried by the incus binary.
+depends=('cockpit>=300' 'incus')
+makedepends=('nodejs>=20' 'npm' 'make')
+
+source=("$pkgname-$pkgver.tar.xz")
+# The tarball is built from this tree by `make dist` rather than downloaded, so
+# there is nothing to pin a hash against. A release consumer should replace this
+# with the sha256sum published beside the release asset.
+sha256sums=('SKIP')
+
+build() {
+    cd "$pkgname-$pkgver"
+    make build
+}
+
+package() {
+    cd "$pkgname-$pkgver"
+    make install DESTDIR="$pkgdir" PREFIX=/usr
+
+    install -Dm644 LICENSE "$pkgdir/usr/share/licenses/$pkgname/LICENSE"
+    install -Dm644 README.md "$pkgdir/usr/share/doc/$pkgname/README.md"
+}

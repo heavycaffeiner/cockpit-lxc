@@ -126,8 +126,43 @@ jobs:
           name: deb
           path: "*.deb"
 
+  arch:
+    needs: tarball
+    runs-on: ubuntu-latest
+    container: archlinux:base-devel
+
+    steps:
+      - uses: actions/download-artifact@v4
+        with:
+          name: tarball
+
+      - name: Install the build tooling
+        run: pacman -Syu --noconfirm nodejs npm
+
+      # makepkg refuses to run as root, on the grounds that a PKGBUILD is
+      # arbitrary code. The container is root, so the build gets its own user.
+      #
+      # The PKGBUILD comes out of the tarball rather than out of a checkout, so
+      # this leg builds from exactly the same bytes the other two do.
+      - name: Build the package
+        run: |
+          useradd -m builder
+          tar xf cockpit-lxc-*.tar.xz
+          cp cockpit-lxc-*/packaging/arch/PKGBUILD .
+          chown -R builder:builder .
+          # --nodeps: cockpit and incus are what the package needs to run, not
+          # what it needs to be built, and pulling them into a build container
+          # would prove nothing.
+          su builder -c "makepkg --noconfirm --nodeps"
+          ls -la ./*.pkg.tar.*
+
+      - uses: actions/upload-artifact@v4
+        with:
+          name: arch
+          path: "*.pkg.tar.*"
+
   publish:
-    needs: [tarball, rpm, deb]
+    needs: [tarball, rpm, deb, arch]
     runs-on: ubuntu-latest
     if: startsWith(github.ref, 'refs/tags/v')
 

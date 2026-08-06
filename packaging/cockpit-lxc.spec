@@ -1,5 +1,5 @@
 Name:           cockpit-lxc
-Version:        0.1.0
+Version:        0.1.1
 Release:        1%{?dist}
 Summary:        Cockpit user interface for LXC system containers managed by Incus
 
@@ -47,6 +47,12 @@ make build
 %{_datadir}/cockpit/lxc
 
 %changelog
+* Thu Aug 06 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.1-1
+- Add an Arch package, so the three supported distributions each have one
+- Every instance option Incus advertises is editable, not only the 25 that
+  were typed out by hand
+- Show the container metrics the overview had never been able to fetch
+
 * Tue Aug 04 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.0-1
 - Initial release: container lifecycle, configuration, devices, snapshots,
   images and terminal access

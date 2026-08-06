@@ -27,6 +27,21 @@ second credential.
 - **Terminal and console**: an interactive shell and the tty console, over xterm.js.
 - **Live updates**: the list follows `incus monitor`, and says so when it cannot.
 
+## Supported distributions
+
+Three, and each has a package built and published by CI from the same source tarball:
+
+| Distribution        | Package                | Built on                |
+|---------------------|------------------------|-------------------------|
+| RHEL and rebuilds   | `.rpm`                 | Fedora, `noarch`        |
+| Debian and Ubuntu   | `.deb`                 | Debian, `Architecture: all` |
+| Arch                | `.pkg.tar.zst`         | Arch, `any`             |
+
+The plugin is a bundle of static assets with no compiled component, so the packages are
+architecture-independent and the build host's distribution does not constrain where they
+install. Anything else with Cockpit and Incus will very likely work from the source
+install below; it is simply not something this project builds or tests.
+
 ## Requirements
 
 On the managed host:
@@ -42,8 +57,14 @@ Administrative access is required: the Incus socket is owned `root:incus-admin`.
 
 ## Install
 
+Download the package for your distribution from the
+[latest release](https://github.com/heavycaffeiner/cockpit-lxc/releases/latest), check it
+against the published `SHA256SUMS`, and install it:
+
 ```sh
-sudo dnf install cockpit-lxc      # or: sudo apt install cockpit-lxc
+sudo dnf install ./cockpit-lxc-*.rpm          # RHEL
+sudo apt install ./cockpit-lxc_*_all.deb      # Debian
+sudo pacman -U ./cockpit-lxc-*.pkg.tar.zst    # Arch
 ```
 
 From source:
@@ -55,8 +76,8 @@ make devinstall       # symlink dist/ into ~/.local/share/cockpit/lxc
 sudo make install     # or copy into /usr/share/cockpit/lxc
 ```
 
-`make rpm` builds an RPM. For a `.deb`, `make dist` then copy `packaging/debian` to
-`debian/` in the unpacked tree and run `dpkg-buildpackage -us -uc`.
+Or build the package yourself: `make rpm`, `make deb` or `make arch`, each of which runs
+`make dist` first so nothing is packaged that would not pass CI.
 
 ## Checks
 

@@ -1,5 +1,5 @@
 PACKAGE_NAME := cockpit-lxc
-VERSION := 0.1.0
+VERSION := 0.1.1
 # Cockpit addresses the package by its directory name, which is what appears in
 # the URL (/cockpit/@localhost/lxc). It is deliberately shorter than the
 # distribution package name.
@@ -12,8 +12,14 @@ USER_DIR := $(HOME)/.local/share/cockpit/$(COCKPIT_PACKAGE)
 
 TARBALL := $(PACKAGE_NAME)-$(VERSION).tar.xz
 
+# makepkg unpacks into src/ and stages into pkg/ relative to its working
+# directory, and this project's own sources are in src/. It gets its own
+# directory so it cannot overwrite them.
+ARCH_BUILD_DIR := build-arch
+DEB_BUILD_DIR := build-deb
+
 .PHONY: all build watch check typecheck lint lint-js lint-css install devinstall \
-        devuninstall dist rpm deb clean
+        devuninstall dist rpm deb arch clean
 
 all: build
 
@@ -58,7 +64,7 @@ devinstall: build
 devuninstall:
 	rm -f $(USER_DIR)
 
-# The source tarball, which is what both packages are built from.
+# The source tarball, which is what all three packages are built from.
 #
 # node_modules is deliberately not in it. Vendoring a few hundred megabytes of
 # dependencies into a release asset to save an `npm ci` is a poor trade, and the
@@ -77,8 +83,31 @@ dist: check build
 rpm: dist
 	rpmbuild -ta $(TARBALL)
 
+# Built in its own directory, because dpkg-buildpackage writes the .deb and its
+# metadata to the parent of the source tree it is given.
 deb: dist
-	@echo "Unpack $(TARBALL), copy packaging/debian to debian/, then run dpkg-buildpackage -us -uc"
+	rm -rf $(DEB_BUILD_DIR)
+	mkdir -p $(DEB_BUILD_DIR)
+	tar -x -C $(DEB_BUILD_DIR) -f $(TARBALL)
+	cp -r packaging/debian $(DEB_BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)/debian
+	cd $(DEB_BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION) && dpkg-buildpackage -us -uc -b
+	@echo "wrote $(DEB_BUILD_DIR)/$(PACKAGE_NAME)_$(VERSION)-1_all.deb"
+
+# makepkg wants the PKGBUILD beside the tarball it names as its source, and it
+# unpacks into `src/` and stages into `pkg/` relative to wherever it runs.
+#
+# It therefore must not run in the repository root: this project's own sources
+# live in src/, and makepkg would extract the tarball straight over them. That
+# is what ARCH_BUILD_DIR is for, and why `clean` removes that directory rather
+# than the two names makepkg would otherwise have used.
+#
+# makepkg also refuses to run as root, because a PKGBUILD is arbitrary code.
+arch: dist
+	rm -rf $(ARCH_BUILD_DIR)
+	mkdir -p $(ARCH_BUILD_DIR)
+	cp packaging/arch/PKGBUILD $(TARBALL) $(ARCH_BUILD_DIR)/
+	cd $(ARCH_BUILD_DIR) && makepkg --noconfirm --nodeps
+	@echo "wrote $(ARCH_BUILD_DIR)/$(PACKAGE_NAME)-$(VERSION)-*.pkg.tar.*"
 
 # Message ids are stable keys, so there is nothing for xgettext to extract from
 # the source: po/en.po is the English catalogue, not a by-product. This checks
@@ -88,11 +117,12 @@ deb: dist
 check-po: node_modules
 	npm run check:po
 
-# The version is declared in package.json, this Makefile, the rpm spec and the
-# debian changelog. This is what stops a release naming itself one thing and
-# installing as another.
+# The version is declared in package.json, this Makefile, and one file per
+# supported distribution: the rpm spec, the debian changelog and the PKGBUILD.
+# This is what stops a release naming itself one thing and installing as
+# another.
 check-version:
 	npm run check:version
 
 clean:
-	rm -rf dist $(PACKAGE_NAME)-*.tar.xz
+	rm -rf dist $(ARCH_BUILD_DIR) $(DEB_BUILD_DIR) $(PACKAGE_NAME)-*.tar.xz
