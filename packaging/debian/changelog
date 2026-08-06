@@ -1,3 +1,12 @@
+cockpit-lxc (0.1.2-1) unstable; urgency=medium
+
+  * Find the Incus socket where the distribution put it. Arch uses
+    /var/lib/incus/unix.socket and has no /run/incus, so the Arch package in
+    0.1.1 could not reach Incus at all.
+  * Name every install command, not only the dnf one.
+
+ -- heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>  Thu, 06 Aug 2026 13:30:00 +0000
+
 cockpit-lxc (0.1.1-1) unstable; urgency=medium
 
   * Add an Arch package, so the three supported distributions each have one.

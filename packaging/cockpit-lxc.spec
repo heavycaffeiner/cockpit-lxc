@@ -1,5 +1,5 @@
 Name:           cockpit-lxc
-Version:        0.1.1
+Version:        0.1.2
 Release:        1%{?dist}
 Summary:        Cockpit user interface for LXC system containers managed by Incus
 
@@ -47,6 +47,12 @@ make build
 %{_datadir}/cockpit/lxc
 
 %changelog
+* Thu Aug 06 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.2-1
+- Find the Incus socket where the distribution put it. Arch uses
+  /var/lib/incus/unix.socket and has no /run/incus, so the Arch package in
+  0.1.1 could not reach Incus at all
+- Name every install command, not only the dnf one
+
 * Thu Aug 06 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.1-1
 - Add an Arch package, so the three supported distributions each have one
 - Every instance option Incus advertises is editable, not only the 25 that
