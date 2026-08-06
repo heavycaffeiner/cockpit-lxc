@@ -1,6 +1,7 @@
 import type { ContainerDriver, EventHandlers, SetStateOptions } from "../driver";
 import { ApiError, ConflictError, DriverError } from "../errors";
 import type {
+    ConfigSchema,
     Container,
     ContainerConfig,
     ContainerUpdate,
@@ -55,6 +56,7 @@ const divergedKeys = (
 };
 import {
     isContainer,
+    mapConfigSchema,
     mapContainer,
     mapImage,
     mapMetrics,
@@ -65,6 +67,7 @@ import {
     mapStoragePool,
 } from "./map";
 import type {
+    WireConfigMetadata,
     WireImage,
     WireInstance,
     WireNetwork,
@@ -137,6 +140,31 @@ export class IncusDriver implements ContainerDriver {
     }
 
     /**
+     * Fetch the server's own description of every instance option.
+     *
+     * Resolves to null rather than rejecting when the server does not advertise
+     * the extension, or when the table cannot be read. The configuration forms
+     * work without it, and a probe for documentation must not cost the operator
+     * a page that would otherwise render.
+     *
+     * Called once per session: the table is compiled into the Incus binary and
+     * does not change while the daemon runs.
+     */
+    async fetchConfigSchema(extensions: ReadonlySet<string>): Promise<ConfigSchema | null> {
+        if (!extensions.has("metadata_configuration"))
+            return null;
+
+        try {
+            const wire = await this.client.request<WireConfigMetadata>(
+                "/1.0/metadata/configuration",
+            );
+            return mapConfigSchema(wire);
+        } catch {
+            return null;
+        }
+    }
+
+    /**
      * recursion=2 fetches configuration and live state in one round trip. That
      * is a deliberate bandwidth-for-latency trade: the list view needs state for
      * every row, and fetching it per row would turn one request into N.
@@ -152,8 +180,18 @@ export class IncusDriver implements ContainerDriver {
             .filter((container): container is Container => container !== null);
     }
 
+    /**
+     * One container, with the ETag needed to write it back safely.
+     *
+     * recursion=1 rather than a plain GET, because a plain GET carries the
+     * configuration and no `state`: the detail view fed from it showed no
+     * metrics and no addresses however the container was running, since there
+     * was nothing there to show. The ETag is byte-identical between the two
+     * forms, verified against Incus 6.23, so the write precondition is
+     * unaffected by asking for more.
+     */
     async getContainer(name: string): Promise<{ container: Container; etag: string }> {
-        const path = `/1.0/instances/${encodeURIComponent(name)}`;
+        const path = `/1.0/instances/${encodeURIComponent(name)}?recursion=1`;
         const { data, etag } = await this.client.getWithEtag<WireInstance>(path);
 
         const container = mapContainer(data);

@@ -12,9 +12,11 @@ second credential.
 - **Lifecycle**: create, start, stop, force stop, restart, freeze, unfreeze, rename, copy
   and delete, one container at a time or a selection at once. Actions are offered per
   state, so the menu never shows something the API would reject.
-- **Configuration**: resource limits, security posture, boot behaviour, automatic
-  snapshots and cloud-init as labelled fields, plus a raw key/value editor covering
-  everything else including `raw.lxc`.
+- **Configuration**: every instance option the server advertises for containers, 75 of them
+  on Incus 6.23. The ones reached for daily come first as translated, validated fields; the
+  rest are generated from Incus's own option table with its descriptions, defaults and
+  whether the change needs a restart. A raw key/value editor still covers the wildcard
+  families and anything a future server accepts without documenting.
 - **Devices**: network interfaces and disk mounts, with profile-supplied devices shown as
   inherited rather than silently copied onto the container.
 - **Snapshots**: create, restore, rename and delete, with schedule and expiry configurable.
@@ -157,7 +159,8 @@ src/
   index.html                 loads base1/cockpit.js as a classic script
   theme.ts                   follows Cockpit's dark/light setting
   prefs.ts                   browser-local presentation state
-  config/fields.ts           the typed configuration surface
+  config/fields.ts           the curated fields, and the generator that turns
+                             Incus's option table into the rest
   backend/                   the only place that may import cockpit
     driver.ts                the ContainerDriver interface
     i18n.ts                  translation, with English as the fallback layer
@@ -196,8 +199,10 @@ format(T.list.selected, count)          // $0, $1, ... substituted
 `T` is generated from `po/en.po`, so the key is completed by the editor and a typo is a
 compile error rather than a key showing through in the UI. Put a string more than one view
 needs in the `common` namespace instead of once per view. `npm run check` fails on a key
-`src` uses that `en.po` lacks, on a key `en.po` carries that nothing uses, and on a key in
-another catalogue that English does not have.
+`src` uses that `en.po` lacks, on a key `en.po` carries that nothing uses, on a key in
+another catalogue that English does not have, and on a translation that drops a `$0` the
+English has: a dropped placeholder silently loses whatever was going to be substituted
+into it, and four Korean strings had done exactly that.
 
 English is bundled rather than fetched. Cockpit serves exactly one translation file per
 package, resolved from the request's Accept-Language, and a session in a language with no

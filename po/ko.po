@@ -336,7 +336,7 @@ msgstr "디스크 및 마운트"
 
 # $0 for $1
 msgid "devices.for"
-msgstr "의 $0"
+msgstr "$1의 $0"
 
 # inherited
 msgid "devices.inherited"
@@ -476,7 +476,7 @@ msgstr "Incus는 정지된 컨테이너만 이름을 바꿉니다."
 
 # $0 is $1. Stop it first.
 msgid "dialogs.is_stop_it_first"
-msgstr "$0이(가)  상태입니다. 먼저 정지하십시오."
+msgstr "$0이(가) $1 상태입니다. 먼저 정지하십시오."
 
 # Letters, digits and hyphens only.
 msgid "dialogs.letters_digits_and_hyphens_only"
@@ -662,6 +662,10 @@ msgstr "CPU 우선순위"
 msgid "fields.daily_or_0_6"
 msgstr "@daily 또는 0 6 * * *"
 
+# Default: $0
+msgid "fields.default_is"
+msgstr "기본값: $0"
+
 # Delete protection
 msgid "fields.delete_protection"
 msgstr "삭제 보호"
@@ -713,6 +717,42 @@ msgstr "만료"
 # Gives this container a UID range shared with no other container.
 msgid "fields.gives_this_container_a_uid_range"
 msgstr "다른 컨테이너와 공유하지 않는 UID 범위를 이 컨테이너에 부여합니다."
+
+# Startup and shutdown, as Incus describes them
+msgid "fields.group_boot"
+msgstr "시작과 종료, Incus가 설명하는 대로"
+
+# cloud-init, as Incus describes it
+msgid "fields.group_cloud_init"
+msgstr "cloud-init, Incus가 설명하는 대로"
+
+# Migration
+msgid "fields.group_migration"
+msgstr "마이그레이션"
+
+# Miscellaneous
+msgid "fields.group_miscellaneous"
+msgstr "기타"
+
+# NVIDIA
+msgid "fields.group_nvidia"
+msgstr "NVIDIA"
+
+# Raw configuration
+msgid "fields.group_raw"
+msgstr "원시 설정"
+
+# Resource limits, as Incus describes them
+msgid "fields.group_resource_limits"
+msgstr "자원 한도, Incus가 설명하는 대로"
+
+# Security, as Incus describes it
+msgid "fields.group_security"
+msgstr "보안, Incus가 설명하는 대로"
+
+# Automatic snapshots, as Incus describes them
+msgid "fields.group_snapshots"
+msgstr "자동 스냅샷, Incus가 설명하는 대로"
 
 # Hard
 msgid "fields.hard"
@@ -786,6 +826,14 @@ msgstr "네트워크 설정"
 msgid "fields.network_priority"
 msgstr "네트워크 우선순위"
 
+# Only applies while the container is unprivileged.
+msgid "fields.only_applies_while_the_container_is"
+msgstr "컨테이너가 비특권 상태일 때만 적용됩니다."
+
+# $0 ($1)
+msgid "fields.options"
+msgstr "$0 ($1개)"
+
 # Privileged
 msgid "fields.privileged"
 msgstr "privileged"
@@ -817,6 +865,10 @@ msgstr "자원 한도"
 # Runs without a UID mapping. Escaping such a container means host root.
 msgid "fields.runs_without_a_uid_mapping_escaping"
 msgstr "UID 매핑 없이 실행됩니다. 이런 컨테이너를 탈출하면 호스트 root를 얻습니다."
+
+# Saved. These take effect after a restart: $0
+msgid "fields.saved_these_take_effect_after_a"
+msgstr "저장했습니다. 다음 항목은 다시 시작해야 적용됩니다: $0"
 
 # Schedule
 msgid "fields.schedule"
@@ -857,6 +909,10 @@ msgstr "호스트와 함께 시작합니다. 설정하지 않으면 Incus의 자
 # Startup and shutdown
 msgid "fields.startup_and_shutdown"
 msgstr "시작 및 종료"
+
+# Takes effect after a restart.
+msgid "fields.takes_effect_after_a_restart"
+msgstr "다시 시작해야 적용됩니다."
 
 # User data
 msgid "fields.user_data"
@@ -1062,10 +1118,6 @@ msgstr "현재 필터에 해당하는 컨테이너가 없습니다."
 msgid "list.none_of_the_selected_containers_can"
 msgstr "선택한 컨테이너 중 이 작업을 받을 수 있는 것이 없습니다."
 
-# $0 of $1
-msgid "list.of"
-msgstr "$1개 중 $0개"
-
 # $0 - $1 of $2
 msgid "list.of_containers"
 msgstr "$2개 중 $0 - $1"
@@ -1190,6 +1242,10 @@ msgstr "프로파일 변경"
 msgid "overview.cpu_time"
 msgstr "CPU 시간"
 
+# Disk
+msgid "overview.disk"
+msgstr "디스크"
+
 # Ephemeral
 msgid "overview.ephemeral"
 msgstr "임시"
@@ -1200,11 +1256,15 @@ msgstr "기본 정보"
 
 # $0 in, $1 out
 msgid "overview.in_out"
-msgstr "수신 $0, 송신 "
+msgstr "수신 $0, 송신 $1"
 
 # Incus
 msgid "overview.incus"
 msgstr "Incus"
+
+# Incus reports no disk usage for this container's storage pool.
+msgid "overview.incus_reports_no_disk_usage_for"
+msgstr "이 컨테이너의 저장소 풀에 대해 Incus가 디스크 사용량을 보고하지 않습니다."
 
 # Memory usage
 msgid "overview.memory_usage"
@@ -1217,6 +1277,10 @@ msgstr "아니요"
 # No interfaces are up.
 msgid "overview.no_interfaces_are_up"
 msgstr "활성화된 인터페이스가 없습니다."
+
+# $0 of $1
+msgid "overview.of_size"
+msgstr "$1 중 $0"
 
 # Profiles supply configuration and devices to every container that applies them. Order matters: a later profile wins.
 msgid "overview.profiles_supply_configuration_and_devices_to"
@@ -1443,7 +1507,7 @@ msgstr "이 컨테이너에는 스냅샷이 없습니다."
 
 # This rolls $0 back to $1, taken $2. Everything written to the container since then is discarded and cannot be recovered.
 msgid "snapshots.this_rolls_back_to_taken_everything"
-msgstr "$0을(를)  시점으로 되돌립니다($2에 생성). 그 이후 컨테이너에 기록된 모든 내용은 폐기되며 복구할 수 없습니다."
+msgstr "$0을(를) $1 시점으로 되돌립니다($2에 생성). 그 이후 컨테이너에 기록된 모든 내용은 폐기되며 복구할 수 없습니다."
 
 # Administrative access is required
 msgid "startup.administrative_access_is_required"

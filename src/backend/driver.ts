@@ -1,4 +1,5 @@
 import type {
+    ConfigSchema,
     Container,
     ContainerConfig,
     ContainerUpdate,
@@ -54,6 +55,13 @@ export interface ContainerDriver {
      * each maps to a different empty state.
      */
     probe(): Promise<ServerInfo>;
+
+    /**
+     * The server's own description of every instance option, or null when the
+     * server does not advertise the metadata_configuration extension or the
+     * table cannot be read. Never rejects: the forms work without it.
+     */
+    fetchConfigSchema(extensions: ReadonlySet<string>): Promise<ConfigSchema | null>;
 
     /**
      * List system containers. Virtual machines are filtered out. Uses

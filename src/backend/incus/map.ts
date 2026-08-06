@@ -1,4 +1,5 @@
 import type {
+    ConfigSchema,
     Container,
     ContainerInterface,
     ContainerState,
@@ -6,12 +7,16 @@ import type {
     Metrics,
     Network,
     NetworkAddress,
+    OptionSpec,
+    OptionType,
     Profile,
     ServerInfo,
     Snapshot,
     StoragePool,
 } from "../types";
 import type {
+    WireConfigMetadata,
+    WireConfigOption,
     WireImage,
     WireInstance,
     WireNetwork,
@@ -129,6 +134,100 @@ export const mapServerInfo = (wire: WireServerInfo): ServerInfo => ({
     extensions: new Set(wire.api_extensions ?? []),
     trusted: wire.auth === "trusted",
 });
+
+/**
+ * Incus reports `int64` alongside `integer`, and is free to add a type this
+ * code has not seen. An unknown type becomes a text field, which accepts
+ * anything and lets the server be the judge, rather than dropping the option.
+ */
+const optionType = (wire: string | undefined): OptionType => {
+    switch (wire) {
+        case "bool":
+            return "bool";
+        case "integer":
+        case "int64":
+            return "integer";
+        case "blob":
+            return "blob";
+        default:
+            return "string";
+    }
+};
+
+/**
+ * Whether an option belongs on a system container's form.
+ *
+ * Ordered so the cheapest and most decisive rejections come first. A wildcard is
+ * a family rather than a setting and has no single value to bind a control to;
+ * volatile is Incus's own and rejects writes; oci and the qemu raw keys belong
+ * to instance types section 3.2 of the first proposal puts out of scope.
+ *
+ * "unprivileged container" is kept rather than rejected. It is the normal state
+ * of the containers this manages, and hiding a real setting on a condition that
+ * is usually satisfied would lose more than it protects.
+ */
+const appliesToContainer = (group: string, key: string, wire: WireConfigOption): boolean => {
+    if (key.includes("*"))
+        return false;
+    if (group === "volatile" || group === "oci")
+        return false;
+    if (key.startsWith("raw.qemu"))
+        return false;
+    return !(wire.condition ?? "").toLowerCase().includes("virtual machine");
+};
+
+/**
+ * Incus's configuration table, reduced to what a container form can render.
+ *
+ * Returns null rather than an empty schema when the body is not the shape this
+ * expects, so the caller can tell "the server did not describe itself" from
+ * "the server describes nothing", and degrade rather than render an empty form.
+ */
+export const mapConfigSchema = (wire: WireConfigMetadata): ConfigSchema | null => {
+    const instance = wire.configs?.instance;
+    if (typeof instance !== "object" || instance === null)
+        return null;
+
+    const byKey = new Map<string, OptionSpec>();
+    const groups: { name: string; options: OptionSpec[] }[] = [];
+
+    for (const [group, body] of Object.entries(instance)) {
+        const options: OptionSpec[] = [];
+
+        for (const entry of body?.keys ?? []) {
+            // The option's name is the sole property name of the entry, not a
+            // field within it.
+            for (const [key, meta] of Object.entries(entry ?? {})) {
+                if (!appliesToContainer(group, key, meta))
+                    continue;
+
+                const spec: OptionSpec = {
+                    key,
+                    group,
+                    type: optionType(meta.type),
+                    description: meta.shortdesc ?? "",
+                    detail: meta.longdesc ?? "",
+                    defaultText: meta.defaultdesc ?? "",
+                    liveUpdate: meta.liveupdate === "yes",
+                    unprivilegedOnly: (meta.condition ?? "").toLowerCase().includes("unprivileged"),
+                };
+                options.push(spec);
+                byKey.set(key, spec);
+            }
+        }
+
+        if (options.length > 0) {
+            options.sort((a, b) => a.key.localeCompare(b.key));
+            groups.push({ name: group, options });
+        }
+    }
+
+    if (byKey.size === 0)
+        return null;
+
+    groups.sort((a, b) => a.name.localeCompare(b.name));
+    return { byKey, groups };
+};
 
 /**
  * `used_by` entries are URL paths such as "/1.0/instances/web01", so the last

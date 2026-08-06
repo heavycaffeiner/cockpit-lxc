@@ -23,6 +23,7 @@ import { useState } from "react";
 import {
     T,
     format,
+    type ConfigSchema,
     type Container,
     type ContainerDriver,
     type Profile,
@@ -57,6 +58,8 @@ interface ContainerDetailProps {
     /** From the list, so the header stays current with the event stream. */
     container: Container;
     info: ServerInfo;
+    /** Incus's own option table, threaded to the configuration tab. */
+    schema: ConfigSchema | null;
     profiles: readonly Profile[];
     driver: ContainerDriver;
     generation: number;
@@ -72,6 +75,7 @@ interface ContainerDetailProps {
 export const ContainerDetail = ({
     container,
     info,
+    schema,
     profiles,
     driver,
     generation,
@@ -112,6 +116,12 @@ export const ContainerDetail = ({
         } finally {
             setStarting(false);
         }
+    };
+
+    /** Offered after saving a key that only applies at the next start. */
+    const restart = async () => {
+        await driver.setState(container.name, "restart");
+        onRefresh();
     };
 
     const saved = () => {
@@ -198,8 +208,10 @@ export const ContainerDetail = ({
                                         container={editable}
                                         etag={detail.etag}
                                         info={info}
+                                        schema={schema}
                                         driver={driver}
                                         onSaved={saved}
+                                        onRestart={restart}
                                     />
                                 )}
                         </Tab>

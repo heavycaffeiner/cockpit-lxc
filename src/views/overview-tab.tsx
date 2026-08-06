@@ -215,7 +215,7 @@ export const OverviewTab = ({
                                                         measureLocation={ProgressMeasureLocation.outside}
                                                         aria-label={T.overview.memory_usage}
                                                         title=""
-                                                        label={format(T.list.of, formatBytes(metrics.memoryUsedBytes), formatBytes(metrics.memoryTotalBytes))}
+                                                        label={format(T.overview.of_size, formatBytes(metrics.memoryUsedBytes), formatBytes(metrics.memoryTotalBytes))}
                                                     />
                                                 )}
                                         </DescriptionListDescription>
@@ -224,6 +224,25 @@ export const OverviewTab = ({
                                         <DescriptionListTerm>{T.overview.cpu_time}</DescriptionListTerm>
                                         <DescriptionListDescription>
                                             {metrics.cpuSecondsTotal.toFixed(1)} s
+                                        </DescriptionListDescription>
+                                    </DescriptionListGroup>
+                                    <DescriptionListGroup>
+                                        <DescriptionListTerm>{T.overview.disk}</DescriptionListTerm>
+                                        <DescriptionListDescription>
+                                            {/*
+                                              * Incus reports nothing here for a
+                                              * dir pool, which is the default on
+                                              * a stock install. Saying why beats
+                                              * showing 0 B, which would read as
+                                              * a container using no disk at all.
+                                              */}
+                                            {metrics.diskUsedBytes > 0
+                                                ? formatBytes(metrics.diskUsedBytes)
+                                                : (
+                                                    <span className="lxc-muted">
+                                                        {T.overview.incus_reports_no_disk_usage_for}
+                                                    </span>
+                                                )}
                                         </DescriptionListDescription>
                                     </DescriptionListGroup>
                                     <DescriptionListGroup>

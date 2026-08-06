@@ -4,6 +4,7 @@ import {
     DriverError,
     IncusDriver,
     watchAdmin,
+    type ConfigSchema,
     type Container,
     type ContainerDriver,
     type DriverErrorKind,
@@ -16,6 +17,8 @@ export type LoadState =
     | {
         status: "ready";
         info: ServerInfo;
+        /** Incus's own option table, or null when the server does not offer one. */
+        schema: ConfigSchema | null;
         containers: Container[];
         profiles: Profile[];
     }
@@ -69,8 +72,16 @@ export const useContainers = (): ContainersApi => {
                  */
                 const profiles = await driver.listProfiles().catch(() => [] as Profile[]);
 
+                /*
+                 * The option table, which decides what the configuration forms
+                 * may offer. Resolves to null rather than rejecting on a server
+                 * that cannot describe itself, and the forms fall back to their
+                 * curated list, so this is never on the failure path.
+                 */
+                const schema = await driver.fetchConfigSchema(info.extensions);
+
                 if (!cancelled)
-                    setState({ status: "ready", info, containers, profiles });
+                    setState({ status: "ready", info, schema, containers, profiles });
             } catch (error) {
                 if (cancelled)
                     return;

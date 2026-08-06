@@ -145,6 +145,19 @@ body {
     max-inline-size: 640px;
 }
 
+/*
+ * The generated groups. Indented under their toggle so the fields read as
+ * belonging to the section rather than as a continuation of the curated form.
+ */
+.lxc-config__generated {
+    margin-block-end: var(--pf-t--global--spacer--md);
+
+    .pf-v6-c-expandable-section__content {
+        padding-inline-start: var(--pf-t--global--spacer--md);
+        border-inline-start: 1px solid var(--pf-t--global--border--color--default);
+    }
+}
+
 .lxc-config__description {
     margin-block-end: var(--pf-t--global--spacer--md);
     color: var(--pf-t--global--text--color--subtle);

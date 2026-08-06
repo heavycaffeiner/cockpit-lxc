@@ -33,6 +33,7 @@ export { IncusDriver } from "./incus/driver";
 export { IncusClient } from "./incus/client";
 
 export type {
+    ConfigSchema,
     Container,
     ContainerConfig,
     ContainerInterface,
@@ -45,6 +46,8 @@ export type {
     Metrics,
     Network,
     NetworkAddress,
+    OptionSpec,
+    OptionType,
     Profile,
     Remote,
     RemoteImage,

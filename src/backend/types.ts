@@ -189,6 +189,45 @@ export interface LogFile {
     size: number | null;
 }
 
+/** How an option is edited, derived from the type Incus reports for it. */
+export type OptionType = "bool" | "integer" | "string" | "blob";
+
+/**
+ * Incus's own description of one instance option.
+ *
+ * Not authoritative about any container; authoritative about what may be set on
+ * one. Its purpose is that the UI never offers a key the server does not have,
+ * which a hand-maintained list cannot promise across Incus's monthly releases.
+ */
+export interface OptionSpec {
+    /** Full key, for example "security.nesting". Never a wildcard prefix. */
+    key: string;
+    /** Incus's own group: "security", "resource-limits", "boot", and so on. */
+    group: string;
+    type: OptionType;
+    /** One-line description from the server. English, as the server sends it. */
+    description: string;
+    /** Extended description, empty when the server gives none. */
+    detail: string;
+    /** The default as the server describes it, so an empty field is not read as zero. */
+    defaultText: string;
+    /** False when the change is stored now and applied at the next start. */
+    liveUpdate: boolean;
+    /** True when the option only applies while the container is unprivileged. */
+    unprivilegedOnly: boolean;
+}
+
+/**
+ * The option table, indexed for lookup and ordered for rendering.
+ *
+ * Fetched once per session: the table is compiled into the Incus binary and
+ * does not change while the daemon runs, so there is nothing to invalidate.
+ */
+export interface ConfigSchema {
+    byKey: ReadonlyMap<string, OptionSpec>;
+    groups: readonly { name: string; options: readonly OptionSpec[] }[];
+}
+
 /** The editable half of a profile, network or storage pool. */
 export interface ResourceUpdate {
     description: string;

@@ -499,6 +499,9 @@ msgstr "CPU priority"
 msgid "fields.daily_or_0_6"
 msgstr "@daily or 0 6 * * *"
 
+msgid "fields.default_is"
+msgstr "Default: $0"
+
 msgid "fields.delete_protection"
 msgstr "Delete protection"
 
@@ -537,6 +540,33 @@ msgstr "Expiry"
 
 msgid "fields.gives_this_container_a_uid_range"
 msgstr "Gives this container a UID range shared with no other container."
+
+msgid "fields.group_boot"
+msgstr "Startup and shutdown, as Incus describes them"
+
+msgid "fields.group_cloud_init"
+msgstr "cloud-init, as Incus describes it"
+
+msgid "fields.group_migration"
+msgstr "Migration"
+
+msgid "fields.group_miscellaneous"
+msgstr "Miscellaneous"
+
+msgid "fields.group_nvidia"
+msgstr "NVIDIA"
+
+msgid "fields.group_raw"
+msgstr "Raw configuration"
+
+msgid "fields.group_resource_limits"
+msgstr "Resource limits, as Incus describes them"
+
+msgid "fields.group_security"
+msgstr "Security, as Incus describes it"
+
+msgid "fields.group_snapshots"
+msgstr "Automatic snapshots, as Incus describes them"
 
 msgid "fields.hard"
 msgstr "Hard"
@@ -592,6 +622,12 @@ msgstr "Network config"
 msgid "fields.network_priority"
 msgstr "Network priority"
 
+msgid "fields.only_applies_while_the_container_is"
+msgstr "Only applies while the container is unprivileged."
+
+msgid "fields.options"
+msgstr "$0 ($1)"
+
 msgid "fields.privileged"
 msgstr "Privileged"
 
@@ -615,6 +651,9 @@ msgstr "Resource limits"
 
 msgid "fields.runs_without_a_uid_mapping_escaping"
 msgstr "Runs without a UID mapping. Escaping such a container means host root."
+
+msgid "fields.saved_these_take_effect_after_a"
+msgstr "Saved. These take effect after a restart: $0"
 
 msgid "fields.schedule"
 msgstr "Schedule"
@@ -645,6 +684,9 @@ msgstr "Starts with the host. Unset follows Incus's own heuristic."
 
 msgid "fields.startup_and_shutdown"
 msgstr "Startup and shutdown"
+
+msgid "fields.takes_effect_after_a_restart"
+msgstr "Takes effect after a restart."
 
 msgid "fields.user_data"
 msgstr "User data"
@@ -799,9 +841,6 @@ msgstr "No container matches the current filter."
 msgid "list.none_of_the_selected_containers_can"
 msgstr "None of the selected containers can take this action."
 
-msgid "list.of"
-msgstr "$0 of $1"
-
 msgid "list.of_containers"
 msgstr "$0 - $1 of $2"
 
@@ -895,6 +934,9 @@ msgstr "Change profiles"
 msgid "overview.cpu_time"
 msgstr "CPU time"
 
+msgid "overview.disk"
+msgstr "Disk"
+
 msgid "overview.ephemeral"
 msgstr "Ephemeral"
 
@@ -907,6 +949,9 @@ msgstr "$0 in, $1 out"
 msgid "overview.incus"
 msgstr "Incus"
 
+msgid "overview.incus_reports_no_disk_usage_for"
+msgstr "Incus reports no disk usage for this container's storage pool."
+
 msgid "overview.memory_usage"
 msgstr "Memory usage"
 
@@ -915,6 +960,9 @@ msgstr "No"
 
 msgid "overview.no_interfaces_are_up"
 msgstr "No interfaces are up."
+
+msgid "overview.of_size"
+msgstr "$0 of $1"
 
 msgid "overview.profiles_supply_configuration_and_devices_to"
 msgstr "Profiles supply configuration and devices to every container that applies them. Order matters: a later profile wins."

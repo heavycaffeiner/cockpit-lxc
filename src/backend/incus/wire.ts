@@ -152,6 +152,42 @@ export interface WireImage {
 }
 
 /**
+ * One option in Incus's own configuration table.
+ *
+ * Every field is optional because this is the wire: the table is generated from
+ * Incus's documentation source, and a release is free to omit a description or
+ * to introduce a type this code has not seen.
+ */
+export interface WireConfigOption {
+    type?: string;
+    /** "container", "unprivileged container", "virtual machine", "oci container". */
+    condition?: string;
+    /** "yes" when the setting takes effect without a restart. */
+    liveupdate?: string;
+    shortdesc?: string;
+    longdesc?: string;
+    defaultdesc?: string;
+}
+
+/**
+ * A group of options, as `/1.0/metadata/configuration` returns it.
+ *
+ * `keys` is an array of single-entry objects rather than an object, so the
+ * option's name is the sole property name of each element rather than a field
+ * inside it. That shape is easy to misread, and misreading it yields an empty
+ * table rather than an error.
+ */
+export interface WireConfigGroup {
+    keys?: Record<string, WireConfigOption>[];
+}
+
+export interface WireConfigMetadata {
+    configs?: {
+        instance?: Record<string, WireConfigGroup>;
+    };
+}
+
+/**
  * Incus operation status codes.
  *
  * Only the terminal three matter to the operation waiter; the rest are listed so

@@ -1,16 +1,19 @@
-import { T } from "../backend";
+import { T, type ConfigSchema, type OptionSpec } from "../backend";
 
 /**
- * The typed configuration surface.
+ * The configuration surface.
  *
- * Incus exposes over 150 instance options. These are the ones an operator
- * reaches for often enough that a labelled field beats typing a key by hand;
- * everything else stays reachable through the raw editor, which is what keeps
- * the "every setting is editable" promise true as Incus adds keys.
+ * Two halves. The curated groups below are the settings an operator reaches for
+ * often enough that a translated label, a placeholder and a validator beat
+ * Incus's own one-line description; they are filtered against the server's
+ * option table so a key this host does not have is never offered. Everything
+ * else the server advertises is generated from that same table, which is what
+ * makes "every setting is editable" true of the 75 options Incus 6.23 carries
+ * for containers rather than of the 25 someone remembered to type out.
  *
- * Built by a function rather than declared as a constant, because the strings
- * have to be translated after Cockpit's catalogue has loaded. A module-scope
- * constant would capture the untranslated text at import time.
+ * Built by functions rather than declared as constants, because the strings have
+ * to be translated after Cockpit's catalogue has loaded. A module-scope constant
+ * would capture the untranslated text at import time.
  */
 
 export type FieldKind = "text" | "number" | "boolean" | "select" | "textarea";
@@ -28,6 +31,12 @@ export interface FieldSpec {
      */
     extension?: string;
     validate?: (value: string) => string | null;
+    /**
+     * What the server says about this option, when it says anything. Carries the
+     * default and whether a restart is needed, neither of which the curated text
+     * can state without going stale on the next Incus release.
+     */
+    spec?: OptionSpec;
 }
 
 export interface FieldGroup {
@@ -35,6 +44,8 @@ export interface FieldGroup {
     title: string;
     description: string;
     fields: readonly FieldSpec[];
+    /** Generated groups arrive collapsed; there are far more of them. */
+    collapsed?: boolean;
 }
 
 /** Incus accepts a bare byte count or a suffixed size, and also percentages. */
@@ -91,7 +102,7 @@ const booleanOptions = () => [
     { value: "false", label: T.fields.disabled },
 ];
 
-export const fieldGroups = (): readonly FieldGroup[] => [
+const curatedFieldGroups = (): readonly FieldGroup[] => [
     {
         id: "resources",
         title: T.fields.resource_limits,
@@ -321,6 +332,139 @@ export const fieldGroups = (): readonly FieldGroup[] => [
         ],
     },
 ];
+
+/**
+ * The curated groups, filtered by what the server actually has.
+ *
+ * A field naming a key the schema does not carry is dropped rather than
+ * rendered. Offering it produces a save that fails as a whole, because the
+ * configuration PUT sends the entire editable half of the instance, and an error
+ * that names the key but not the field it came from: Incus 6.23 answers
+ * `limits.network.priority` with "Unknown configuration key", and a value in
+ * that one field used to take every unrelated change in the same edit down with
+ * it.
+ *
+ * With no schema every group is returned unchanged, which is the behaviour on a
+ * server too old to describe itself.
+ */
+export const curatedGroups = (schema: ConfigSchema | null): readonly FieldGroup[] => {
+    const groups = curatedFieldGroups();
+    if (schema === null)
+        return groups;
+
+    return groups
+        .map((group) => ({
+            ...group,
+            fields: group.fields
+                .filter((field) => schema.byKey.has(field.key))
+                .map((field) => {
+                    const spec = schema.byKey.get(field.key);
+                    return spec === undefined ? field : { ...field, spec };
+                }),
+        }))
+        .filter((group) => group.fields.length > 0);
+};
+
+/**
+ * Incus's group names, as headings.
+ *
+ * Only the nine a current server ships are translated. A group this does not
+ * know is rendered under the name the server gave it, which is worse than a
+ * translation and much better than being dropped.
+ */
+const groupTitle = (name: string): string => {
+    switch (name) {
+        case "boot": return T.fields.group_boot;
+        case "cloud-init": return T.fields.group_cloud_init;
+        case "migration": return T.fields.group_migration;
+        case "miscellaneous": return T.fields.group_miscellaneous;
+        case "nvidia": return T.fields.group_nvidia;
+        case "raw": return T.fields.group_raw;
+        case "resource-limits": return T.fields.group_resource_limits;
+        case "security": return T.fields.group_security;
+        case "snapshots": return T.fields.group_snapshots;
+        default: return name;
+    }
+};
+
+const kindFor = (spec: OptionSpec): FieldKind => {
+    switch (spec.type) {
+        case "bool":
+            return "select";
+        case "integer":
+            return "number";
+        case "blob":
+            return "textarea";
+        default:
+            return "text";
+    }
+};
+
+/**
+ * Everything the server advertises that no curated group already owns.
+ *
+ * Grouped as Incus groups it and headed with Incus's own group name, so an
+ * operator reading the upstream option reference finds the same divisions here.
+ * The help text is the server's own `shortdesc`: it arrives in English and is
+ * shown as it arrives, because translating 75 upstream descriptions would put
+ * this plugin in the business of maintaining a fork of Incus's documentation.
+ */
+export const generatedGroups = (schema: ConfigSchema | null): readonly FieldGroup[] => {
+    if (schema === null)
+        return [];
+
+    const groups: FieldGroup[] = [];
+
+    for (const group of schema.groups) {
+        const fields = group.options
+            .filter((option) => !TYPED_KEYS.has(option.key))
+            .map((option): FieldSpec => ({
+                key: option.key,
+                // The key is the label. Incus's descriptions are sentences about
+                // the option rather than names for it, and inventing a name per
+                // option would be inventing 75 pieces of terminology that no
+                // upstream document uses.
+                label: option.key,
+                kind: kindFor(option),
+                help: option.description,
+                ...(option.type === "bool" ? { options: booleanOptions() } : {}),
+                spec: option,
+            }));
+
+        if (fields.length > 0) {
+            groups.push({
+                id: `incus-${group.name}`,
+                title: groupTitle(group.name),
+                description: "",
+                fields,
+                collapsed: true,
+            });
+        }
+    }
+
+    return groups;
+};
+
+/**
+ * The saved keys that only take effect at the next start.
+ *
+ * Empty for a container that is not running, which applies everything at its
+ * next start anyway, and empty without a schema, since nothing then knows which
+ * keys are live. Derived from what was saved rather than stored, so it cannot go
+ * stale: the plugin has no way to learn that a restart happened outside it, and
+ * a pending badge that is wrong is worse than none.
+ */
+export const restartPending = (
+    schema: ConfigSchema | null,
+    savedKeys: readonly string[],
+    running: boolean,
+): readonly string[] => {
+    if (schema === null || !running)
+        return [];
+    return savedKeys
+        .filter((key) => schema.byKey.get(key)?.liveUpdate === false)
+        .sort();
+};
 
 /** Cross-field rules the API would reject, checked before a round trip. */
 export const formLevelProblems = (config: Record<string, string>): string[] => {

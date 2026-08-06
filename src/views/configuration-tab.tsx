@@ -3,6 +3,7 @@ import {
     Alert,
     AlertActionLink,
     Button,
+    ExpandableSection,
     Form,
     FormGroup,
     FormHelperText,
@@ -23,12 +24,22 @@ import { useMemo, useState } from "react";
 import {
     ConflictError,
     T,
+    format,
+    type ConfigSchema,
     type Container,
     type ContainerDriver,
     type ContainerUpdate,
     type ServerInfo,
 } from "../backend";
-import { fieldGroups, TYPED_KEYS, formLevelProblems, type FieldSpec } from "../config/fields";
+import {
+    TYPED_KEYS,
+    curatedGroups,
+    formLevelProblems,
+    generatedGroups,
+    restartPending,
+    type FieldGroup,
+    type FieldSpec,
+} from "../config/fields";
 import { EnvironmentEditor } from "./environment-editor";
 import { RawConfigEditor } from "./raw-config-editor";
 
@@ -36,12 +47,25 @@ interface ConfigurationTabProps {
     container: Container;
     etag: string | null;
     info: ServerInfo;
+    /** Incus's own option table, or null on a server that does not offer one. */
+    schema: ConfigSchema | null;
     driver: ContainerDriver;
     onSaved: () => void;
+    /** Offers a restart when the save contained keys that need one. */
+    onRestart: () => Promise<void>;
 }
 
 const errorText = (error: unknown): string =>
     error instanceof Error ? error.message : String(error);
+
+/**
+ * Incus writes its option table in the markup its documentation is built from,
+ * so a default arrives as "`1GiB`" rather than as "1GiB". Stripping the
+ * backticks and collapsing the newlines is the whole of what is needed to read
+ * it as a sentence.
+ */
+const plainText = (text: string): string =>
+    text.replace(/`/g, "").replace(/\s+/g, " ").trim();
 
 /**
  * Typed configuration forms over the instance-local config.
@@ -55,13 +79,33 @@ export const ConfigurationTab = ({
     container,
     etag,
     info,
+    schema,
     driver,
     onSaved,
+    onRestart,
 }: ConfigurationTabProps) => {
     // Edits only. A key absent here has not been touched.
     const [edits, setEdits] = useState<Record<string, string>>({});
     const [rawEdits, setRawEdits] = useState<Record<string, string> | null>(null);
     const [envEdits, setEnvEdits] = useState<Record<string, string> | null>(null);
+    /** Keys from the last save that only take effect at the next start. */
+    const [pending, setPending] = useState<readonly string[]>([]);
+
+    const curated = useMemo(() => curatedGroups(schema), [schema]);
+    const generated = useMemo(() => generatedGroups(schema), [schema]);
+
+    /*
+     * Keys the forms own between them, so the raw editor is left with exactly
+     * what nothing else can express: the wildcard families and any key the
+     * server accepts without documenting.
+     */
+    const ownedKeys = useMemo(() => {
+        const owned = new Set<string>(TYPED_KEYS);
+        for (const group of [...curated, ...generated])
+            for (const field of group.fields)
+                owned.add(field.key);
+        return owned;
+    }, [curated, generated]);
 
     /*
      * The snapshot this edit is based on, pinned at the first keystroke.
@@ -112,7 +156,7 @@ export const ConfigurationTab = ({
 
     const fieldProblems = useMemo(() => {
         const problems: Record<string, string> = {};
-        for (const group of fieldGroups()) {
+        for (const group of curated) {
             for (const field of group.fields) {
                 const value = edits[field.key];
                 if (value === undefined || field.validate === undefined)
@@ -123,7 +167,7 @@ export const ConfigurationTab = ({
             }
         }
         return problems;
-    }, [edits]);
+    }, [edits, curated]);
 
     const crossFieldProblems = useMemo(() => formLevelProblems(merged), [merged]);
 
@@ -146,6 +190,15 @@ export const ConfigurationTab = ({
         setError(null);
     };
 
+    /** Every key this edit touched, which is what the restart notice reports on. */
+    const touchedKeys = (): string[] => [
+        ...new Set([
+            ...Object.keys(edits),
+            ...Object.keys(rawEdits ?? {}),
+            ...Object.keys(envEdits ?? {}),
+        ]),
+    ];
+
     const buildUpdate = (): ContainerUpdate => ({
         architecture: container.architecture,
         description: container.description,
@@ -161,7 +214,10 @@ export const ConfigurationTab = ({
         setBusy(true);
         setError(null);
         try {
+            const saved = touchedKeys();
             await driver.updateConfig(container.name, buildUpdate(), saveEtag);
+            // Read before discarding, since discarding clears what was touched.
+            setPending(restartPending(schema, saved, container.state === "Running"));
             discard();
             onSaved();
         } catch (caught) {
@@ -195,7 +251,14 @@ export const ConfigurationTab = ({
                 key={field.key}
                 label={field.label}
                 fieldId={`lxc-cfg-${field.key}`}
-                labelHelp={<span className="lxc-field__key">{field.key}</span>}
+                /*
+                 * The key beside the label, so an operator reading Incus's own
+                 * documentation can find the field. A generated field is already
+                 * labelled with its key, and repeating it there reads as a bug.
+                 */
+                {...(field.label === field.key
+                    ? {}
+                    : { labelHelp: <span className="lxc-field__key">{field.key}</span> })}
             >
                 {field.kind === "select" && (
                     <FormSelect
@@ -239,6 +302,25 @@ export const ConfigurationTab = ({
                         <HelperTextItem variant={problem === undefined ? "default" : "error"}>
                             {problem ?? field.help}
                         </HelperTextItem>
+                        {field.spec !== undefined && field.spec.defaultText !== "" && (
+                            <HelperTextItem>
+                                {/*
+                                  * The server's own default, so an empty field
+                                  * is not read as zero or as off.
+                                  */}
+                                {format(T.fields.default_is, plainText(field.spec.defaultText))}
+                            </HelperTextItem>
+                        )}
+                        {field.spec !== undefined && !field.spec.liveUpdate && (
+                            <HelperTextItem>
+                                {T.fields.takes_effect_after_a_restart}
+                            </HelperTextItem>
+                        )}
+                        {field.spec?.unprivilegedOnly === true && (
+                            <HelperTextItem>
+                                {T.fields.only_applies_while_the_container_is}
+                            </HelperTextItem>
+                        )}
                         {isInherited && value !== "" && (
                             <HelperTextItem>
                                 {T.config.inherited_from_a_profile_editing_copies}
@@ -248,6 +330,38 @@ export const ConfigurationTab = ({
                 </FormHelperText>
             </FormGroup>
         );
+    };
+
+    const renderGroup = (group: FieldGroup) => {
+        const body = (
+            <>
+                {group.description !== "" && (
+                    <p className="lxc-config__description">{group.description}</p>
+                )}
+                {group.fields.map(renderField)}
+            </>
+        );
+
+        /*
+         * Generated groups arrive collapsed. There are far more of them than
+         * curated ones, and 50 further fields expanded on arrival would bury the
+         * handful that most edits actually touch.
+         */
+        return group.collapsed === true
+            ? (
+                <ExpandableSection
+                    key={group.id}
+                    toggleText={format(T.fields.options, group.title, group.fields.length)}
+                    className="lxc-config__generated"
+                >
+                    {body}
+                </ExpandableSection>
+            )
+            : (
+                <FormSection key={group.id} title={group.title} titleElement="h3">
+                    {body}
+                </FormSection>
+            );
     };
 
     return (
@@ -274,6 +388,33 @@ export const ConfigurationTab = ({
                 />
             )}
 
+            {/*
+              * Saying this once after the save, rather than leaving the operator
+              * to wonder why a stored setting has not taken effect. Dismissed
+              * rather than persisted: nothing here can learn that a restart
+              * happened elsewhere, and a stale notice is worse than none.
+              */}
+            {pending.length > 0 && (
+                <Alert
+                    variant="info"
+                    isInline
+                    title={format(T.fields.saved_these_take_effect_after_a, pending.join(", "))}
+                    actionClose={
+                        <Button variant="plain" onClick={() => setPending([])}
+                            aria-label={T.list.dismiss_error}>
+                            &times;
+                        </Button>
+                    }
+                >
+                    <AlertActionLink onClick={() => {
+                        setPending([]);
+                        void onRestart();
+                    }}>
+                        {T.actions.restart}
+                    </AlertActionLink>
+                </Alert>
+            )}
+
             <Form
                 onSubmit={(event) => {
                     event.preventDefault();
@@ -281,12 +422,7 @@ export const ConfigurationTab = ({
                         void save();
                 }}
             >
-                {fieldGroups().map((group) => (
-                    <FormSection key={group.id} title={group.title} titleElement="h3">
-                        <p className="lxc-config__description">{group.description}</p>
-                        {group.fields.map(renderField)}
-                    </FormSection>
-                ))}
+                {curated.map(renderGroup)}
 
                 <FormSection title={T.config.environment} titleElement="h3">
                     <p className="lxc-config__description">
@@ -302,6 +438,8 @@ export const ConfigurationTab = ({
                     />
                 </FormSection>
 
+                {generated.map(renderGroup)}
+
                 <FormSection title={T.config.other_keys} titleElement="h3">
                     <p className="lxc-config__description">
                         {T.config.everything_the_forms_above_do_not}
@@ -309,12 +447,15 @@ export const ConfigurationTab = ({
                     {/*
                       * Keyed on the server's own config, so a save or an
                       * event-driven refresh reseeds the rows by remounting
-                      * instead of through an effect.
+                      * instead of through an effect. `excluded` covers whatever
+                      * the forms above render, so what is left here is the
+                      * wildcard families and any key the server accepts without
+                      * documenting.
                       */}
                     <RawConfigEditor
                         key={JSON.stringify(baseConfig)}
                         localConfig={baseConfig}
-                        excluded={TYPED_KEYS}
+                        excluded={ownedKeys}
                         onChange={(next) => {
                             beginEdit();
                             setRawEdits(next);

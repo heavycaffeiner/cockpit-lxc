@@ -109,11 +109,60 @@ if (untranslatedEnglish.length > 0) {
 
 console.log(`\npo/en.po: ${english.size} keys, all used by src` + (failed ? " (see errors above)" : ""));
 
+/** The $0, $1, ... a string substitutes, as a sorted, deduplicated list. */
+const placeholders = (text) =>
+    [...new Set([...text.matchAll(/\$(\d+)/g)].map((m) => m[1]))].sort();
+
+/**
+ * Every msgstr of an entry, which is what a placeholder check has to look at:
+ * a plural entry has one per form and any of them can drop one.
+ */
+const parseTexts = (text) => {
+    const out = new Map();
+    for (const block of text.split(/\n\s*\n/)) {
+        const id = /msgid\s+"((?:[^"\\]|\\.)*)"/.exec(block);
+        if (id === null || id[1] === "")
+            continue;
+        out.set(id[1], [...block.matchAll(/msgstr(?:\[\d+\])?\s+"((?:[^"\\]|\\.)*)"/g)]
+            .map((m) => m[1])
+            .filter((s) => s !== ""));
+    }
+    return out;
+};
+
+const englishTexts = parseTexts(await readFile(path.join(PO, "en.po"), "utf8"));
+
 for (const file of (await readdir(PO)).filter((f) => f.endsWith(".po") && f !== "en.po")) {
     const locale = path.basename(file, ".po");
-    const catalogue = parseKeys(await readFile(path.join(PO, file), "utf8"));
+    const raw = await readFile(path.join(PO, file), "utf8");
+    const catalogue = parseKeys(raw);
     const stray = [...catalogue.keys()].filter((k) => !english.has(k)).sort();
     const translated = [...catalogue.entries()].filter(([, has]) => has).length;
+
+    /*
+     * A translation that drops a placeholder silently loses whatever was going
+     * to be substituted into it, and nothing at runtime complains: the Korean
+     * "$0 in, $1 out" lost its $1 and reported a container's network transmit
+     * as nothing at all for as long as the metric was too broken to be read.
+     */
+    const dropped = [];
+    for (const [key, texts] of parseTexts(raw)) {
+        const wanted = placeholders((englishTexts.get(key) ?? []).join(" "));
+        if (wanted.length === 0)
+            continue;
+        for (const text of texts) {
+            const missing = wanted.filter((n) => !placeholders(text).includes(n));
+            if (missing.length > 0)
+                dropped.push(`${key}: missing ${missing.map((n) => `$${n}`).join(", ")}`);
+        }
+    }
+
+    if (dropped.length > 0) {
+        failed = true;
+        console.error(`\npo/${file}: ${dropped.length} translation(s) dropping a placeholder:`);
+        for (const entry of dropped)
+            console.error(`  ${entry}`);
+    }
 
     if (stray.length > 0) {
         failed = true;

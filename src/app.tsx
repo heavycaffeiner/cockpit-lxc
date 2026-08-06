@@ -114,6 +114,7 @@ export const Application = () => {
                     <ContainerDetail
                         container={current}
                         info={state.info}
+                        schema={state.schema}
                         profiles={state.profiles}
                         driver={driver}
                         generation={generation}

@@ -929,6 +929,18 @@ Two things Incus itself constrains, recorded so they do not read as gaps:
 
 Everything in section 3.1 is implemented. Nothing is deferred.
 
+Two claims in section 3.1 were checked again afterwards and were not true as written; both
+are now true, and `cockpit-lxc-1-metadata-driven-configuration.md` records the detail:
+
+- **"Every Incus-expressible container setting editable."** The typed forms covered 25
+  options and one of those, `limits.network.priority`, does not exist on Incus 6.23 and
+  failed the whole save. The configuration surface is now driven by the server's own
+  option table, so it renders all 75 options this Incus advertises for containers and
+  cannot offer one the server lacks.
+- **"Per-container CPU, memory, disk and network metrics."** The detail view fetched the
+  instance without `recursion=1`, so it received no `state` at all and showed none of the
+  four however the container was running.
+
 ## 7. References
 
 **Cockpit**
