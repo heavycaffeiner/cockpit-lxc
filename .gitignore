@@ -11,3 +11,9 @@ npm-debug.log*
 build-arch/
 build-deb/
 src/generated/
+
+# The layout audit's build output and evidence. waivers.json and image.json are
+# the tracked half of it and are not here on purpose.
+test/layout/.host/
+test/layout/screenshots/
+test/layout/layout-report.*

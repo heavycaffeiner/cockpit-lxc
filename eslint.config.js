@@ -5,7 +5,7 @@ import reactHooks from "eslint-plugin-react-hooks";
 import globals from "globals";
 
 export default tseslint.config(
-    { ignores: ["dist/**", "node_modules/**", "src/generated/**"] },
+    { ignores: ["dist/**", "node_modules/**", "src/generated/**", "test/layout/.host/**"] },
 
     js.configs.recommended,
     ...tseslint.configs.recommended,
@@ -78,6 +78,19 @@ export default tseslint.config(
         files: ["build.js", "build/**/*.js", "build/**/*.mjs"],
         languageOptions: {
             globals: { ...globals.node },
+            sourceType: "module",
+        },
+    },
+
+    {
+        /*
+         * Both global sets, because the audit runner is one file that runs in two
+         * places: the page.evaluate callbacks are written here and execute in the
+         * browser, so `document` and `window` are as real as `process` is.
+         */
+        files: ["test/layout/**/*.mjs", "test/layout/**/*.ts"],
+        languageOptions: {
+            globals: { ...globals.node, ...globals.browser },
             sourceType: "module",
         },
     },

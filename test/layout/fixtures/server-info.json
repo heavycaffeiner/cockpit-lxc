@@ -1,0 +1,38 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": {
+        "api_version": "1.0",
+        "auth": "trusted",
+        "api_extensions": [
+            "metadata_configuration",
+            "instances",
+            "storage",
+            "network",
+            "snapshots",
+            "images",
+            "profiles"
+        ],
+        "environment": {
+            "server": "incus",
+            "server_version": "6.23",
+            "server_name": "audit-host",
+            "kernel": "Linux",
+            "kernel_version": "6.12.0-audit",
+            "kernel_architecture": "x86_64",
+            "os_name": "Rocky Linux",
+            "os_version": "10.2",
+            "driver": "lxc",
+            "driver_version": "6.0.5",
+            "storage": "dir",
+            "storage_version": "1"
+        },
+        "config": {
+            "storage.images_volume": "default/images"
+        }
+    }
+}

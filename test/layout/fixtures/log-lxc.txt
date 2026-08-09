@@ -1,0 +1,18 @@
+lxc web01 20260128220500.412 INFO     confile - confile.c:set_config_idmaps:2158 - Read uid map: type u nsid 0 hostid 1000000 range 1000000000
+lxc web01 20260128220500.412 INFO     confile - confile.c:set_config_idmaps:2158 - Read uid map: type g nsid 0 hostid 1000000 range 1000000000
+lxc web01 20260128220500.418 INFO     lsm - lsm/lsm.c:lsm_init_static:38 - Initialized LSM security driver nop
+lxc web01 20260128220500.419 INFO     utils - utils.c:run_script_argv:587 - Executing script "/usr/libexec/incus/incusd callhook /var/lib/incus 1 start"
+lxc web01 20260128220500.902 INFO     conf - conf.c:run_script_argv:587 - Executing script "/usr/libexec/incus/incusd callhook" for container "web01"
+lxc web01 20260128220501.114 INFO     apparmor - lsm/apparmor.c:apparmor_process_label_set:1091 - Changed apparmor profile to incus-web01_</var/lib/incus>
+lxc web01 20260128220501.120 NOTICE   utils - utils.c:lxc_setup_keyring:1013 - Kernel keyring support is missing
+lxc web01 20260128220501.121 INFO     start - start.c:lxc_init:882 - Container "web01" is initialized
+lxc web01 20260128220501.318 INFO     cgfsng - cgroups/cgfsng.c:cgfsng_monitor_create:1494 - The monitor process uses "lxc.monitor.web01" as cgroup
+lxc web01 20260128220501.502 INFO     start - start.c:lxc_spawn:1751 - Cloned CLONE_NEWUSER
+lxc web01 20260128220501.503 INFO     start - start.c:lxc_spawn:1751 - Cloned CLONE_NEWNS
+lxc web01 20260128220501.503 INFO     start - start.c:lxc_spawn:1751 - Cloned CLONE_NEWPID
+lxc web01 20260128220501.503 INFO     start - start.c:lxc_spawn:1751 - Cloned CLONE_NEWUTS
+lxc web01 20260128220501.504 INFO     start - start.c:lxc_spawn:1751 - Cloned CLONE_NEWIPC
+lxc web01 20260128220501.711 INFO     conf - conf.c:lxc_setup:4400 - The container "web01" is set up
+lxc web01 20260128220502.004 INFO     apparmor - lsm/apparmor.c:apparmor_process_label_set:1091 - Changed apparmor profile to incus-web01_</var/lib/incus>//&:incus-web01_<-var-lib-incus>:unconfined
+lxc web01 20260128220502.219 INFO     start - start.c:post_start:2118 - Started "/sbin/init" with pid "4821"
+lxc web01 20260128220502.220 INFO     start - start.c:signal_handler:446 - Received container state "RUNNING"

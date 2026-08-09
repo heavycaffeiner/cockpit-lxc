@@ -1,0 +1,206 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        {
+            "name": "web01",
+            "type": "container",
+            "status": "Running",
+            "status_code": 103,
+            "architecture": "x86_64",
+            "ephemeral": false,
+            "created_at": "2026-01-04T08:12:00Z",
+            "last_used_at": "2026-01-28T22:05:00Z",
+            "description": "Front-end reverse proxy",
+            "project": "default",
+            "profiles": ["default"],
+            "config": {
+                "limits.cpu": "2",
+                "limits.memory": "2GiB",
+                "boot.autostart": "true"
+            },
+            "devices": {},
+            "expanded_config": {
+                "limits.cpu": "2",
+                "limits.memory": "2GiB",
+                "boot.autostart": "true",
+                "security.nesting": "false",
+                "image.description": "Debian trixie amd64",
+                "volatile.base_image": "9f2b1c4d5e6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c"
+            },
+            "expanded_devices": {
+                "eth0": { "type": "nic", "network": "incusbr0", "name": "eth0" },
+                "root": { "type": "disk", "path": "/", "pool": "default" }
+            },
+            "state": {
+                "status": "Running",
+                "status_code": 103,
+                "pid": 4821,
+                "processes": 24,
+                "started_at": "2026-01-28T22:05:00Z",
+                "network": {
+                    "eth0": {
+                        "addresses": [
+                            { "family": "inet", "address": "10.216.44.31", "netmask": "24", "scope": "global" },
+                            { "family": "inet6", "address": "fd42:1a2b:3c4d:5e6f::31", "netmask": "64", "scope": "global" }
+                        ],
+                        "hwaddr": "00:16:3e:1a:2b:3c",
+                        "mtu": 1500,
+                        "state": "up",
+                        "type": "broadcast"
+                    },
+                    "lo": {
+                        "addresses": [{ "family": "inet", "address": "127.0.0.1", "netmask": "8", "scope": "local" }],
+                        "hwaddr": "",
+                        "mtu": 65536,
+                        "state": "up",
+                        "type": "loopback"
+                    }
+                },
+                "memory": {
+                    "usage": 486539264,
+                    "usage_peak": 612368384,
+                    "total": 2147483648,
+                    "swap_usage": 0,
+                    "swap_usage_peak": 0
+                },
+                "cpu": { "usage": 148329471028, "allocated_time": 0 },
+                "disk": { "root": { "usage": 1288490188, "total": 21474836480 } }
+            }
+        },
+        {
+            "name": "db01",
+            "type": "container",
+            "status": "Stopped",
+            "status_code": 102,
+            "architecture": "x86_64",
+            "ephemeral": false,
+            "created_at": "2025-11-19T14:40:00Z",
+            "last_used_at": "2026-01-22T06:15:00Z",
+            "description": "PostgreSQL 17",
+            "project": "default",
+            "profiles": ["default", "database"],
+            "config": { "limits.memory": "8GiB" },
+            "devices": {},
+            "expanded_config": {
+                "limits.cpu": "4",
+                "limits.memory": "8GiB",
+                "image.description": "Debian trixie amd64"
+            },
+            "expanded_devices": {
+                "eth0": { "type": "nic", "network": "incusbr0", "name": "eth0" },
+                "root": { "type": "disk", "path": "/", "pool": "fast" }
+            },
+            "state": {
+                "status": "Stopped",
+                "status_code": 102,
+                "pid": 0,
+                "processes": 0,
+                "network": null,
+                "memory": { "usage": 0, "usage_peak": 0, "total": 0 },
+                "cpu": { "usage": 0 },
+                "disk": null
+            }
+        },
+        {
+            "name": "cache01",
+            "type": "container",
+            "status": "Frozen",
+            "status_code": 110,
+            "architecture": "x86_64",
+            "ephemeral": false,
+            "created_at": "2026-01-11T11:02:00Z",
+            "last_used_at": "2026-01-27T19:48:00Z",
+            "description": "",
+            "project": "default",
+            "profiles": ["default"],
+            "config": {},
+            "devices": {},
+            "expanded_config": { "limits.cpu": "1", "image.description": "Alpine 3.21 amd64" },
+            "expanded_devices": {
+                "eth0": { "type": "nic", "network": "incusbr0", "name": "eth0" },
+                "root": { "type": "disk", "path": "/", "pool": "default" }
+            },
+            "state": {
+                "status": "Frozen",
+                "status_code": 110,
+                "pid": 5190,
+                "processes": 6,
+                "started_at": "2026-01-27T19:48:00Z",
+                "network": {
+                    "eth0": {
+                        "addresses": [{ "family": "inet", "address": "10.216.44.87", "netmask": "24", "scope": "global" }],
+                        "hwaddr": "00:16:3e:4d:5e:6f",
+                        "mtu": 1500,
+                        "state": "up",
+                        "type": "broadcast"
+                    }
+                },
+                "memory": { "usage": 41943040, "usage_peak": 62914560, "total": 536870912 },
+                "cpu": { "usage": 8329471028 },
+                "disk": { "root": { "usage": 134217728, "total": 21474836480 } }
+            }
+        },
+        {
+            "name": "build01",
+            "type": "container",
+            "status": "Running",
+            "status_code": 103,
+            "architecture": "x86_64",
+            "ephemeral": true,
+            "created_at": "2026-01-30T03:25:00Z",
+            "last_used_at": "2026-01-30T03:25:00Z",
+            "description": "Ephemeral CI worker",
+            "project": "default",
+            "profiles": ["default"],
+            "config": { "limits.cpu": "8", "security.nesting": "true" },
+            "devices": {},
+            "expanded_config": {
+                "limits.cpu": "8",
+                "security.nesting": "true",
+                "image.description": "Ubuntu 26.04 amd64"
+            },
+            "expanded_devices": {
+                "eth0": { "type": "nic", "network": "incusbr0", "name": "eth0" },
+                "root": { "type": "disk", "path": "/", "pool": "default" }
+            },
+            "state": {
+                "status": "Running",
+                "status_code": 103,
+                "pid": 6402,
+                "processes": 112,
+                "started_at": "2026-01-30T03:25:00Z",
+                "network": {
+                    "eth0": {
+                        "addresses": [{ "family": "inet", "address": "10.216.44.112", "netmask": "24", "scope": "global" }],
+                        "hwaddr": "00:16:3e:7a:8b:9c",
+                        "mtu": 1500,
+                        "state": "up",
+                        "type": "broadcast"
+                    }
+                },
+                "memory": { "usage": 3221225472, "usage_peak": 4294967296, "total": 8589934592 },
+                "cpu": { "usage": 942329471028 },
+                "disk": { "root": { "usage": 8589934592, "total": 21474836480 } }
+            }
+        },
+        {
+            "name": "vm01",
+            "type": "virtual-machine",
+            "status": "Running",
+            "status_code": 103,
+            "architecture": "x86_64",
+            "created_at": "2026-01-02T10:00:00Z",
+            "profiles": ["default"],
+            "config": {},
+            "devices": {},
+            "expanded_config": {},
+            "expanded_devices": {},
+            "state": { "status": "Running", "status_code": 103, "network": null }
+        }
+    ]
+}

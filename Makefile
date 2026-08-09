@@ -18,6 +18,11 @@ TARBALL := $(PACKAGE_NAME)-$(VERSION).tar.xz
 ARCH_BUILD_DIR := build-arch
 DEB_BUILD_DIR := build-deb
 
+# The browser the layout audit measures in, pinned by digest so the fonts and
+# the renderer are the same bytes here as on a CI runner. Recursive rather than
+# immediate: `make clean` on a machine with no node should not have to read it.
+LAYOUT_IMAGE = $(shell node -p "const i=require('./test/layout/image.json'); i.image + '@' + i.digest")
+
 .PHONY: all build watch check typecheck lint lint-js lint-css install devinstall \
         devuninstall dist rpm deb arch clean
 
@@ -50,6 +55,24 @@ lint-js: node_modules
 
 lint-css: node_modules
 	npm run lint:css
+
+# The runtime layout audit, in the pinned browser image.
+#
+# `check` deliberately does not depend on this. `dist` depends on `check`, and
+# `dist` is what the rpm, deb and Arch builds run, so a dependency here would
+# make the plugin unbuildable on any machine without a container runtime. CI
+# runs both targets, which is where a layout regression should be caught.
+#
+# --user and HOME=/tmp keep the report and the screenshots owned by the invoking
+# user. Without them a local run leaves root-owned files that npm cannot remove.
+.PHONY: check-layout
+check-layout: build
+	docker run --rm \
+	    --user $$(id -u):$$(id -g) \
+	    -e HOME=/tmp \
+	    -v $(CURDIR):/work -w /work \
+	    $(LAYOUT_IMAGE) \
+	    sh -c "npm run build:harness && npm run check:layout"
 
 install: build
 	install -d $(SYSTEM_DIR)

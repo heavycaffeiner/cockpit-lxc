@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>cockpit-lxc layout harness</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="/index.css">
+    <!--
+      Where src/index.html loads ../base1/cockpit.js, this loads the shim. Both
+      are classic scripts and both must run before the bundle, which is the
+      ordering contract src/index.html documents: index.js is deferred, so it
+      executes after parsing and after every classic script above it.
+
+      po.js is deliberately absent. English is bundled, so src/backend/i18n.ts
+      falls back to it and no host locale can reach the page.
+    -->
+    <script type="text/javascript" src="/_harness/fake-cockpit.js"></script>
+    <script type="text/javascript" src="/_harness/probe.js"></script>
+    <script type="text/javascript" src="/index.js" defer></script>
+</head>
+<body>
+    <div id="app"></div>
+</body>
+</html>

@@ -1,0 +1,79 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": {
+        "name": "web01",
+        "type": "container",
+        "status": "Running",
+        "status_code": 103,
+        "architecture": "x86_64",
+        "ephemeral": false,
+        "created_at": "2026-01-04T08:12:00Z",
+        "last_used_at": "2026-01-28T22:05:00Z",
+        "description": "Front-end reverse proxy",
+        "project": "default",
+        "profiles": ["default"],
+        "config": {
+            "limits.cpu": "2",
+            "limits.memory": "2GiB",
+            "boot.autostart": "true"
+        },
+        "devices": {
+            "shared": { "type": "disk", "source": "/srv/web", "path": "/srv" }
+        },
+        "expanded_config": {
+            "limits.cpu": "2",
+            "limits.memory": "2GiB",
+            "boot.autostart": "true",
+            "security.nesting": "false",
+            "security.privileged": "false",
+            "environment.LANG": "C.UTF-8",
+            "image.description": "Debian trixie amd64",
+            "volatile.base_image": "9f2b1c4d5e6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c"
+        },
+        "expanded_devices": {
+            "eth0": { "type": "nic", "network": "incusbr0", "name": "eth0" },
+            "root": { "type": "disk", "path": "/", "pool": "default" },
+            "shared": { "type": "disk", "source": "/srv/web", "path": "/srv" }
+        },
+        "state": {
+            "status": "Running",
+            "status_code": 103,
+            "pid": 4821,
+            "processes": 24,
+            "started_at": "2026-01-28T22:05:00Z",
+            "network": {
+                "eth0": {
+                    "addresses": [
+                        { "family": "inet", "address": "10.216.44.31", "netmask": "24", "scope": "global" },
+                        { "family": "inet6", "address": "fd42:1a2b:3c4d:5e6f::31", "netmask": "64", "scope": "global" }
+                    ],
+                    "hwaddr": "00:16:3e:1a:2b:3c",
+                    "mtu": 1500,
+                    "state": "up",
+                    "type": "broadcast"
+                },
+                "lo": {
+                    "addresses": [{ "family": "inet", "address": "127.0.0.1", "netmask": "8", "scope": "local" }],
+                    "hwaddr": "",
+                    "mtu": 65536,
+                    "state": "up",
+                    "type": "loopback"
+                }
+            },
+            "memory": {
+                "usage": 486539264,
+                "usage_peak": 612368384,
+                "total": 2147483648,
+                "swap_usage": 0,
+                "swap_usage_peak": 0
+            },
+            "cpu": { "usage": 148329471028, "allocated_time": 0 },
+            "disk": { "root": { "usage": 1288490188, "total": 21474836480 } }
+        }
+    }
+}

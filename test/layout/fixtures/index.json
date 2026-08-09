@@ -1,0 +1,38 @@
+{
+    "comment": "The base fixture set: what a healthy Incus 6.23 host with four containers answers. Scenarios in scenarios.mjs override individual entries rather than carrying a whole set of their own. Every timestamp is absolute and every size is fixed, because a label that changes run to run is a box whose width changes run to run.",
+
+    "responses": {
+        "GET /1.0": { "status": 200, "body": "server-info.json" },
+        "GET /1.0/instances?recursion=2": { "status": 200, "body": "instances.json" },
+        "GET /1.0/instances/web01?recursion=1": {
+            "status": 200,
+            "body": "instance-web01.json",
+            "headers": { "Etag": "\"a3f9c21e7b4d8065\"" }
+        },
+        "GET /1.0/instances/web01/snapshots?recursion=1": { "status": 200, "body": "snapshots-web01.json" },
+        "GET /1.0/instances/web01/logs": { "status": 200, "body": "logs-web01.json" },
+        "GET /1.0/instances/web01/logs/lxc.log": { "status": 200, "body": "log-lxc.txt" },
+        "GET /1.0/profiles?recursion=1": { "status": 200, "body": "profiles.json" },
+        "GET /1.0/networks?recursion=1": { "status": 200, "body": "networks.json" },
+        "GET /1.0/storage-pools?recursion=1": { "status": 200, "body": "storage-pools.json" },
+        "GET /1.0/storage-pools/default/volumes/custom?recursion=1": { "status": 200, "body": "volumes-default.json" },
+        "GET /1.0/storage-pools/fast/volumes/custom?recursion=1": { "status": 200, "body": "volumes-fast.json" },
+        "GET /1.0/images?recursion=1": { "status": 200, "body": "images.json" },
+        "GET /1.0/metadata/configuration": { "status": 200, "body": "metadata-configuration.json" }
+    },
+
+    "processes": {
+        "incus remote list --format=json": { "output": "remotes.json" },
+        "incus image list images: --format=json": { "output": "remote-images.json" },
+        "incus image list local: --format=json": { "output": "empty-array.json" },
+        "incus monitor --format=json --type=lifecycle": { "hang": true }
+    },
+
+    "permission": { "allowed": true },
+
+    "terminal": [
+        "Welcome to the audit host.",
+        "",
+        "root@web01:~# "
+    ]
+}

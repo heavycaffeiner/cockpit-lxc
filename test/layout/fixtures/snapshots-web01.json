@@ -1,0 +1,28 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        {
+            "name": "before-upgrade",
+            "created_at": "2026-01-18T21:00:00Z",
+            "stateful": false,
+            "expires_at": "0001-01-01T00:00:00Z"
+        },
+        {
+            "name": "nightly-2026-01-28",
+            "created_at": "2026-01-28T02:00:00Z",
+            "stateful": false,
+            "expires_at": "2026-02-27T02:00:00Z"
+        },
+        {
+            "name": "live-checkpoint",
+            "created_at": "2026-01-29T16:45:00Z",
+            "stateful": true,
+            "expires_at": "0001-01-01T00:00:00Z"
+        }
+    ]
+}
