@@ -364,6 +364,7 @@ export const ContainerList = ({
                             config: {},
                             ephemeral: false,
                             start: spec.start,
+                            pool: spec.pool,
                         });
                         announce(format(T.list.created, spec.name));
                         onRefresh();

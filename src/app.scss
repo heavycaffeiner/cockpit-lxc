@@ -234,6 +234,26 @@ body,
     color: var(--pf-t--global--color--status--danger--default);
 }
 
+/*
+ * The image store setting, above the list it governs. Spaced off the list
+ * rather than off the toolbar, because it is a form and the table below it is
+ * the next block, not a continuation of this one.
+ */
+.lxc-imagestore {
+    margin-block-end: var(--pf-t--global--spacer--lg);
+}
+
+.lxc-imagestore__row {
+    display: flex;
+    gap: var(--pf-t--global--spacer--sm);
+    align-items: center;
+}
+
+.lxc-imagestore__picker {
+    flex: 0 0 auto;
+    inline-size: 320px;
+}
+
 .lxc-devices__card {
     margin-block-end: var(--pf-t--global--spacer--md);
 }
