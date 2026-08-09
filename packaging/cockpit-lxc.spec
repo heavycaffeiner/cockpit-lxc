@@ -1,5 +1,5 @@
 Name:           cockpit-lxc
-Version:        0.1.4
+Version:        0.1.5
 Release:        1%{?dist}
 Summary:        Cockpit user interface for LXC system containers managed by Incus
 
@@ -47,6 +47,13 @@ make build
 %{_datadir}/cockpit/lxc
 
 %changelog
+* Sun Aug 09 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.5-1
+- Build and packaging only. The plugin itself is unchanged from 0.1.4
+- Move the release workflow off the Actions runtimes that had reached end of
+  life, so a release is built by something still receiving fixes
+- The lockfile had claimed 0.1.0 since that release; it now says what the
+  package says
+
 * Sun Aug 09 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.4-1
 - Fill the Cockpit frame. The page reserved a sidebar column it never used,
   which left a wide empty gutter beside the content above 1200px, and it
