@@ -6,11 +6,25 @@
  * for anything that has to be written as a literal.
  */
 
+/*
+ * The height chain down to the page.
+ *
+ * A percentage height resolves to `auto` unless every ancestor up to the root
+ * has a height of its own, so leaving the React mount point out of this makes
+ * `.lxc-page` below collapse to its content and stop short of the frame.
+ */
 html,
-body {
+body,
+#app {
     height: 100%;
 }
 
+/*
+ * PatternFly sizes the page in `dvh`, which inside Cockpit's frame is the frame
+ * viewport and so is the same measurement by a different route. Percentages of
+ * the mount point are used here instead because they follow the frame's box
+ * rather than the visual viewport, which is what the shell actually resizes.
+ */
 .lxc-page {
     block-size: 100%;
 }

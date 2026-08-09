@@ -72,8 +72,21 @@ export const Application = () => {
         storage: T.common.storage_pools,
     };
 
+    /*
+     * `sidebar={null}` is not the same as leaving the prop off.
+     *
+     * PatternFly tests it with `sidebar === null` to decide whether to add
+     * `pf-m-no-sidebar`, so an absent prop is `undefined` and fails that test.
+     * Without the class the page grid still reserves its sidebar column above
+     * 1200px and the content is pushed into what is left, leaving a wide empty
+     * gutter down the near side.
+     *
+     * `isContentFilled` stretches the main container to the full height of that
+     * grid instead of letting it stop at its content, so the page scrolls inside
+     * the frame the way Cockpit's own pages do.
+     */
     return (
-        <Page className="lxc-page">
+        <Page className="lxc-page" sidebar={null} isContentFilled>
             <PageSection>
                 <Content component="h1" className="lxc-page__title">
                     {T.app.lxc_containers}
