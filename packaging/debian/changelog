@@ -1,3 +1,11 @@
+cockpit-lxc (0.1.4-1) unstable; urgency=medium
+
+  * Fill the Cockpit frame. The page reserved a sidebar column it never used,
+    which left a wide empty gutter beside the content above 1200px, and it
+    stopped short of the bottom of the frame instead of filling it.
+
+ -- heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>  Sun, 09 Aug 2026 17:30:00 +0000
+
 cockpit-lxc (0.1.3-1) unstable; urgency=medium
 
   * Documentation only. The plugin itself is unchanged from 0.1.2.

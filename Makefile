@@ -1,5 +1,5 @@
 PACKAGE_NAME := cockpit-lxc
-VERSION := 0.1.3
+VERSION := 0.1.4
 # Cockpit addresses the package by its directory name, which is what appears in
 # the URL (/cockpit/@localhost/lxc). It is deliberately shorter than the
 # distribution package name.
