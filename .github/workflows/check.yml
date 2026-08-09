@@ -17,9 +17,9 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
-      - uses: actions/setup-node@v4
+      - uses: actions/setup-node@v7
         with:
           # The floor the build actually needs, not the latest: a plugin whose
           # CI passes only on the newest Node tells a packager nothing about the
@@ -50,7 +50,7 @@ jobs:
 
       # The build is what ships. Keeping it lets a reviewer inspect exactly
       # what a change produced without reproducing the toolchain.
-      - uses: actions/upload-artifact@v4
+      - uses: actions/upload-artifact@v7
         with:
           name: cockpit-lxc-dist
           path: dist/

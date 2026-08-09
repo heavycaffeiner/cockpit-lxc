@@ -1,3 +1,13 @@
+cockpit-lxc (0.1.5-1) unstable; urgency=medium
+
+  * Build and packaging only. The plugin itself is unchanged from 0.1.4.
+  * Move the release workflow off the Actions runtimes that had reached end of
+    life, so a release is built by something still receiving fixes.
+  * The lockfile had claimed 0.1.0 since that release; it now says what the
+    package says.
+
+ -- heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>  Sun, 09 Aug 2026 18:30:00 +0000
+
 cockpit-lxc (0.1.4-1) unstable; urgency=medium
 
   * Fill the Cockpit frame. The page reserved a sidebar column it never used,
