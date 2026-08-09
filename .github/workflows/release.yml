@@ -26,9 +26,14 @@ jobs:
         with:
           ref: ${{ inputs.tag || github.ref }}
 
+      # This job only runs the checks and rolls the source tarball, which
+      # excludes dist, so nothing a user installs is built here. Both ends of the
+      # range are covered by the check workflow, and the three packages below are
+      # each built by whatever Node their own distribution ships, so there is
+      # nothing left for this one to prove by staying on the floor.
       - uses: actions/setup-node@v7
         with:
-          node-version: "20"
+          node-version: "24"
           cache: npm
 
       - name: Install
