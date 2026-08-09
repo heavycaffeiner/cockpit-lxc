@@ -1,0 +1,214 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": {
+        "configs": {
+            "instance": {
+                "boot": {
+                    "keys": [
+                        {
+                            "boot.autostart": {
+                                "type": "bool",
+                                "liveupdate": "no",
+                                "shortdesc": "Whether to always start the instance when the daemon starts",
+                                "longdesc": "If set to `false`, restore the last state.",
+                                "defaultdesc": "-"
+                            }
+                        },
+                        {
+                            "boot.autostart.delay": {
+                                "type": "integer",
+                                "liveupdate": "no",
+                                "shortdesc": "Duration to wait after starting the instance",
+                                "longdesc": "The number of seconds to wait after the instance started before starting the next one.",
+                                "defaultdesc": "`0`"
+                            }
+                        },
+                        {
+                            "boot.autostart.priority": {
+                                "type": "integer",
+                                "liveupdate": "no",
+                                "shortdesc": "What order to start the instances in",
+                                "longdesc": "The instance with the highest value is started first.",
+                                "defaultdesc": "`0`"
+                            }
+                        },
+                        {
+                            "boot.host_shutdown_timeout": {
+                                "type": "integer",
+                                "liveupdate": "yes",
+                                "shortdesc": "How long to wait for the instance to shut down",
+                                "longdesc": "Number of seconds to wait for the instance to shut down before it is force-stopped.",
+                                "defaultdesc": "`30`"
+                            }
+                        }
+                    ]
+                },
+                "limits": {
+                    "keys": [
+                        {
+                            "limits.cpu": {
+                                "type": "string",
+                                "liveupdate": "yes",
+                                "shortdesc": "Which CPUs to expose to the instance",
+                                "longdesc": "A number of CPUs, or a specific range of CPU cores, for example `0,1,2,3`.",
+                                "defaultdesc": "for containers: empty, for VMs: `1` CPU"
+                            }
+                        },
+                        {
+                            "limits.cpu.allowance": {
+                                "type": "string",
+                                "condition": "container",
+                                "liveupdate": "yes",
+                                "shortdesc": "How much of the CPU can be used",
+                                "longdesc": "Nothing or a percentage, for example `50%`, or a time slice, for example `25ms/100ms`.",
+                                "defaultdesc": "`100%`"
+                            }
+                        },
+                        {
+                            "limits.memory": {
+                                "type": "string",
+                                "liveupdate": "yes",
+                                "shortdesc": "Usage limit for the host's memory",
+                                "longdesc": "A percentage of the total memory, or a fixed value in bytes with a unit suffix.",
+                                "defaultdesc": "-"
+                            }
+                        },
+                        {
+                            "limits.memory.swap": {
+                                "type": "bool",
+                                "condition": "container",
+                                "liveupdate": "yes",
+                                "shortdesc": "Whether to encourage/discourage swapping",
+                                "longdesc": "",
+                                "defaultdesc": "`true`"
+                            }
+                        },
+                        {
+                            "limits.processes": {
+                                "type": "integer",
+                                "condition": "container",
+                                "liveupdate": "yes",
+                                "shortdesc": "Maximum number of processes",
+                                "longdesc": "If left empty, no limit is set.",
+                                "defaultdesc": "empty"
+                            }
+                        },
+                        {
+                            "limits.disk.priority": {
+                                "type": "integer",
+                                "liveupdate": "yes",
+                                "shortdesc": "Priority of the instance's I/O requests",
+                                "longdesc": "Controls how much priority to give to the instance's I/O requests when under load. A value between 0 and 10.",
+                                "defaultdesc": "`5`"
+                            }
+                        }
+                    ]
+                },
+                "security": {
+                    "keys": [
+                        {
+                            "security.nesting": {
+                                "type": "bool",
+                                "condition": "container",
+                                "liveupdate": "yes",
+                                "shortdesc": "Whether to support running nested containers",
+                                "longdesc": "",
+                                "defaultdesc": "`false`"
+                            }
+                        },
+                        {
+                            "security.privileged": {
+                                "type": "bool",
+                                "condition": "container",
+                                "liveupdate": "no",
+                                "shortdesc": "Whether to run the instance in privileged mode",
+                                "longdesc": "A privileged container shares the host's user namespace.",
+                                "defaultdesc": "`false`"
+                            }
+                        },
+                        {
+                            "security.syscalls.intercept.mknod": {
+                                "type": "bool",
+                                "condition": "unprivileged container",
+                                "liveupdate": "yes",
+                                "shortdesc": "Whether to handle the `mknod` and `mknodat` system calls",
+                                "longdesc": "These system calls allow creating a limited subset of char/block devices.",
+                                "defaultdesc": "`false`"
+                            }
+                        },
+                        {
+                            "security.secureboot": {
+                                "type": "bool",
+                                "condition": "virtual machine",
+                                "liveupdate": "no",
+                                "shortdesc": "Whether UEFI secure boot is enabled",
+                                "longdesc": "",
+                                "defaultdesc": "`true`"
+                            }
+                        }
+                    ]
+                },
+                "miscellaneous": {
+                    "keys": [
+                        {
+                            "cluster.evacuate": {
+                                "type": "string",
+                                "liveupdate": "no",
+                                "shortdesc": "What to do when evacuating the instance",
+                                "longdesc": "One of `auto`, `migrate`, `live-migrate` or `stop`.",
+                                "defaultdesc": "`auto`"
+                            }
+                        },
+                        {
+                            "linux.kernel_modules": {
+                                "type": "string",
+                                "condition": "container",
+                                "liveupdate": "yes",
+                                "shortdesc": "Kernel modules to load before starting the instance",
+                                "longdesc": "A comma-separated list of kernel modules.",
+                                "defaultdesc": "-"
+                            }
+                        },
+                        {
+                            "environment.*": {
+                                "type": "string",
+                                "liveupdate": "yes",
+                                "shortdesc": "Key/value environment variables",
+                                "longdesc": "",
+                                "defaultdesc": "-"
+                            }
+                        },
+                        {
+                            "raw.qemu": {
+                                "type": "string",
+                                "condition": "virtual machine",
+                                "liveupdate": "no",
+                                "shortdesc": "Additional QEMU command line arguments",
+                                "longdesc": "",
+                                "defaultdesc": "-"
+                            }
+                        }
+                    ]
+                },
+                "volatile": {
+                    "keys": [
+                        {
+                            "volatile.base_image": {
+                                "type": "string",
+                                "liveupdate": "no",
+                                "shortdesc": "The hash of the image the instance was created from",
+                                "longdesc": "",
+                                "defaultdesc": "-"
+                            }
+                        }
+                    ]
+                }
+            }
+        }
+    }
+}

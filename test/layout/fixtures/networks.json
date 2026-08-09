@@ -1,0 +1,48 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        {
+            "name": "incusbr0",
+            "type": "bridge",
+            "managed": true,
+            "description": "Default managed bridge",
+            "status": "Created",
+            "config": {
+                "ipv4.address": "10.216.44.1/24",
+                "ipv4.nat": "true",
+                "ipv6.address": "fd42:1a2b:3c4d:5e6f::1/64",
+                "ipv6.nat": "true"
+            },
+            "used_by": [
+                "/1.0/instances/web01",
+                "/1.0/instances/db01",
+                "/1.0/instances/cache01",
+                "/1.0/instances/build01",
+                "/1.0/profiles/default"
+            ]
+        },
+        {
+            "name": "eth0",
+            "type": "physical",
+            "managed": false,
+            "description": "",
+            "status": "",
+            "config": {},
+            "used_by": []
+        },
+        {
+            "name": "lab0",
+            "type": "bridge",
+            "managed": true,
+            "description": "Isolated lab network, no uplink",
+            "status": "Created",
+            "config": { "ipv4.address": "10.99.0.1/24", "ipv4.nat": "false", "ipv6.address": "none" },
+            "used_by": []
+        }
+    ]
+}

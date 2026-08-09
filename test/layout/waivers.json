@@ -1,0 +1,93 @@
+{
+    "version": 1,
+    "waivers": [
+        {
+            "rule": "A2",
+            "scenario": "*",
+            "selector": "table.pf-v6-c-table",
+            "value": "end edge",
+            "reason": "Every header cell is nowrap on purpose: a sortable Th puts its label in a button the default layout will truncate, and a column headed 'N...' is worse than a table that runs wide. At 768px the intrinsic width exceeds the section, so the table's end edge lands past the toolbar's. The operator's remedy is the column picker, not a narrower header.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "G2",
+            "scenario": "detail/terminal",
+            "selector": "div.slider",
+            "value": "height: 475px",
+            "reason": "xterm.js draws its own scrollbar and sizes the slider as the visible fraction of the buffer. Nothing in this repository styles it, and the height moves with the number of lines the shell has written.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "G2",
+            "scenario": "*",
+            "selector": "span.pf-v6-c-switch__toggle",
+            "value": "height: 21px",
+            "reason": "PatternFly sizes the switch track from the body font size and its line height rather than from a spacer token, so 21px is 14px at 1.5. Overriding it would desynchronise the toggle from the label beside it.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "G3",
+            "scenario": "*",
+            "selector": "input.pf-v6-c-text-input-group__text-input",
+            "value": "padding-left: 38px",
+            "reason": "The inline start padding holds the text clear of the leading search icon PatternFly paints inside the group. The component derives it from the icon box, not from a spacer, and cutting it back would run the query text under the icon.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "G3",
+            "scenario": "*",
+            "selector": "select",
+            "value": "padding-right: 30px",
+            "reason": "PatternFly reserves this inline end padding for the chevron it paints over the native select. The value is the component's own and applies to every FormSelect on every page; reducing it would put the last character of a long value under the chevron.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "P3",
+            "scenario": "*",
+            "selector": "a.pf-v6-c-breadcrumb__link",
+            "value": "target: height",
+            "reason": "A breadcrumb link is a run of text, so its height is the line box of the body font. WCAG 2.2 2.5.8 exempts a target whose size is constrained by the line height of the text it sits in, and padding it to 24px would break the crumb trail into a stack of buttons.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "P3",
+            "scenario": "*",
+            "selector": "button.pf-v6-c-button",
+            "value": "target: height",
+            "reason": "The inline link buttons in a table's name column, whose height is the 21px line box of the cell text. Giving each 24px would add three pixels per row to every list in the plugin to make a link that is already the widest thing in its cell easier to hit.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "P3",
+            "scenario": "images/list",
+            "selector": "button.pf-v6-c-button",
+            "value": "target: width and height",
+            "reason": "The 12 by 18px close button PatternFly draws inside a Label, used here on an image's aliases. Its size is the component's, and deleting an alias is also reachable from the row's action menu, which is full sized.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "P3",
+            "scenario": "containers/create-dialog",
+            "selector": "input.pf-v6-c-check__input",
+            "value": "target: height",
+            "reason": "A native checkbox is 13px whatever the component around it declares, and the browser decides that. This one has a label, so the target is as wide as the label text and short only in height. WCAG 2.2 2.5.8 exempts a target the user agent sizes.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "P3",
+            "scenario": "*",
+            "selector": "input.pf-v6-c-check__input",
+            "value": "target: width and height",
+            "reason": "The row selection checkboxes in a table, where the control carries no visible label to widen the target. 13 by 13px is what the browser draws for a native checkbox; WCAG 2.2 2.5.8 exempts a target the user agent sizes, and the whole row is selectable by keyboard.",
+            "owner": "heavycaffeiner"
+        },
+        {
+            "rule": "P3",
+            "scenario": "*",
+            "selector": "input.pf-v6-c-switch__input",
+            "value": "target: height",
+            "reason": "The autostart switch, whose label wraps the control and gives it a 35 by 21px target. The height follows PatternFly's track, which is sized from the body line height, so this is the same value G2 waives for the toggle.",
+            "owner": "heavycaffeiner"
+        }
+    ]
+}

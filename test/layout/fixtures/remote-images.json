@@ -1,0 +1,74 @@
+[
+    {
+        "aliases": [{ "name": "debian/trixie/amd64" }],
+        "fingerprint": "9f2b1c4d5e6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c",
+        "architecture": "x86_64",
+        "size": 132120576,
+        "type": "container",
+        "properties": { "description": "Debian trixie amd64 (20260104_05:24)" }
+    },
+    {
+        "aliases": [{ "name": "debian/bookworm/amd64" }],
+        "fingerprint": "2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c",
+        "architecture": "x86_64",
+        "size": 128974848,
+        "type": "container",
+        "properties": { "description": "Debian bookworm amd64 (20260104_05:24)" }
+    },
+    {
+        "aliases": [{ "name": "alpine/3.21/amd64" }],
+        "fingerprint": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+        "architecture": "x86_64",
+        "size": 3512320,
+        "type": "container",
+        "properties": { "description": "Alpine 3.21 amd64 (20260111_13:00)" }
+    },
+    {
+        "aliases": [{ "name": "alpine/edge/amd64" }],
+        "fingerprint": "3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b3c4d",
+        "architecture": "x86_64",
+        "size": 3616768,
+        "type": "container",
+        "properties": { "description": "Alpine edge amd64 (20260130_13:00)" }
+    },
+    {
+        "aliases": [{ "name": "ubuntu/26.04/amd64" }],
+        "fingerprint": "c0ffee11deadbeef2233445566778899aabbccddeeff00112233445566778899",
+        "architecture": "x86_64",
+        "size": 198180864,
+        "type": "container",
+        "properties": { "description": "Ubuntu 26.04 amd64 (20260130_07:42)" }
+    },
+    {
+        "aliases": [{ "name": "ubuntu/24.04/amd64" }],
+        "fingerprint": "deadbeef11c0ffee2233445566778899aabbccddeeff00112233445566778899",
+        "architecture": "x86_64",
+        "size": 192937984,
+        "type": "container",
+        "properties": { "description": "Ubuntu 24.04 amd64 (20260129_07:42)" }
+    },
+    {
+        "aliases": [{ "name": "rockylinux/10/amd64" }],
+        "fingerprint": "aabbccdd11223344556677889900eeff11223344556677889900aabbccddeeff",
+        "architecture": "x86_64",
+        "size": 174063616,
+        "type": "container",
+        "properties": { "description": "Rockylinux 10 amd64 (20260128_02:06)" }
+    },
+    {
+        "aliases": [{ "name": "fedora/43/amd64" }],
+        "fingerprint": "ff00112233445566778899aabbccddeeff00112233445566778899aabbccddee",
+        "architecture": "x86_64",
+        "size": 210763776,
+        "type": "container",
+        "properties": { "description": "Fedora 43 amd64 (20260130_20:33)" }
+    },
+    {
+        "aliases": [],
+        "fingerprint": "0000112233445566778899aabbccddeeff00112233445566778899aabbccddee",
+        "architecture": "x86_64",
+        "size": 1048576,
+        "type": "container",
+        "properties": { "description": "An image with no alias, which is filtered out" }
+    }
+]

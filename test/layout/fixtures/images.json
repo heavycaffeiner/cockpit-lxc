@@ -1,0 +1,46 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        {
+            "fingerprint": "9f2b1c4d5e6a7b8c9d0e1f2a3b4c5d6e7f8a9b0c1d2e3f4a5b6c7d8e9f0a1b2c",
+            "aliases": [{ "name": "debian/trixie", "description": "Debian trixie amd64" }],
+            "architecture": "x86_64",
+            "size": 132120576,
+            "uploaded_at": "2026-01-04T08:10:00Z",
+            "properties": {
+                "description": "Debian trixie amd64 (20260104_05:24)",
+                "os": "Debian",
+                "release": "trixie"
+            }
+        },
+        {
+            "fingerprint": "1a2b3c4d5e6f7a8b9c0d1e2f3a4b5c6d7e8f9a0b1c2d3e4f5a6b7c8d9e0f1a2b",
+            "aliases": [{ "name": "alpine/3.21", "description": "Alpine 3.21 amd64" }],
+            "architecture": "x86_64",
+            "size": 3512320,
+            "uploaded_at": "2026-01-11T10:58:00Z",
+            "properties": {
+                "description": "Alpine 3.21 amd64 (20260111_13:00)",
+                "os": "Alpine",
+                "release": "3.21"
+            }
+        },
+        {
+            "fingerprint": "c0ffee11deadbeef2233445566778899aabbccddeeff00112233445566778899",
+            "aliases": [],
+            "architecture": "x86_64",
+            "size": 198180864,
+            "uploaded_at": "2026-01-30T03:20:00Z",
+            "properties": {
+                "description": "Ubuntu 26.04 amd64 (20260130_07:42)",
+                "os": "Ubuntu",
+                "release": "26.04"
+            }
+        }
+    ]
+}

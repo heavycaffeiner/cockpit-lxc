@@ -1,0 +1,31 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        {
+            "name": "default",
+            "driver": "dir",
+            "description": "Default directory pool",
+            "status": "Created",
+            "config": { "source": "/var/lib/incus/storage-pools/default" },
+            "used_by": [
+                "/1.0/instances/web01",
+                "/1.0/instances/cache01",
+                "/1.0/instances/build01",
+                "/1.0/profiles/default"
+            ]
+        },
+        {
+            "name": "fast",
+            "driver": "zfs",
+            "description": "NVMe zpool for databases",
+            "status": "Created",
+            "config": { "source": "nvme0", "zfs.pool_name": "nvme0", "size": "512GiB" },
+            "used_by": ["/1.0/instances/db01", "/1.0/profiles/database"]
+        }
+    ]
+}

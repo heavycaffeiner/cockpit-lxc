@@ -1,0 +1,39 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        {
+            "name": "default",
+            "description": "Default Incus profile",
+            "config": {},
+            "devices": {
+                "eth0": { "type": "nic", "network": "incusbr0", "name": "eth0" },
+                "root": { "type": "disk", "path": "/", "pool": "default" }
+            },
+            "used_by": [
+                "/1.0/instances/web01",
+                "/1.0/instances/db01",
+                "/1.0/instances/cache01",
+                "/1.0/instances/build01"
+            ]
+        },
+        {
+            "name": "database",
+            "description": "Larger limits and the fast pool",
+            "config": { "limits.cpu": "4", "limits.memory": "8GiB" },
+            "devices": { "root": { "type": "disk", "path": "/", "pool": "fast" } },
+            "used_by": ["/1.0/instances/db01"]
+        },
+        {
+            "name": "isolated",
+            "description": "",
+            "config": { "security.nesting": "false", "security.privileged": "false" },
+            "devices": {},
+            "used_by": []
+        }
+    ]
+}

@@ -1,0 +1,42 @@
+{
+    "comment": "Audit-set membership and rule inputs. Selectors live here rather than as attributes in src/, so production markup is not annotated for the benefit of a test.",
+
+    "excludeSelectors": [
+        "svg",
+        ".lxc-terminal__viewport .xterm-screen",
+        ".lxc-terminal__viewport .xterm-helpers",
+        ".lxc-grid-overlay"
+    ],
+
+    "groupingSelectors": [
+        ".pf-v6-c-button-group",
+        ".pf-v6-c-toggle-group",
+        ".pf-v6-c-input-group",
+        ".pf-v6-c-clipboard-copy__group",
+        ".pf-v6-c-menu",
+        ".pf-v6-c-select__menu",
+        ".pf-v6-c-menu-toggle",
+        ".pf-v6-c-pagination__nav",
+        ".pf-v6-c-tabs__list",
+        ".pf-v6-c-breadcrumb"
+    ],
+
+    "interactiveSelector": "button, a[href], input, select, textarea, [role=\"button\"], [role=\"link\"], [role=\"checkbox\"], [role=\"switch\"], [role=\"tab\"], [tabindex]:not([tabindex=\"-1\"])",
+
+    "sectionRootSelector": ".pf-v6-c-tab-content, .pf-v6-c-page__main-section",
+
+
+    "grid": {
+        "base": 4,
+        "comment": "Chromium lays out in 1/64px units, so an exactly-on-grid value can be reported as 15.984375. Three of those units is 0.047, and the smallest real defect here is a 2px half-step. The tolerance absorbs float representation and nothing else.",
+        "tolerance": 0.05,
+        "centreTolerance": 0.5
+    },
+
+    "separation": {
+        "comment": "8px is two grid steps and the smallest PatternFly spacer above xs. minTargetSize is the WCAG 2.2 AA floor.",
+        "minGap": 8,
+        "minTargetSize": 24,
+        "overlapRatio": 0.5
+    }
+}

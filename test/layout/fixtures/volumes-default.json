@@ -1,0 +1,13 @@
+{
+    "type": "sync",
+    "status": "Success",
+    "status_code": 200,
+    "operation": "",
+    "error_code": 0,
+    "error": "",
+    "metadata": [
+        { "name": "images", "type": "custom", "content_type": "filesystem" },
+        { "name": "backups", "type": "custom", "content_type": "filesystem" },
+        { "name": "raw-disk", "type": "custom", "content_type": "block" }
+    ]
+}

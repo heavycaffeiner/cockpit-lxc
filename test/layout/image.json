@@ -1,0 +1,6 @@
+{
+    "comment": "The environment the audit measures in. `version` must equal the @playwright/test version in package.json, which build/check-version.mjs enforces: a runner built against one API driving browsers from another is a failure with a confusing symptom. `digest` pins the image contents, so the fonts and the renderer are the same bytes on a developer's machine and on a CI runner. The Makefile reads this file; the workflow cannot, so it repeats the reference and check-version.mjs compares the two.",
+    "version": "1.62.1",
+    "image": "mcr.microsoft.com/playwright:v1.62.1-noble",
+    "digest": "sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e"
+}

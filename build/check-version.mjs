@@ -9,6 +9,10 @@
  *
  * The release workflow additionally checks the git tag against package.json, so
  * between the two every name a user can see comes from the same number.
+ *
+ * The layout audit's browser image is checked here too, for the same reason and
+ * against a different failure: a runner built against one Playwright API driving
+ * browsers from another breaks in ways that read as layout defects.
  */
 import { readFile } from "node:fs/promises";
 import path from "node:path";
@@ -57,3 +61,38 @@ if (versions.size !== 1) {
 }
 
 process.stdout.write(`version ${[...versions][0]}, agreed by all ${Object.keys(declared).length} files\n`);
+
+/*
+ * The audit environment. Three claims, checked against each other:
+ *
+ * the npm package and the image tag are the same Playwright release; the tag is
+ * spelled the way the registry spells it; and the workflow, which cannot read a
+ * JSON file to build its `container.image`, repeats the same reference the
+ * Makefile derives from image.json.
+ */
+const playwright = JSON.parse(await read("package.json")).devDependencies["@playwright/test"];
+const image = JSON.parse(await read("test", "layout", "image.json"));
+const workflow = await read(".github", "workflows", "check.yml");
+
+const reference = `${image.image}@${image.digest}`;
+const mismatches = [];
+
+if (image.version !== playwright)
+    mismatches.push(`@playwright/test is ${playwright}, test/layout/image.json says ${image.version}`);
+
+if (image.image !== `mcr.microsoft.com/playwright:v${image.version}-noble`)
+    mismatches.push(`the image tag "${image.image}" does not name version ${image.version}`);
+
+if (!image.digest.startsWith("sha256:"))
+    mismatches.push("the image digest is missing, so a run cannot be reproduced");
+else if (!workflow.includes(reference))
+    mismatches.push(`.github/workflows/check.yml does not use "${reference}"`);
+
+if (mismatches.length > 0) {
+    process.stderr.write("the layout audit environment is inconsistent:\n");
+    for (const mismatch of mismatches)
+        process.stderr.write(`  ${mismatch}\n`);
+    process.exit(1);
+}
+
+process.stdout.write(`layout audit runs on ${reference}\n`);

@@ -20,5 +20,5 @@
             "cockpit": ["./src/backend/cockpit-runtime.ts"]
         }
     },
-    "include": ["src/**/*"]
+    "include": ["src/**/*", "test/layout/host/**/*"]
 }

@@ -1,0 +1,14 @@
+{
+    "images": {
+        "Addr": "https://images.linuxcontainers.org",
+        "Protocol": "simplestreams",
+        "Public": true,
+        "AuthType": "none"
+    },
+    "local": {
+        "Addr": "unix://",
+        "Protocol": "incus",
+        "Public": false,
+        "AuthType": "tls"
+    }
+}

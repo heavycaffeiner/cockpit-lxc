@@ -112,17 +112,113 @@ Use a scoped disable and say why. The comment is visible in review, which is the
 block-size: 417px;
 ```
 
-## Layout
+## The layout audit
+
+The stylelint rule reads declarations. It cannot see an element that is on the grid in
+every line of its own CSS and lands off it because an ancestor put it there, and it cannot
+see two blocks that both use tokens and still fail to line up with each other. That is what
+`test/layout/` measures: it renders each view against recorded fixtures in a pinned browser
+and reads back `getBoundingClientRect`.
+
+```
+make check-layout            # in the pinned image, which is what CI runs
+npm run build && npm run build:harness && npm run check:layout
+```
+
+The second form runs against whatever Chromium Playwright installed locally. It is faster
+and it is fine for iterating, but the numbers are only comparable to CI's from inside the
+image, because fonts rasterize differently.
+
+Twenty scenarios by three viewports (768, 1280, 1600) by two themes. Each cell serves
+`dist/` from a local server with `window.cockpit` stubbed at the transport, so no plugin
+source knows the audit exists. `npm run build` first: the harness loads the built bundle,
+not `src/`.
+
+### Reading a finding
+
+```
+G1  div.lxc-page > section.lxc-config > div.pf-v6-c-form__group
+    sits 22px below the block above it        (gap above: 22px)
+```
+
+The rule id says what was measured. `G` is grid conformance, `A` is alignment between
+elements, `P` is separation and target size. The selector is a path you can paste into the
+console. The detail is the measurement against the requirement.
+
+A rule reports where a defect is introduced, not everywhere it is felt: a heading whose
+line box is 31.19px tall pushes everything below it off the baseline by the same 0.19px,
+and one finding for the heading beats three hundred for its consequences.
+
+Failing cells write an outlined screenshot to `test/layout/screenshots/`. The picture is
+evidence attached to a number; nothing in the pass or fail decision reads a pixel.
+
+### Waivers
+
+`test/layout/waivers.json` is the list of findings that are known and deliberate. A waiver
+matches on the rule, the scenario, a selector the browser evaluates, and the measurement,
+so it lapses when any of those change rather than covering the next defect at the same
+place.
+
+Two guards keep the file honest. A reason under 40 characters, or one still saying `TODO`,
+fails the run before a browser starts. A waiver that matched nothing also fails the run,
+which is what makes deleting it part of the same commit as the fix.
+
+A reason has to say why the finding is correct behaviour, in terms a reader can check:
+
+```json
+{
+    "rule": "G2",
+    "scenario": "*",
+    "selector": "span.pf-v6-c-switch__toggle",
+    "value": "height: 21px",
+    "reason": "PatternFly sizes the switch track from the body font size and its line height rather than from a spacer token, so 21px is 14px at 1.5. Overriding it would desynchronise the toggle from the label beside it.",
+    "owner": "heavycaffeiner"
+}
+```
+
+"PatternFly does this" is not a reason on its own. Which value, derived from what, and what
+breaks if it is overridden.
+
+`node test/layout/run.mjs --update-waivers` rewrites the file from the current findings,
+carrying existing reasons across and stamping new entries `TODO`. It always exits non-zero.
+Use it to see the shape of a change, then write the reasons by hand.
+
+### Adding a scenario
+
+A scenario in `test/layout/scenarios.mjs` names a route, the fixture overrides its page
+needs, and optionally the steps that open a dialog or a tab. Fixtures are JSON files under
+`test/layout/fixtures/`, keyed by request. A request with no fixture fails the scenario
+rather than resolving empty: an empty page passes every geometry rule.
+
+### The pinned image
+
+`test/layout/image.json` holds the Playwright version and the image digest. The Makefile
+reads it; the workflow cannot, so `.github/workflows/check.yml` repeats the reference and
+`npm run check:version` fails if the two disagree or if the npm `@playwright/test` version
+is not the same release. `make check` deliberately does not depend on `check-layout`:
+`make dist` depends on `check`, and the packaging builds must not require Docker.
+
+`docs/proposals/design/cockpit-lxc-2-layout-conformance-toolchain.md` is the design note.
+
+## Repository layout
 
 ```
 build.js                     esbuild driver
 build/stylelint-4px-grid.js  the 4px gate
 build/gen-en.mjs             bundles po/en.po and generates the key tree
 build/check-catalogues.mjs   the catalogue gate, in place of xgettext
-build/check-version.mjs      keeps the five version declarations in step
+build/check-version.mjs      keeps the five version declarations in step, and
+                             the audit image in step with @playwright/test
 packaging/                   rpm spec, debian packaging and PKGBUILD
 po/en.po, po/ko.po           the catalogues, keyed by stable message id
 test/session-smoke.py        real-session verification
+test/layout/                 the runtime layout audit
+  run.mjs                    the matrix runner
+  scenarios.mjs              what is rendered, and the steps to get there
+  host/probe.ts              the in-page measurement, injected not imported
+  rules/                     G, A and P, pure functions over observations
+  waivers.json               reasoned exceptions, one per known finding
+  image.json                 the pinned browser
 docs/csp.md                  why the style CSP is widened
 src/
   manifest.json              Cockpit package manifest, including its CSP
@@ -189,7 +285,7 @@ curated field whose key the server does not carry is not rendered, which is what
 plugin offering a setting the API would reject. On a server too old to describe itself the
 schema is null and the curated list plus the raw editor carry on unchanged.
 
-`cockpit-lxc-1-metadata-driven-configuration.md` is the design note.
+`docs/proposals/cockpit-lxc-1-metadata-driven-configuration.md` is the design note.
 
 ## Notable behaviour
 

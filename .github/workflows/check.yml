@@ -75,3 +75,46 @@ jobs:
           name: cockpit-lxc-dist
           path: dist/
           retention-days: 14
+
+  # The runtime layout audit: 4px grid conformance, alignment and separation,
+  # measured in a rendered page rather than read out of the stylesheet.
+  #
+  # Alongside `check` rather than inside it, and with no Node matrix. The audit
+  # measures pixels, which the interpreter that produced the bundle cannot
+  # change, so a second leg would double the slowest job to re-measure identical
+  # numbers.
+  #
+  # The image is pinned by digest, and build/check-version.mjs fails the `check`
+  # job if this reference and test/layout/image.json disagree.
+  layout:
+    runs-on: ubuntu-latest
+    container:
+      image: mcr.microsoft.com/playwright:v1.62.1-noble@sha256:dcc5531e97840b9b5e794f2814476b21571c5124a3fca2267d73041f56e7580e
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Install
+        run: npm ci
+
+      - name: Build
+        run: npm run build
+
+      - name: Build the audit harness
+        run: npm run build:harness
+
+      - name: Audit the rendered layout
+        run: npm run check:layout
+
+      # On failure as well, because the report and the outlined screenshots are
+      # the diagnosis. A red job whose evidence was not uploaded costs a second
+      # run to reproduce locally.
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: layout-report
+          path: |
+            test/layout/layout-report.md
+            test/layout/layout-report.json
+            test/layout/screenshots/
+          retention-days: 14
