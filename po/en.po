@@ -124,6 +124,9 @@ msgstr "Source"
 msgid "common.state"
 msgstr "State"
 
+msgid "common.storage_pool"
+msgstr "Storage pool"
+
 msgid "common.storage_pools"
 msgstr "Storage pools"
 
@@ -396,6 +399,12 @@ msgstr "The copy takes this container's configuration and its disk. It is not th
 
 msgid "dialogs.the_names_must_match_exactly"
 msgstr "The names must match exactly"
+
+msgid "dialogs.the_profiles_pool"
+msgstr "The profile's pool (default)"
+
+msgid "dialogs.the_root_disk_is_created_here"
+msgstr "The root disk is created here. Incus cannot move it to another pool afterwards."
 
 msgid "dialogs.this_permanently_destroys_the_container_s"
 msgstr "This permanently destroys the container's root filesystem and every snapshot it holds. Incus cannot recover it."
@@ -736,8 +745,17 @@ msgstr "Filter the catalogue"
 msgid "images.fingerprint"
 msgstr "Fingerprint"
 
+msgid "images.image_store_location"
+msgstr "Image store location"
+
 msgid "images.image_views"
 msgstr "Image views"
+
+msgid "images.incus_moves_the_images_it_already"
+msgstr "Incus moves the images it already holds when this changes. The volume must have room for them."
+
+msgid "images.no_custom_volume_exists_to_move"
+msgstr "No custom volume exists to move the store onto. Create one on the Storage pools page first."
 
 msgid "images.is_removed_from_this_host_containers"
 msgstr "$0 is removed from this host. Containers already created from it keep working; creating new ones will download it again."
@@ -783,6 +801,15 @@ msgstr "Images on the remote"
 
 msgid "images.remove_alias"
 msgstr "Remove the alias $0"
+
+msgid "images.the_image_store_is_back_in"
+msgstr "The image store is back in the Incus data directory"
+
+msgid "images.the_image_store_is_now_on"
+msgstr "The image store is now on $0"
+
+msgid "images.the_incus_data_directory"
+msgstr "The Incus data directory (default)"
 
 msgid "list.all_states"
 msgstr "All states"

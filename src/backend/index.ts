@@ -55,6 +55,7 @@ export type {
     ServerInfo,
     Snapshot,
     StoragePool,
+    StorageVolume,
     TerminalHandle,
     TerminalMode,
 } from "./types";

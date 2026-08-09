@@ -16,6 +16,7 @@ import type {
     ServerInfo,
     Snapshot,
     StoragePool,
+    StorageVolume,
     TerminalHandle,
     TerminalMode,
 } from "./types";
@@ -149,6 +150,21 @@ export interface ContainerDriver {
     deleteStoragePool(name: string): Promise<void>;
 
     listImages(): Promise<Image[]>;
+
+    /**
+     * Custom volumes across every pool, which are what the image store can be
+     * moved onto.
+     */
+    listCustomVolumes(): Promise<StorageVolume[]>;
+
+    /**
+     * Where Incus writes image tarballs, as "pool/volume". Empty means the
+     * daemon's own directory under /var/lib/incus.
+     */
+    getImagesVolume(): Promise<string>;
+
+    /** Move the image store. Empty puts it back in the daemon's directory. */
+    setImagesVolume(volume: string): Promise<void>;
 
     /** Image servers the CLI has configured, so the operator can browse them. */
     listRemotes(): Promise<Remote[]>;

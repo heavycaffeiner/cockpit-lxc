@@ -17,6 +17,7 @@ import type {
     ServerInfo,
     Snapshot,
     StoragePool,
+    StorageVolume,
     TerminalHandle,
     TerminalMode,
 } from "../types";
@@ -75,6 +76,7 @@ import type {
     WireServerInfo,
     WireSnapshot,
     WireStoragePool,
+    WireStorageVolume,
 } from "./wire";
 
 /**
@@ -395,6 +397,21 @@ export class IncusDriver implements ContainerDriver {
             ? { type: "image", fingerprint: spec.image }
             : { type: "image", alias: spec.image };
 
+        /*
+         * A pool is chosen by overriding the root disk the profile supplies.
+         * Incus has no "create this instance on pool X" field: the pool is a
+         * property of the root disk device, so naming one means writing that
+         * device onto the instance, where it takes precedence over the
+         * profile's.
+         *
+         * Nothing is sent when no pool was chosen, so the profile's own root
+         * disk is left to apply rather than being replaced by a copy of itself
+         * that would then stop tracking it.
+         */
+        const devices = spec.pool === ""
+            ? {}
+            : { devices: { root: { type: "disk", path: "/", pool: spec.pool } } };
+
         await this.client.request<unknown>("/1.0/instances", {
             method: "POST",
             body: {
@@ -404,6 +421,7 @@ export class IncusDriver implements ContainerDriver {
                 profiles: spec.profiles.length > 0 ? spec.profiles : ["default"],
                 config: spec.config,
                 ephemeral: spec.ephemeral,
+                ...devices,
             },
         });
 
@@ -639,6 +657,76 @@ export class IncusDriver implements ContainerDriver {
             throw new DriverError("parse", "Incus returned a non-list of images");
 
         return wire.map(mapImage).filter((i): i is Image => i !== null);
+    }
+
+    /**
+     * The custom volumes on every pool.
+     *
+     * One request per pool, because Incus has no endpoint that lists volumes
+     * across pools. Pools are counted in single digits on any host this plugin
+     * runs on, and a pool whose volumes cannot be read is skipped rather than
+     * failing the lot: one unreachable pool should not hide the volumes on the
+     * others.
+     */
+    async listCustomVolumes(): Promise<StorageVolume[]> {
+        const pools = await this.listStoragePools();
+        const volumes: StorageVolume[] = [];
+
+        for (const pool of pools) {
+            let wire: WireStorageVolume[];
+            try {
+                wire = await this.client.request<WireStorageVolume[]>(
+                    `/1.0/storage-pools/${encodeURIComponent(pool.name)}/volumes/custom?recursion=1`,
+                );
+            } catch {
+                continue;
+            }
+            if (!Array.isArray(wire))
+                continue;
+
+            for (const entry of wire) {
+                // A block volume is a raw device with no filesystem to write
+                // tarballs into, and Incus rejects one here.
+                if (typeof entry.name !== "string" || entry.name === "")
+                    continue;
+                if (entry.content_type !== undefined && entry.content_type !== "filesystem")
+                    continue;
+                volumes.push({ pool: pool.name, name: entry.name });
+            }
+        }
+
+        return volumes.sort((a, b) =>
+            a.pool.localeCompare(b.pool) || a.name.localeCompare(b.name));
+    }
+
+    /**
+     * Where the image tarballs go.
+     *
+     * Read from the server's own configuration rather than remembered, because
+     * it is host-wide: the CLI or another session can change it, and a stale
+     * answer here would be shown as the current one.
+     */
+    async getImagesVolume(): Promise<string> {
+        const wire = await this.client.request<WireServerInfo>("/1.0");
+        const value = wire?.config?.["storage.images_volume"];
+        return typeof value === "string" ? value : "";
+    }
+
+    /**
+     * Move the image store.
+     *
+     * PATCH rather than PUT: this is one key of the daemon's whole
+     * configuration, and PUT would replace all of it, silently reverting every
+     * other setting to whatever this request happened not to mention.
+     *
+     * Incus reads an empty string as "unset", which is how the default
+     * directory is chosen again.
+     */
+    async setImagesVolume(volume: string): Promise<void> {
+        await this.client.request<unknown>("/1.0", {
+            method: "PATCH",
+            body: { config: { "storage.images_volume": volume } },
+        });
     }
 
     listRemotes(): Promise<Remote[]> {

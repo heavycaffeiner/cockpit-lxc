@@ -123,6 +123,19 @@ export interface WireServerInfo {
     auth?: string;
     api_extensions?: string[];
     environment?: WireServerEnvironment;
+    /**
+     * Server-wide settings. Typed as unknown per key rather than as strings:
+     * this is the daemon's whole configuration surface, and nothing here should
+     * assume every value in it is one shape.
+     */
+    config?: Record<string, unknown>;
+}
+
+export interface WireStorageVolume {
+    name?: string;
+    type?: string;
+    /** "filesystem" or "block". Only the former can hold the image store. */
+    content_type?: string;
 }
 
 export interface WireOperation {

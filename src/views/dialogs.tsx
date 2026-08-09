@@ -24,6 +24,7 @@ import {
     type Container,
     type ContainerDriver,
     type Image,
+    type StoragePool,
 } from "../backend";
 import { stateName } from "../components/container-state-label";
 
@@ -261,6 +262,8 @@ export interface CreateSpec {
     /** A local image, named by alias where it has one, else by fingerprint. */
     image: string;
     start: boolean;
+    /** The pool the root disk goes on. Empty leaves the profile's choice. */
+    pool: string;
 }
 
 interface CreateDialogProps {
@@ -309,6 +312,8 @@ export const CreateDialog = ({
     const [name, setName] = useState("");
     const [image, setImage] = useState("");
     const [images, setImages] = useState<readonly Image[] | null>(null);
+    const [pools, setPools] = useState<readonly StoragePool[]>([]);
+    const [pool, setPool] = useState("");
     const [start, setStart] = useState(true);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -332,6 +337,21 @@ export const CreateDialog = ({
         return () => { cancelled = true; };
     }, [driver]);
 
+    /*
+     * Pools are loaded separately and their failure is swallowed. The choice is
+     * optional and the default is the one Incus would have made, so a host whose
+     * pools cannot be read should still be able to create a container rather
+     * than see the dialog fail over a field nobody had to fill in.
+     */
+    useEffect(() => {
+        let cancelled = false;
+        driver.listStoragePools().then(
+            (result) => { if (!cancelled) setPools(result); },
+            () => { if (!cancelled) setPools([]); },
+        );
+        return () => { cancelled = true; };
+    }, [driver]);
+
     const duplicate = existing.includes(name);
     const nameValid = name !== "" && /^[a-zA-Z0-9-]+$/.test(name) && !duplicate;
     const valid = nameValid && image !== "";
@@ -340,7 +360,7 @@ export const CreateDialog = ({
         setBusy(true);
         setError(null);
         try {
-            await onConfirm({ name, image, start });
+            await onConfirm({ name, image, start, pool });
             onClose();
         } catch (caught) {
             setError(errorText(caught));
@@ -417,6 +437,38 @@ export const CreateDialog = ({
                                     </>
                                 )}
                     </FormGroup>
+                    {/*
+                      * Only when there is a choice to make. One pool means the
+                      * select would have a single option beside the default that
+                      * resolves to it, which is a control that cannot change
+                      * anything.
+                      */}
+                    {pools.length > 1 && (
+                        <FormGroup label={T.common.storage_pool} fieldId="lxc-create-pool">
+                            <FormSelect
+                                id="lxc-create-pool"
+                                value={pool}
+                                onChange={(_event, value) => setPool(value)}
+                                aria-label={T.common.storage_pool}
+                            >
+                                <FormSelectOption value="" label={T.dialogs.the_profiles_pool} />
+                                {pools.map((candidate) => (
+                                    <FormSelectOption
+                                        key={candidate.name}
+                                        value={candidate.name}
+                                        label={`${candidate.name} (${candidate.driver})`}
+                                    />
+                                ))}
+                            </FormSelect>
+                            <FormHelperText>
+                                <HelperText>
+                                    <HelperTextItem>
+                                        {T.dialogs.the_root_disk_is_created_here}
+                                    </HelperTextItem>
+                                </HelperText>
+                            </FormHelperText>
+                        </FormGroup>
+                    )}
                     <FormGroup fieldId="lxc-create-start">
                         <Checkbox
                             id="lxc-create-start"

@@ -148,6 +148,18 @@ export interface StoragePool {
     usedBy: readonly string[];
 }
 
+/**
+ * A custom volume on a pool.
+ *
+ * Only the two fields that name it, because the one thing this is for is
+ * offering somewhere to put the image store, and that is addressed as
+ * "pool/volume".
+ */
+export interface StorageVolume {
+    pool: string;
+    name: string;
+}
+
 export interface Image {
     fingerprint: string;
     aliases: readonly string[];
@@ -270,6 +282,15 @@ export interface CreateContainerSpec {
     ephemeral: boolean;
     /** Start the container once creation completes. */
     start: boolean;
+    /**
+     * The storage pool the root disk is created on. Empty means the one the
+     * profile already names, which is what Incus would have chosen anyway.
+     *
+     * This is a create-time decision. Incus will not move a root disk between
+     * pools afterwards, so the alternative to offering it here is recreating
+     * the container.
+     */
+    pool: string;
 }
 
 /**

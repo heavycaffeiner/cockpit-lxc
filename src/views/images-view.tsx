@@ -3,8 +3,11 @@ import {
     Button,
     Form,
     FormGroup,
+    FormHelperText,
     FormSelect,
     FormSelectOption,
+    HelperText,
+    HelperTextItem,
     Label,
     Modal,
     ModalBody,
@@ -30,6 +33,7 @@ import {
     type Image,
     type Remote,
     type RemoteImage,
+    type StorageVolume,
 } from "../backend";
 import { announce } from "../components/live-region";
 import { ConfirmDelete } from "../components/resource-dialog";
@@ -145,6 +149,126 @@ export const ImagesView = ({ driver, onChanged }: ImagesViewProps) => {
     );
 };
 
+/**
+ * Where the tarballs land.
+ *
+ * Incus keeps its image store in a directory under /var/lib/incus unless
+ * `storage.images_volume` names a custom volume to use instead, which is the
+ * setting that lets a host with a small root filesystem cache images somewhere
+ * with room for them.
+ *
+ * A picker rather than a text field: the value is "pool/volume" and Incus
+ * rejects anything that is not an existing filesystem volume, so the choices
+ * are exactly the volumes that exist and a typo is not a way to fail.
+ */
+const ImageStore = ({ driver }: { driver: ContainerDriver }) => {
+    const [volumes, setVolumes] = useState<readonly StorageVolume[] | null>(null);
+    // The value the server holds, kept apart from the pending selection so the
+    // button knows whether there is anything to save.
+    const [saved, setSaved] = useState<string | null>(null);
+    const [chosen, setChosen] = useState("");
+    const [busy, setBusy] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    useEffect(() => {
+        let cancelled = false;
+        Promise.all([driver.getImagesVolume(), driver.listCustomVolumes()]).then(
+            ([current, available]) => {
+                if (cancelled)
+                    return;
+                setSaved(current);
+                setChosen(current);
+                setVolumes(available);
+            },
+            /*
+             * Nothing is assumed about the current value here. Defaulting it to
+             * "the Incus directory" would render the picker showing a setting
+             * the server was never asked about, and the next save would write
+             * that guess over whatever is really set.
+             */
+            (caught: unknown) => {
+                if (!cancelled)
+                    setError(errorText(caught));
+            },
+        );
+        return () => { cancelled = true; };
+    }, [driver]);
+
+    const save = async () => {
+        setBusy(true);
+        setError(null);
+        try {
+            await driver.setImagesVolume(chosen);
+            setSaved(chosen);
+            announce(chosen === ""
+                ? T.images.the_image_store_is_back_in
+                : format(T.images.the_image_store_is_now_on, chosen));
+        } catch (caught) {
+            setError(errorText(caught));
+        } finally {
+            setBusy(false);
+        }
+    };
+
+    // The read failed, so there is no setting to show. The reason is, and it is
+    // the only thing this can honestly report.
+    if (volumes === null || saved === null)
+        return error === null ? null : <Alert variant="danger" isInline title={error} />;
+
+    /*
+     * The current value is offered even when it is not in the list. Incus keeps
+     * whatever was set, and a volume this cannot see, deleted, or on a pool that
+     * failed to read, must not silently show as the default and then be written
+     * away by the next save.
+     */
+    const known = volumes.some((volume) => `${volume.pool}/${volume.name}` === saved);
+    const missing = saved !== "" && !known;
+
+    return (
+        <div className="lxc-imagestore">
+            {error !== null && <Alert variant="danger" isInline title={error} />}
+
+            <FormGroup label={T.images.image_store_location} fieldId="lxc-images-volume">
+                <div className="lxc-imagestore__row">
+                    <div className="lxc-imagestore__picker">
+                        <FormSelect
+                            id="lxc-images-volume"
+                            value={chosen}
+                            onChange={(_event, value) => setChosen(value)}
+                            aria-label={T.images.image_store_location}
+                            isDisabled={busy}
+                        >
+                            <FormSelectOption value="" label={T.images.the_incus_data_directory} />
+                            {missing && <FormSelectOption value={saved} label={saved} />}
+                            {volumes.map((volume) => {
+                                const value = `${volume.pool}/${volume.name}`;
+                                return <FormSelectOption key={value} value={value} label={value} />;
+                            })}
+                        </FormSelect>
+                    </div>
+                    <Button
+                        variant="secondary"
+                        isDisabled={busy || chosen === saved}
+                        isLoading={busy}
+                        onClick={() => void save()}
+                    >
+                        {T.common.save}
+                    </Button>
+                </div>
+                <FormHelperText>
+                    <HelperText>
+                        <HelperTextItem variant={chosen === saved ? "default" : "warning"}>
+                            {volumes.length === 0 && saved === ""
+                                ? T.images.no_custom_volume_exists_to_move
+                                : T.images.incus_moves_the_images_it_already}
+                        </HelperTextItem>
+                    </HelperText>
+                </FormHelperText>
+            </FormGroup>
+        </div>
+    );
+};
+
 const LocalImages = ({
     driver,
     list,
@@ -168,6 +292,8 @@ const LocalImages = ({
                     {T.common.refresh}
                 </Button>
             </div>
+
+            <ImageStore driver={driver} />
 
             {items.length === 0
                 ? (
