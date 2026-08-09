@@ -1,3 +1,14 @@
+cockpit-lxc (0.1.6-1) unstable; urgency=medium
+
+  * Choose where Incus keeps its image tarballs, from the custom volumes that
+    exist rather than by typing a path. A host with a small root filesystem no
+    longer has to cache images on it.
+  * Choose the storage pool a new container's root disk is created on. Incus
+    cannot move it afterwards, so the only previous way to change it was to
+    create the container again.
+
+ -- heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>  Mon, 10 Aug 2026 09:00:00 +0000
+
 cockpit-lxc (0.1.5-1) unstable; urgency=medium
 
   * Build and packaging only. The plugin itself is unchanged from 0.1.4.

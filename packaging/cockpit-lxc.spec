@@ -1,5 +1,5 @@
 Name:           cockpit-lxc
-Version:        0.1.5
+Version:        0.1.6
 Release:        1%{?dist}
 Summary:        Cockpit user interface for LXC system containers managed by Incus
 
@@ -47,6 +47,14 @@ make build
 %{_datadir}/cockpit/lxc
 
 %changelog
+* Mon Aug 10 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.6-1
+- Choose where Incus keeps its image tarballs, from the custom volumes that
+  exist rather than by typing a path. A host with a small root filesystem no
+  longer has to cache images on it
+- Choose the storage pool a new container's root disk is created on. Incus
+  cannot move it afterwards, so the only previous way to change it was to
+  create the container again
+
 * Sun Aug 09 2026 heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com> - 0.1.5-1
 - Build and packaging only. The plugin itself is unchanged from 0.1.4
 - Move the release workflow off the Actions runtimes that had reached end of
