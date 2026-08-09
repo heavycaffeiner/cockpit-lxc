@@ -11,14 +11,6 @@
         },
         {
             "rule": "G2",
-            "scenario": "detail/terminal",
-            "selector": "div.slider",
-            "value": "height: 475px",
-            "reason": "xterm.js draws its own scrollbar and sizes the slider as the visible fraction of the buffer. Nothing in this repository styles it, and the height moves with the number of lines the shell has written.",
-            "owner": "heavycaffeiner"
-        },
-        {
-            "rule": "G2",
             "scenario": "*",
             "selector": "span.pf-v6-c-switch__toggle",
             "value": "height: 21px",

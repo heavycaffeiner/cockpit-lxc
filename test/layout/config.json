@@ -1,10 +1,11 @@
 {
-    "comment": "Audit-set membership and rule inputs. Selectors live here rather than as attributes in src/, so production markup is not annotated for the benefit of a test.",
+    "comment": "Audit-set membership and rule inputs. Selectors live here rather than as attributes in src/, so production markup is not annotated for the benefit of a test. excludeSelectors drops subtrees whose geometry no stylesheet here decides: xterm draws its own screen and its own scrollbar, sizing both from the buffer and the cell metrics, so those boxes measure differently on two machines and mean nothing on either.",
 
     "excludeSelectors": [
         "svg",
         ".lxc-terminal__viewport .xterm-screen",
         ".lxc-terminal__viewport .xterm-helpers",
+        ".lxc-terminal__viewport .xterm-scrollable-element > .invisible",
         ".lxc-grid-overlay"
     ],
 
