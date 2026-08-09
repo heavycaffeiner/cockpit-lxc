@@ -1,6 +1,6 @@
 # Maintainer: heavycaffeiner <146043537+heavycaffeiner@users.noreply.github.com>
 pkgname=cockpit-lxc
-pkgver=0.1.5
+pkgver=0.1.6
 pkgrel=1
 pkgdesc="Cockpit user interface for LXC system containers managed by Incus"
 arch=('any')
